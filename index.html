@@ -306,8 +306,14 @@
   ];
 
   function loadProgress(){
-    try{var r=localStorage.getItem(STORAGE_KEY);return r?JSON.parse(r):{plan:"free",lessons:{}};}
-    catch(e){return{plan:"free",lessons:{}};}
+    try{
+      var r=localStorage.getItem(STORAGE_KEY);
+      var p=r?JSON.parse(r):{};
+      if(!p||typeof p!=='object')p={};
+      if(!p.lessons||typeof p.lessons!=='object')p.lessons={};
+      if(!p.plan)p.plan='free';
+      return p;
+    }catch(e){return{plan:'free',lessons:{}};}
   }
   function lessonStats(progress,lid){
     var l=progress.lessons[lid];if(!l||!l.questions)return{attempted:0,correct:0,total:0};

@@ -189,7 +189,7 @@ const EN_GAME = {
         <div>
           <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:#8A8370;font-weight:700;">Learning Streak</div>
           <div style="font-family:'Fraunces',serif;font-size:28px;font-weight:700;color:${flameColor};">${count} Day${count!==1?'s':''}</div>
-          <div style="font-size:12px;color:#8A8370;">${count>=7?'Amazing! Keep it up! 🏆':count>=3?'On fire! Don't stop! ⚡':'Study daily to build streak'}</div>
+          <div style="font-size:12px;color:#8A8370;">${count>=7?'Amazing! Keep it up! 🏆':count>=3?'On fire! Dont stop! ⚡':'Study daily to build streak'}</div>
         </div>
       </div>
       <div style="background:white;border:1.5px solid #E4DFD0;border-radius:14px;padding:16px 20px;">
