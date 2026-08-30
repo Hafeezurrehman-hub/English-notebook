@@ -40,7 +40,7 @@
   .hero,.overall{background-image:linear-gradient(var(--paper-line) 1px,transparent 1px);background-size:100% 42px;}
 
   /* Header */
-  header.topbar{position:sticky;top:0;z-index:10;background:rgba(247,244,236,0.92);backdrop-filter:blur(6px);border-bottom:2px solid var(--ink);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:nowrap;}
+  header.topbar{position:sticky;top:0;z-index:10;background:rgba(247,244,236,0.92);backdrop-filter:blur(6px);border-bottom:2px solid var(--ink);padding:10px 12px;display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:nowrap;overflow:hidden;}
   [data-theme="dark"] header.topbar{background:rgba(20,27,45,0.96);border-color:var(--paper-line);}
   .brand{font-family:'Fraunces',serif;font-weight:700;font-size:20px;letter-spacing:0.2px;flex-shrink:0;}
   .brand span{color:var(--green);}
@@ -137,7 +137,11 @@
 
   @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;}}
   @media (max-width:600px){
-    header.topbar{padding:10px 12px;}
+    header.topbar{padding:8px 10px;}
+    .brand{font-size:16px!important;}
+    #user-name{display:none!important;}
+    #auth-link{font-size:11px!important;padding:5px 10px!important;}
+    .header-upgrade{display:none!important;}
     .brand{font-size:17px;}
     #dark-toggle{padding:4px 8px;font-size:11px;}
     .hero{padding:28px 16px 20px;text-align:center;}
@@ -171,10 +175,10 @@
 
 <header class="topbar">
   <div class="brand">English<span>Notebook</span></div>
-  <div style="display:flex;align-items:center;gap:8px;flex-wrap:nowrap;">
-    <a href="pricing.html" style="font-size:12px;font-weight:600;color:var(--green);text-decoration:none;white-space:nowrap;">Upgrade ↗</a>
-    <span id="user-name" style="font-size:13px;font-weight:600;color:var(--muted);display:none;"></span>
-    <a href="auth.html" id="auth-link" style="font-size:13px;font-weight:600;color:var(--ink);text-decoration:none;border:1.5px solid var(--ink);padding:6px 14px;border-radius:20px;">Login</a>
+  <div style="display:flex;align-items:center;gap:6px;flex-wrap:nowrap;min-width:0;">
+    <a href="pricing.html" class="header-upgrade" style="font-size:12px;font-weight:600;color:var(--green);text-decoration:none;white-space:nowrap;">Upgrade ↗</a>
+    <span id="user-name" style="font-size:12px;font-weight:600;color:var(--muted);display:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:80px;"></span>
+    <a href="auth.html" id="auth-link" style="font-size:12px;font-weight:600;color:var(--ink);text-decoration:none;border:1.5px solid var(--ink);padding:5px 12px;border-radius:20px;white-space:nowrap;flex-shrink:0;">Login</a>
   </div>
 </header>
 
