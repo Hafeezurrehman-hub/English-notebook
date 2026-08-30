@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="en-guard.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Pronunciation Guide — EnglishNotebook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--ink:#1B2A4A;--paper:#F7F4EC;--paper-line:#E4DFD0;--green:#2F6F5E;--clay:#B5482A;--muted:#8A8370;--card:#FFFFFF;}
+  [data-theme="dark"]{--ink:#E8E4DA;--paper:#141B2D;--paper-line:#1F2D45;--green:#4CAF8A;--clay:#E07055;--muted:#7A8FA6;--card:#1A2540;}
+  *{box-sizing:border-box;} html,body{margin:0;padding:0;overflow-x:hidden;max-width:100vw;}
+  body{background:var(--paper);color:var(--ink);font-family:'Inter',sans-serif;min-height:100vh;}
+  [data-theme="dark"] body{background:var(--paper);color:var(--ink);}
+  header{border-bottom:2px solid var(--ink);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:rgba(247,244,236,0.94);backdrop-filter:blur(6px);z-index:10;}
+  [data-theme="dark"] header{background:rgba(20,27,45,0.96)!important;}
+  .brand{font-family:'Fraunces',serif;font-weight:700;font-size:20px;}
+  .brand span{color:var(--green);}
+  .back-link{font-size:14px;font-weight:600;color:var(--ink);text-decoration:none;}
+  .back-link:hover{color:var(--green);}
+  #dark-toggle{background:none;border:1.5px solid var(--paper-line);border-radius:20px;padding:5px 11px;cursor:pointer;color:var(--ink);font-family:'Inter',sans-serif;font-size:12px;font-weight:600;}
+
+  main{max-width:720px;margin:0 auto;padding:40px 24px 80px;}
+  .eyebrow{font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:var(--green);font-weight:600;margin-bottom:10px;}
+  h1{font-family:'Fraunces',serif;font-size:36px;margin:0 0 8px;}
+  .sub{font-size:14px;color:var(--muted);margin:0 0 32px;line-height:1.6;}
+
+  /* Search box */
+  .search-card{background:var(--card);border:2px solid var(--ink);border-radius:16px;padding:24px;box-shadow:4px 4px 0 var(--ink);margin-bottom:28px;}
+  .search-row{display:flex;gap:10px;}
+  .search-input{flex:1;padding:14px 16px;border-radius:12px;border:1.5px solid var(--paper-line);background:var(--paper);color:var(--ink);font-family:'Inter',sans-serif;font-size:16px;}
+  .search-input:focus-visible{outline:2px solid var(--green);outline-offset:1px;}
+  [data-theme="dark"] .search-input{background:var(--paper);color:var(--ink);}
+  .search-btn{padding:14px 22px;border-radius:12px;border:none;background:linear-gradient(135deg,#4A90D9,#7B5EA7);color:white;font-family:'Inter',sans-serif;font-size:15px;font-weight:700;cursor:pointer;white-space:nowrap;}
+  .search-btn:hover{opacity:0.9;}
+  .search-btn:disabled{opacity:0.5;cursor:not-allowed;}
+
+  /* Quick words */
+  .quick-label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);margin-bottom:8px;margin-top:14px;}
+  .quick-words{display:flex;flex-wrap:wrap;gap:8px;}
+  .quick-word{padding:6px 14px;border-radius:20px;border:1.5px solid var(--paper-line);background:var(--paper);font-size:13px;font-weight:600;cursor:pointer;color:var(--ink);transition:all 0.15s;font-family:'Inter',sans-serif;}
+  .quick-word:hover{border-color:var(--green);color:var(--green);}
+
+  /* Result card */
+  .result-card{background:var(--card);border:1.5px solid var(--paper-line);border-radius:16px;padding:24px;display:none;}
+  .result-card.show{display:block;}
+  [data-theme="dark"] .result-card{background:var(--card);}
+  .word-display{font-family:'Fraunces',serif;font-size:40px;font-weight:700;margin-bottom:6px;}
+  .phonetic{font-size:20px;color:#4A90D9;font-weight:500;margin-bottom:16px;letter-spacing:0.05em;}
+  .speak-btn{background:var(--green);color:white;border:none;padding:10px 20px;border-radius:20px;cursor:pointer;font-family:'Inter',sans-serif;font-size:13.5px;font-weight:600;margin-bottom:20px;display:inline-flex;align-items:center;gap:6px;}
+  .speak-btn:hover{opacity:0.9;}
+
+  .info-section{margin-bottom:16px;}
+  .info-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);margin-bottom:6px;}
+  .info-content{font-size:14.5px;line-height:1.7;color:var(--ink);}
+  .info-content.roman{color:#7B5EA7;font-weight:500;}
+  .divider{height:1px;background:var(--paper-line);margin:14px 0;}
+
+  /* Common mistakes */
+  .mistake-tag{display:inline-block;background:rgba(181,72,42,0.1);color:var(--clay);font-size:12.5px;padding:4px 10px;border-radius:10px;margin:3px;}
+  .correct-tag{display:inline-block;background:rgba(47,111,94,0.1);color:var(--green);font-size:12.5px;padding:4px 10px;border-radius:10px;margin:3px;}
+
+  /* History */
+  .history-section{margin-top:32px;}
+  .history-title{font-family:'Fraunces',serif;font-size:18px;font-weight:600;margin-bottom:12px;}
+  .history-grid{display:flex;flex-wrap:wrap;gap:8px;}
+  .history-chip{padding:6px 14px;border-radius:20px;border:1.5px solid var(--paper-line);font-size:13px;cursor:pointer;color:var(--ink);background:var(--card);font-family:'Inter',sans-serif;}
+  .history-chip:hover{border-color:var(--green);color:var(--green);}
+
+  .loading-dots{display:inline-flex;gap:4px;align-items:center;}
+  .loading-dots span{width:8px;height:8px;border-radius:50%;background:var(--green);animation:bounce 1s infinite;}
+  .loading-dots span:nth-child(2){animation-delay:0.15s;}
+  .loading-dots span:nth-child(3){animation-delay:0.3s;}
+  @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+</style>
+</head>
+<body>
+<header>
+  <a href="index.html" class="back-link">← Home</a>
+  <div class="brand">English<span>Notebook</span></div>
+  <button id="dark-toggle" onclick="toggleDark()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px;"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>Dark</button>
+</header>
+
+<main>
+  <div class="eyebrow">AI Feature</div>
+  <h1>🗣️ Pronunciation Guide</h1>
+  <p class="sub">Type any English word — AI will explain how to pronounce it correctly, common mistakes Pakistani speakers make, and tips for improvement.</p>
+
+  <div class="search-card">
+    <div class="search-row">
+      <input type="text" class="search-input" id="word-input" placeholder="Type a word (e.g. 'pronunciation')" onkeydown="if(event.key==='Enter')lookupWord()">
+      <button class="search-btn" onclick="lookupWord()" id="search-btn">🔍 Explain</button>
+    </div>
+    <div class="quick-label">Try these words:</div>
+    <div class="quick-words">
+      <span class="quick-word" onclick="quickLookup('pronunciation')">pronunciation</span>
+      <span class="quick-word" onclick="quickLookup('comfortable')">comfortable</span>
+      <span class="quick-word" onclick="quickLookup('vegetable')">vegetable</span>
+      <span class="quick-word" onclick="quickLookup('Wednesday')">Wednesday</span>
+      <span class="quick-word" onclick="quickLookup('colonel')">colonel</span>
+      <span class="quick-word" onclick="quickLookup('thorough')">thorough</span>
+      <span class="quick-word" onclick="quickLookup('debt')">debt</span>
+      <span class="quick-word" onclick="quickLookup('receipt')">receipt</span>
+    </div>
+  </div>
+
+  <!-- Result -->
+  <div class="result-card" id="result-card">
+    <div id="result-content"></div>
+  </div>
+
+  <!-- History -->
+  <div class="history-section" id="history-section" style="display:none">
+    <div class="history-title">Recent Lookups</div>
+    <div class="history-grid" id="history-grid"></div>
+  </div>
+</main>
+
+<script src="en-gamification.js"></script>
+<script src="en-ai.js"></script>
+<script src="dark-mode.js"></script>
+<script>
+let searchHistory = JSON.parse(localStorage.getItem('en_pron_history')||'[]');
+
+function quickLookup(word){
+  document.getElementById('word-input').value = word;
+  lookupWord();
+}
+
+async function lookupWord(){
+  const word = document.getElementById('word-input').value.trim();
+  if(!word){ alert('Please type a word first!'); return; }
+
+  if(EN_AI.hasLimit()){
+    const card = document.getElementById('result-card');
+    card.className = 'result-card show';
+    document.getElementById('result-content').innerHTML = `
+      <div style="text-align:center;padding:32px;color:var(--clay);">
+        <div style="font-size:36px;margin-bottom:10px;">⚠️</div>
+        <div style="font-size:14px;line-height:1.6;">Your AI check limit is over for this plan.<br>
+        <a href="pricing.html" style="color:var(--clay);font-weight:700;">Upgrade for more AI checks →</a></div>
+      </div>
+    `;
+    return;
+  }
+
+  const btn = document.getElementById('search-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="loading-dots"><span></span><span></span><span></span></div>';
+
+  const card = document.getElementById('result-card');
+  card.className = 'result-card show';
+  document.getElementById('result-content').innerHTML = `
+    <div style="text-align:center;padding:32px;color:var(--muted);">
+      <div class="loading-dots"><span></span><span></span><span></span></div>
+      <div style="margin-top:12px;font-size:14px;">AI is analyzing "<strong>${word}</strong>"...</div>
+    </div>
+  `;
+
+  const sys = `You are a pronunciation expert teaching English learners how to pronounce words correctly.
+Respond entirely in simple, clear English — no Urdu or Roman Urdu.
+For the given word, respond in this EXACT JSON format (no other text):
+{
+  "word": "the word",
+  "phonetic": "simple phonetic like pro-NUN-see-AY-shun",
+  "syllables": "pro·nun·ci·a·tion",
+  "howToSay": "Simple English explanation of how to say it",
+  "soundsLike": "An easy English spelling of the sound, e.g. 'pruh-NUN-see-AY-shun'",
+  "commonMistake": "A common mispronunciation of this word",
+  "tip": "One simple memory tip or trick",
+  "exampleSentence": "A simple sentence using this word"
+}`;
+
+  try{
+    const reply = await EN_AI.call(sys, `Explain pronunciation of: "${word}"`);
+    let data;
+    try{
+      const clean = reply.replace(/```json|```/g,'').trim();
+      data = JSON.parse(clean);
+    } catch(e){
+      throw new Error('Could not parse AI response');
+    }
+
+    // Speak using Web Speech API
+    function speakWord(){
+      if('speechSynthesis' in window){
+        const utt = new SpeechSynthesisUtterance(data.word);
+        utt.lang = 'en-US'; utt.rate = 0.8;
+        window.speechSynthesis.speak(utt);
+      }
+    }
+
+    document.getElementById('result-content').innerHTML = `
+      <div class="word-display">${data.word}</div>
+      <div class="phonetic">/${data.phonetic}/</div>
+      <button class="speak-btn" onclick="(${speakWord.toString()})()">🔊 Listen</button>
+
+      <div class="info-section">
+        <div class="info-label">Syllables</div>
+        <div class="info-content" style="font-size:18px;letter-spacing:0.1em;color:#4A90D9;">${data.syllables}</div>
+      </div>
+      <div class="divider"></div>
+      <div class="info-section">
+        <div class="info-label">How to Say It</div>
+        <div class="info-content">${data.howToSay}</div>
+      </div>
+      <div class="divider"></div>
+      <div class="info-section">
+        <div class="info-label">Sounds Like</div>
+        <div class="info-content roman">${data.soundsLike}</div>
+      </div>
+      <div class="divider"></div>
+      <div class="info-section">
+        <div class="info-label">Common Mistake ❌</div>
+        <div><span class="mistake-tag">Wrong: ${data.commonMistake}</span></div>
+        <div style="margin-top:6px;"><span class="correct-tag">Correct: ${data.phonetic}</span></div>
+      </div>
+      <div class="divider"></div>
+      <div class="info-section">
+        <div class="info-label">💡 Memory Tip</div>
+        <div class="info-content">${data.tip}</div>
+      </div>
+      <div class="divider"></div>
+      <div class="info-section">
+        <div class="info-label">Example Sentence</div>
+        <div class="info-content" style="font-style:italic;color:var(--green);">"${data.exampleSentence}"</div>
+      </div>
+    `;
+
+    // Add to history
+    if(!searchHistory.includes(word)){
+      searchHistory.unshift(word);
+      searchHistory = searchHistory.slice(0, 12);
+      localStorage.setItem('en_pron_history', JSON.stringify(searchHistory));
+    }
+    renderHistory();
+    EN_AI.addUsed();
+
+  } catch(e){
+    document.getElementById('result-content').innerHTML = `
+      <div style="color:var(--clay);padding:20px;text-align:center;">
+        <div style="font-size:32px;margin-bottom:8px;">😕</div>
+        Could not get pronunciation. Please try again.
+      </div>
+    `;
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '🔍 Explain';
+}
+
+function renderHistory(){
+  if(searchHistory.length === 0) return;
+  document.getElementById('history-section').style.display = 'block';
+  document.getElementById('history-grid').innerHTML = searchHistory.map(w=>
+    `<span class="history-chip" onclick="quickLookup('${w}')">${w}</span>`
+  ).join('');
+}
+
+renderHistory();
+</script>
+</body>
+</html>

@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="en-guard.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 4-5: 12 Tenses — EnglishNotebook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1B2A4A; --paper:#F7F4EC; --paper-line:#E4DFD0;
+    --green:#2F6F5E; --clay:#B5482A; --muted:#8A8370; --card:#FFFFFF; --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;overflow-x:hidden;max-width:100vw;}
+  body{background:var(--paper); color:var(--ink); font-family:'Inter',sans-serif; min-height:100vh;}
+
+  header.topbar{
+    position:sticky; top:0; z-index:10;
+    background:rgba(247,244,236,0.94); backdrop-filter: blur(6px);
+    border-bottom:2px solid var(--ink); padding:16px 24px;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .back-link{font-size:14px; font-weight:600; color:var(--ink); text-decoration:none; display:flex; align-items:center; gap:6px;}
+  .back-link:hover{color:var(--green);}
+  .brand{font-family:'Fraunces', serif; font-weight:700; font-size:18px;}
+  .brand span{color:var(--green);}
+  .topbar-status{font-size:13px; color:var(--muted);}
+
+  main{max-width:900px; margin:0 auto; padding:40px 24px 100px;}
+  .eyebrow{font-size:13px; letter-spacing:0.08em; text-transform:uppercase; color:var(--green); font-weight:600; margin-bottom:10px;}
+  h1.title{font-family:'Fraunces', serif; font-weight:600; font-size:clamp(28px, 4.5vw, 40px); line-height:1.15; margin:0 0 10px;}
+  p.note{font-size:13.5px; color:var(--muted); margin:0 0 32px; line-height:1.6;}
+
+  .ref-wrap{margin-bottom:44px; overflow-x:auto;}
+  table.ref-table{width:100%; border-collapse:collapse; background:var(--card); border-radius:12px; overflow:hidden; border:1.5px solid var(--paper-line); min-width:680px;}
+  table.ref-table th{background:var(--ink); color:var(--paper); font-size:12px; text-transform:uppercase; letter-spacing:0.04em; padding:10px 14px; text-align:left; font-weight:600;}
+  table.ref-table td{padding:11px 14px; font-size:13px; border-top:1px solid var(--paper-line); vertical-align:top;}
+  table.ref-table tr:nth-child(even) td{background:rgba(47,111,94,0.03);}
+  table.ref-table td.tname{font-family:'Fraunces',serif; font-weight:600; font-size:13.5px; white-space:nowrap;}
+  table.ref-table td.example{color:var(--green); font-weight:500;}
+
+  .section-title{font-family:'Fraunces',serif; font-size:20px; font-weight:600; margin:0 0 4px;}
+  .section-sub{font-size:13.5px; color:var(--muted); margin:0 0 6px;}
+  .group-title{
+    font-family:'Fraunces',serif; font-size:16px; font-weight:600;
+    margin:26px 0 4px; padding-bottom:6px; border-bottom:1px solid var(--paper-line);
+  }
+  .group-structure{font-size:12.5px; color:var(--green); margin:0 0 12px; font-weight:500;}
+
+  .q-row{
+    background:var(--card); border:1.5px solid var(--paper-line); border-radius:12px;
+    padding:14px 16px; margin-bottom:10px;
+  }
+  .q-row.correct{border-color:var(--green);}
+  .q-row.incorrect{border-color:var(--clay);}
+  .q-top{display:flex; align-items:baseline; gap:10px; margin-bottom:8px;}
+  .q-num{font-size:12.5px; color:var(--muted); font-weight:600; flex-shrink:0;}
+  .q-prompt{font-size:15px; font-weight:600; font-family:'Fraunces',serif;}
+  .q-type-badge{
+    font-size:10.5px; text-transform:uppercase; letter-spacing:0.04em; font-weight:700;
+    padding:2px 8px; border-radius:20px; background:rgba(47,111,94,0.12); color:var(--green);
+    margin-left:auto; white-space:nowrap;
+  }
+  .q-type-badge.q{background:rgba(181,72,42,0.12); color:var(--clay);}
+  .q-input-row{display:flex; gap:10px; align-items:center;}
+  input.q-input{
+    flex:1; font-family:'Inter',sans-serif; font-size:14px; padding:9px 11px;
+    border-radius:8px; border:1.5px solid var(--paper-line); background:var(--paper); color:var(--ink);
+  }
+  input.q-input:focus-visible{outline:2px solid var(--green); outline-offset:1px;}
+  .q-feedback{font-size:18px; width:24px; text-align:center; flex-shrink:0;}
+  .check-btn{
+    background:var(--ink); color:var(--paper); border:none; flex-shrink:0;
+    font-family:'Inter',sans-serif; font-size:12.5px; font-weight:600;
+    padding:9px 16px; border-radius:20px; cursor:pointer;
+  }
+  .check-btn:hover{background:var(--green);}
+  .q-hint{
+    font-size:12.5px; color:var(--clay); margin-top:8px;
+    padding-top:8px; border-top:1px dashed var(--paper-line); display:none;
+  }
+  .q-row.incorrect .q-hint{display:block;}
+
+  @media (max-width:600px){
+    .q-input-row{flex-wrap:wrap;}
+    input.q-input{flex-basis:100%;}
+    table.ref-table{font-size:11.5px;}
+  }
+
+  .progress-bar-wrap{
+    position:sticky; bottom:0; z-index:5;
+    background:rgba(247,244,236,0.95); backdrop-filter:blur(6px);
+    border-top:1.5px solid var(--ink); padding:14px 24px;
+    display:flex; align-items:center; gap:16px;
+  }
+  .progress-bar-wrap .pb-label{font-size:13px; color:var(--muted); white-space:nowrap;}
+  .progress-track{flex:1; height:8px; background:var(--paper-line); border-radius:4px; overflow:hidden;}
+  .progress-fill{height:100%; background:var(--green); width:0%; transition:width 0.3s ease;}
+  .pb-stat{font-size:13px; font-weight:600; white-space:nowrap;}
+
+  @media (prefers-reduced-motion: reduce){ .q-row, .progress-fill{transition:none;} }
+
+  /* ── AI Feedback ── */
+  .ai-btn{
+    background:linear-gradient(135deg,#4A90D9,#7B5EA7); color:#fff; border:none; flex-shrink:0;
+    font-family:'Inter',sans-serif; font-size:12px; font-weight:600;
+    padding:9px 14px; border-radius:20px; cursor:pointer; display:flex; align-items:center; gap:5px;
+  }
+  .ai-btn:hover{opacity:0.88;}
+  .ai-btn:disabled{opacity:0.5; cursor:not-allowed;}
+  .ai-btn.loading{opacity:0.7;}
+  .ai-feedback-box{
+    margin-top:10px; padding:12px 14px;
+    background:linear-gradient(135deg,rgba(74,144,217,0.07),rgba(123,94,167,0.07));
+    border:1.5px solid rgba(74,144,217,0.25); border-radius:10px;
+    font-size:13px; line-height:1.7; color:var(--ink); display:none;
+  }
+  .ai-feedback-box.show{display:block;}
+  .ai-feedback-box .ai-label{
+    font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;
+    color:#4A90D9; margin-bottom:6px;
+  }
+  .ai-limit-banner{
+    background:rgba(181,72,42,0.08); border:1.5px solid rgba(181,72,42,0.2);
+    border-radius:10px; padding:10px 14px; font-size:13px; color:var(--clay);
+    margin-top:10px; display:none;
+  }
+  .ai-limit-banner.show{display:block;}
+  .ai-counter{
+    font-size:12px; color:#7B5EA7; font-weight:600; white-space:nowrap;
+  }
+
+  /* ── Dark Mode ── */
+  [data-theme="dark"]{
+    --ink:#E8E4DA; --paper:#141B2D; --paper-line:#1F2D45;
+    --green:#4CAF8A; --clay:#E07055; --muted:#7A8FA6; --card:#1A2540;
+  }
+  [data-theme="dark"] body{ background:var(--paper); color:var(--ink); }
+  [data-theme="dark"] header.topbar{ background:rgba(20,27,45,0.96)!important; }
+  [data-theme="dark"] .q-row,
+  [data-theme="dark"] .kind-card,
+  [data-theme="dark"] .lesson-card,
+  [data-theme="dark"] .tense-row,
+  [data-theme="dark"] .mistake-card,
+  [data-theme="dark"] .story-card,
+  [data-theme="dark"] .ref-table-wrap table,
+  [data-theme="dark"] .summary-card{ background:var(--card)!important; border-color:var(--paper-line)!important; }
+  [data-theme="dark"] input,
+  [data-theme="dark"] select,
+  [data-theme="dark"] textarea{ background:var(--paper)!important; color:var(--ink)!important; border-color:var(--paper-line)!important; }
+  [data-theme="dark"] .progress-bar-wrap{ background:rgba(20,27,45,0.97)!important; border-color:var(--paper-line)!important; }
+
+  #dark-toggle{
+    background:none; border:1.5px solid var(--paper-line); border-radius:20px;
+    padding:5px 11px; cursor:pointer; color:var(--ink); font-family:'Inter',sans-serif;
+    font-size:12px; font-weight:600; transition:all 0.2s;
+  }
+  #dark-toggle:hover{ border-color:var(--green); color:var(--green); }
+
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a href="index.html" class="back-link">← Home</a>
+  <div class="brand">English<span>Notebook</span></div>
+  <span class="ai-counter" id="ai-counter"></span>
+  <div class="topbar-status" id="topbar-status">Free Plan</div>
+</header>
+
+<main>
+  <div class="eyebrow">Lesson 4–5</div>
+  <h1 class="title">12 Tenses — Affirmative, Negative & Question</h1>
+  <p class="note">Write a sentence following the given prompt — any grammatically correct sentence is accepted (exact wording not required), as long as the tense structure is correct.</p>
+
+  <div class="ref-wrap">
+    <table class="ref-table">
+      <thead><tr><th>Tense</th><th>Structure</th><th>Example</th></tr></thead>
+      <tbody id="ref-body"></tbody>
+    </table>
+  </div>
+
+  <div id="sectionA"></div>
+  <div id="sectionB"></div>
+</main>
+
+<div class="progress-bar-wrap">
+  <span class="pb-label">Lesson progress</span>
+  <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+  <span class="pb-stat" id="progress-stat">0 / 84 correct</span>
+</div>
+
+<script>
+const LESSON_ID = "l4_5_tenses";
+const STORAGE_KEY = "englishnotebook_progress_v1";
+
+/* ===================== Reference data ===================== */
+const TENSES = [
+  { name:"Present Simple", structure:"do/does + 1st form", example:"I play." },
+  { name:"Past Simple", structure:"did + 1st form", example:"I played." },
+  { name:"Future Simple", structure:"will + 1st form", example:"I will play." },
+  { name:"Present Continuous", structure:"am/is/are + 4th form", example:"I am playing." },
+  { name:"Past Continuous", structure:"was/were + 4th form", example:"I was playing." },
+  { name:"Future Continuous", structure:"will be + 4th form", example:"I will be playing." },
+  { name:"Present Perfect", structure:"has/have + 3rd form", example:"I have played." },
+  { name:"Past Perfect", structure:"had + 3rd form", example:"I had played." },
+  { name:"Future Perfect", structure:"will have + 3rd form", example:"I will have played." },
+  { name:"Present Perfect Continuous", structure:"has/have been + 4th form", example:"I have been playing." },
+  { name:"Past Perfect Continuous", structure:"had been + 4th form", example:"I had been playing." },
+  { name:"Future Perfect Continuous", structure:"will have been + 4th form", example:"I will have been playing." },
+];
+
+/* ===================== Practice data (from Excel) ===================== */
+const AFFIRMATIVE = [{"tense": "Present Simple", "prompt": "Write a sentence in Present Simple about your daily routine.", "model": "I go to school every day."}, {"tense": "Present Simple", "prompt": "Write a sentence in Present Simple about playing cricket.", "model": "He plays cricket."}, {"tense": "Present Simple", "prompt": "Write a sentence in Present Simple about reading a book.", "model": "We read the Quran."}, {"tense": "Present Simple", "prompt": "Write a sentence in Present Simple about doing your homework.", "model": "Ali learns English every day."}, {"tense": "Present Simple", "prompt": "Write a sentence in Present Simple about cooking food.", "model": "My sister cooks food."}, {"tense": "Past Simple", "prompt": "Write a sentence in Past Simple about your daily routine.", "model": "I went to school yesterday."}, {"tense": "Past Simple", "prompt": "Write a sentence in Past Simple about playing cricket.", "model": "He read a book."}, {"tense": "Past Simple", "prompt": "Write a sentence in Past Simple about reading a book.", "model": "We played cricket yesterday."}, {"tense": "Past Simple", "prompt": "Write a sentence in Past Simple about doing your homework.", "model": "Ali did his homework."}, {"tense": "Past Simple", "prompt": "Write a sentence in Past Simple about cooking food.", "model": "My sister cooked food."}, {"tense": "Future Simple", "prompt": "Write a sentence in Future Simple about your daily routine.", "model": "I will go to school tomorrow."}, {"tense": "Future Simple", "prompt": "Write a sentence in Future Simple about playing cricket.", "model": "He will play cricket tomorrow."}, {"tense": "Future Simple", "prompt": "Write a sentence in Future Simple about reading a book.", "model": "We will learn English."}, {"tense": "Future Simple", "prompt": "Write a sentence in Future Simple about doing your homework.", "model": "Ali will do his homework."}, {"tense": "Future Simple", "prompt": "Write a sentence in Future Simple about cooking food.", "model": "My sister will cook food."}, {"tense": "Present Continuous", "prompt": "Write a sentence in Present Continuous about your daily routine.", "model": "I am reading English now."}, {"tense": "Present Continuous", "prompt": "Write a sentence in Present Continuous about playing cricket.", "model": "He is playing cricket."}, {"tense": "Present Continuous", "prompt": "Write a sentence in Present Continuous about reading a book.", "model": "We are eating food."}, {"tense": "Present Continuous", "prompt": "Write a sentence in Present Continuous about doing your homework.", "model": "Ali is doing his homework."}, {"tense": "Present Continuous", "prompt": "Write a sentence in Present Continuous about cooking food.", "model": "My sister is watching TV."}, {"tense": "Past Continuous", "prompt": "Write a sentence in Past Continuous about your daily routine.", "model": "I was reading English yesterday."}, {"tense": "Past Continuous", "prompt": "Write a sentence in Past Continuous about playing cricket.", "model": "He was playing cricket."}, {"tense": "Past Continuous", "prompt": "Write a sentence in Past Continuous about reading a book.", "model": "We were eating food."}, {"tense": "Past Continuous", "prompt": "Write a sentence in Past Continuous about doing your homework.", "model": "Ali was doing his homework."}, {"tense": "Past Continuous", "prompt": "Write a sentence in Past Continuous about cooking food.", "model": "My sister was watching TV."}, {"tense": "Future Continuous", "prompt": "Write a sentence in Future Continuous about your daily routine.", "model": "I will be reading English at this time tomorrow."}, {"tense": "Future Continuous", "prompt": "Write a sentence in Future Continuous about playing cricket.", "model": "He will be playing cricket tomorrow."}, {"tense": "Future Continuous", "prompt": "Write a sentence in Future Continuous about reading a book.", "model": "We will be eating food in the evening."}, {"tense": "Future Continuous", "prompt": "Write a sentence in Future Continuous about doing your homework.", "model": "Ali will be doing his homework tomorrow."}, {"tense": "Future Continuous", "prompt": "Write a sentence in Future Continuous about cooking food.", "model": "My sister will be watching TV at night."}, {"tense": "Present Perfect", "prompt": "Write a sentence in Present Perfect about your daily routine.", "model": "I have done my homework."}, {"tense": "Present Perfect", "prompt": "Write a sentence in Present Perfect about playing cricket.", "model": "He has eaten food."}, {"tense": "Present Perfect", "prompt": "Write a sentence in Present Perfect about reading a book.", "model": "We have reached school."}, {"tense": "Present Perfect", "prompt": "Write a sentence in Present Perfect about doing your homework.", "model": "Ali has read the book."}, {"tense": "Present Perfect", "prompt": "Write a sentence in Present Perfect about cooking food.", "model": "My sister has cleaned the room."}, {"tense": "Past Perfect", "prompt": "Write a sentence in Past Perfect about your daily routine.", "model": "I had done my homework."}, {"tense": "Past Perfect", "prompt": "Write a sentence in Past Perfect about playing cricket.", "model": "He had eaten food."}, {"tense": "Past Perfect", "prompt": "Write a sentence in Past Perfect about reading a book.", "model": "We had reached school."}, {"tense": "Past Perfect", "prompt": "Write a sentence in Past Perfect about doing your homework.", "model": "Ali had read the book."}, {"tense": "Past Perfect", "prompt": "Write a sentence in Past Perfect about cooking food.", "model": "My sister had cleaned the room."}, {"tense": "Future Perfect", "prompt": "Write a sentence in Future Perfect about your daily routine.", "model": "I will have done my homework by tomorrow."}, {"tense": "Future Perfect", "prompt": "Write a sentence in Future Perfect about playing cricket.", "model": "He will have eaten food by evening."}, {"tense": "Future Perfect", "prompt": "Write a sentence in Future Perfect about reading a book.", "model": "We will have completed the project by tomorrow."}, {"tense": "Future Perfect", "prompt": "Write a sentence in Future Perfect about doing your homework.", "model": "Ali will have read the book by next week."}, {"tense": "Future Perfect", "prompt": "Write a sentence in Future Perfect about cooking food.", "model": "My sister will have cleaned the room by night."}, {"tense": "Present Perfect Continuous", "prompt": "Write a sentence in Present Perfect Continuous about your daily routine.", "model": "I have been reading English for two hours."}, {"tense": "Present Perfect Continuous", "prompt": "Write a sentence in Present Perfect Continuous about playing cricket.", "model": "He has been playing cricket since morning."}, {"tense": "Present Perfect Continuous", "prompt": "Write a sentence in Present Perfect Continuous about reading a book.", "model": "We have been working for two hours."}, {"tense": "Present Perfect Continuous", "prompt": "Write a sentence in Present Perfect Continuous about doing your homework.", "model": "Ali has been working on this project for three days."}, {"tense": "Present Perfect Continuous", "prompt": "Write a sentence in Present Perfect Continuous about cooking food.", "model": "My sister has been watching TV for an hour."}, {"tense": "Past Perfect Continuous", "prompt": "Write a sentence in Past Perfect Continuous about your daily routine.", "model": "I had been reading English for two hours."}, {"tense": "Past Perfect Continuous", "prompt": "Write a sentence in Past Perfect Continuous about playing cricket.", "model": "He had been playing cricket since morning."}, {"tense": "Past Perfect Continuous", "prompt": "Write a sentence in Past Perfect Continuous about reading a book.", "model": "We had been working for two hours."}, {"tense": "Past Perfect Continuous", "prompt": "Write a sentence in Past Perfect Continuous about doing your homework.", "model": "Ali had been working on this project for three days."}, {"tense": "Past Perfect Continuous", "prompt": "Write a sentence in Past Perfect Continuous about cooking food.", "model": "My sister had been watching TV for an hour."}, {"tense": "Future Perfect Continuous", "prompt": "Write a sentence in Future Perfect Continuous about your daily routine.", "model": "I will have been reading English for two hours by tomorrow."}, {"tense": "Future Perfect Continuous", "prompt": "Write a sentence in Future Perfect Continuous about playing cricket.", "model": "He will have been playing cricket for three hours by evening."}, {"tense": "Future Perfect Continuous", "prompt": "Write a sentence in Future Perfect Continuous about reading a book.", "model": "We will have been working for two days by tomorrow."}, {"tense": "Future Perfect Continuous", "prompt": "Write a sentence in Future Perfect Continuous about doing your homework.", "model": "Ali will have been working on this project for a month by next week."}, {"tense": "Future Perfect Continuous", "prompt": "Write a sentence in Future Perfect Continuous about cooking food.", "model": "My sister will have been watching TV for two hours by night."}];
+
+const NEGQ = [{"tense": "Present Simple", "type": "Negative", "structure": "do/does + not + 1st form", "prompt": "Write a negative sentence in Present Simple about your daily routine."}, {"tense": "Present Simple", "type": "Question", "structure": "Do/Does + subject + 1st form?", "prompt": "Write a question sentence in Present Simple about your daily routine."}, {"tense": "Past Simple", "type": "Negative", "structure": "did + not + 1st form", "prompt": "Write a negative sentence in Past Simple about your daily routine."}, {"tense": "Past Simple", "type": "Question", "structure": "Did + subject + 1st form?", "prompt": "Write a question sentence in Past Simple about your daily routine."}, {"tense": "Future Simple", "type": "Negative", "structure": "will + not + 1st form", "prompt": "Write a negative sentence in Future Simple about your daily routine."}, {"tense": "Future Simple", "type": "Question", "structure": "Will + subject + 1st form?", "prompt": "Write a question sentence in Future Simple about your daily routine."}, {"tense": "Present Continuous", "type": "Negative", "structure": "am/is/are + not + 4th form", "prompt": "Write a negative sentence in Present Continuous about your daily routine."}, {"tense": "Present Continuous", "type": "Question", "structure": "Am/Is/Are + subject + 4th form?", "prompt": "Write a question sentence in Present Continuous about your daily routine."}, {"tense": "Past Continuous", "type": "Negative", "structure": "was/were + not + 4th form", "prompt": "Write a negative sentence in Past Continuous about your daily routine."}, {"tense": "Past Continuous", "type": "Question", "structure": "Was/Were + subject + 4th form?", "prompt": "Write a question sentence in Past Continuous about your daily routine."}, {"tense": "Future Continuous", "type": "Negative", "structure": "will not be + 4th form", "prompt": "Write a negative sentence in Future Continuous about your daily routine."}, {"tense": "Future Continuous", "type": "Question", "structure": "Will + subject + be + 4th form?", "prompt": "Write a question sentence in Future Continuous about your daily routine."}, {"tense": "Present Perfect", "type": "Negative", "structure": "has/have + not + 3rd form", "prompt": "Write a negative sentence in Present Perfect about your daily routine."}, {"tense": "Present Perfect", "type": "Question", "structure": "Has/Have + subject + 3rd form?", "prompt": "Write a question sentence in Present Perfect about your daily routine."}, {"tense": "Past Perfect", "type": "Negative", "structure": "had + not + 3rd form", "prompt": "Write a negative sentence in Past Perfect about your daily routine."}, {"tense": "Past Perfect", "type": "Question", "structure": "Had + subject + 3rd form?", "prompt": "Write a question sentence in Past Perfect about your daily routine."}, {"tense": "Future Perfect", "type": "Negative", "structure": "will not have + 3rd form", "prompt": "Write a negative sentence in Future Perfect about your daily routine."}, {"tense": "Future Perfect", "type": "Question", "structure": "Will + subject + have + 3rd form?", "prompt": "Write a question sentence in Future Perfect about your daily routine."}, {"tense": "Present Perfect Continuous", "type": "Negative", "structure": "has/have not been + 4th form", "prompt": "Write a negative sentence in Present Perfect Continuous about your daily routine."}, {"tense": "Present Perfect Continuous", "type": "Question", "structure": "Has/Have + subject + been + 4th form?", "prompt": "Write a question sentence in Present Perfect Continuous about your daily routine."}, {"tense": "Past Perfect Continuous", "type": "Negative", "structure": "had not been + 4th form", "prompt": "Write a negative sentence in Past Perfect Continuous about your daily routine."}, {"tense": "Past Perfect Continuous", "type": "Question", "structure": "Had + subject + been + 4th form?", "prompt": "Write a question sentence in Past Perfect Continuous about your daily routine."}, {"tense": "Future Perfect Continuous", "type": "Negative", "structure": "will not have been + 4th form", "prompt": "Write a negative sentence in Future Perfect Continuous about your daily routine."}, {"tense": "Future Perfect Continuous", "type": "Question", "structure": "Will + subject + have been + 4th form?", "prompt": "Write a question sentence in Future Perfect Continuous about your daily routine."}];
+
+const IRREGULAR = ["ate", "became", "began", "bent", "bit", "bled", "blew", "bought", "bred", "broadcast", "broke", "brought", "built", "burst", "came", "caught", "chose", "clung", "cost", "crept", "cut", "dealt", "did", "dove", "drank", "drew", "drove", "dug", "dwelt", "fed", "felt", "fled", "flew", "flung", "forbade", "forbore", "foresaw", "foretold", "forgave", "forgot", "fought", "found", "froze", "gave", "got", "grew", "ground", "had", "heard", "held", "hid", "hit", "hung", "hurt", "input", "interwove", "kept", "kneeled", "knelt", "knew", "laid", "lay", "leant", "leapt", "led", "left", "lent", "let", "lit", "lost", "made", "meant", "met", "misled", "mistook", "outdid", "outgrew", "overcame", "overdid", "overtook", "paid", "partook", "proved", "put", "ran", "rang", "read", "rebuilt", "redid", "rethought", "rewrote", "rode", "rose", "said", "sang", "sank", "sat", "saw", "sent", "set", "shed", "shone", "shook", "shot", "shrank", "shut", "slept", "slew", "slid", "smelt", "sold", "sought", "spat", "spelt", "spent", "spilt", "split", "spoiled", "spoilt", "spoke", "sprang", "spread", "spun", "stank", "stole", "stood", "strode", "strove", "struck", "stuck", "stung", "stunk", "swam", "swelled", "swept", "swore", "swung", "taught", "thought", "threw", "thrust", "tied", "told", "took", "tore", "trod", "understood", "undertook", "upset", "went", "wept", "withdrew", "woke", "won", "wore", "wound", "wove", "woven", "wrote", "wrung"];
+
+const IRREGULAR_SET = new Set(IRREGULAR);
+
+/* ===================== Structure-based tense checker =====================
+   Mirrors the Excel marker-detection logic (SUMPRODUCT/SEARCH based):
+   detect helping-verb markers in the free-text answer, then match the
+   marker-combination against the tense that's expected — NOT exact wording. */
+function analyzeSentence(text){
+  const raw = " " + text.toLowerCase().trim() + " ";
+  const has = (re) => re.test(raw);
+
+  const willHaveBeen = has(/\bwill\s+have\s+been\b/);
+  const willHave = !willHaveBeen && has(/\bwill\s+have\b/);
+  const willBe = !willHaveBeen && has(/\bwill\s+be\b/);
+  const willPlain = has(/\bwill\b/);
+  const haveHasBeen = has(/\b(have|has)\s+been\b/);
+  const hadBeen = has(/\bhad\s+been\b/);
+  const endsIng = has(/\b[a-z]+ing\b/);
+  const wasWere = has(/\b(was|were)\b/);
+  const amIsAre = has(/\b(am|is|are)\b/);
+  const haveHas = !haveHasBeen && has(/\b(have|has)\b/);
+  const hadPlain = !hadBeen && has(/\bhad\b/);
+  const words = raw.trim().split(/\s+/);
+  const irregularPast = words.some(w => IRREGULAR_SET.has(w.replace(/[.,!?]/g,"")));
+  const edEnding = has(/\b[a-z]+ed\b/);
+  const negation = has(/\bnot\b/) || /n't/.test(raw);
+  const isQuestion = text.trim().endsWith("?");
+
+  return { willHaveBeen, willHave, willBe, willPlain, haveHasBeen, hadBeen, endsIng,
+            wasWere, amIsAre, haveHas, hadPlain, irregularPast, edEnding, negation, isQuestion };
+}
+
+function detectTense(m){
+  if(m.willHaveBeen && m.endsIng) return "Future Perfect Continuous";
+  if(m.haveHasBeen && m.endsIng) return "Present Perfect Continuous";
+  if(m.hadBeen && m.endsIng) return "Past Perfect Continuous";
+  if(m.willHave) return "Future Perfect";
+  if(m.haveHas) return "Present Perfect";
+  if(m.hadPlain) return "Past Perfect";
+  if(m.willBe && m.endsIng) return "Future Continuous";
+  if(m.amIsAre && m.endsIng) return "Present Continuous";
+  if(m.wasWere && m.endsIng) return "Past Continuous";
+  if(m.willPlain) return "Future Simple";
+  if(m.irregularPast || m.edEnding) return "Past Simple";
+  return "Present Simple";
+}
+
+function checkAffirmative(text, expectedTense){
+  const t = text.trim();
+  if(t.split(/\s+/).length < 3) return false;
+  const m = analyzeSentence(t);
+  return detectTense(m) === expectedTense;
+}
+
+function checkNegative(text, expectedTense){
+  const t = text.trim();
+  if(t.split(/\s+/).length < 3) return false;
+  const m = analyzeSentence(t);
+  return m.negation && detectTense(m) === expectedTense;
+}
+
+function checkQuestion(text, expectedTense){
+  const t = text.trim();
+  if(t.split(/\s+/).length < 3) return false;
+  if(!t.endsWith("?")) return false;
+  const m = analyzeSentence(t);
+  return detectTense(m) === expectedTense;
+}
+
+/* ===================== Storage ===================== */
+function loadProgress(){
+  try{ const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : { plan:"free", lessons:{} }; }
+  catch(e){ console.error("Progress load failed", e); return { plan:"free", lessons:{} }; }
+}
+function saveProgress(data){
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+  catch(e){ console.error("Progress save failed", e); }
+}
+function getLessonData(progress){
+  if(!progress.lessons[LESSON_ID]) progress.lessons[LESSON_ID] = { questions:{} };
+  return progress.lessons[LESSON_ID];
+}
+
+const TOTAL_QUESTIONS = AFFIRMATIVE.length + NEGQ.length;
+
+/* ===================== Render reference table ===================== */
+function renderRef(){
+  document.getElementById("ref-body").innerHTML = TENSES.map(t=>`
+    <tr>
+      <td class="tname">${t.name}</td>
+      <td>${t.structure}</td>
+      <td class="example">${t.example}</td>
+    </tr>
+  `).join("");
+}
+
+/* ===================== Render Section A: Affirmative ===================== */
+function renderSectionA(){
+  const progress = loadProgress();
+  const lessonData = getLessonData(progress);
+  const container = document.getElementById("sectionA");
+
+  let html = `<h2 class="section-title">Section A: Affirmative Sentences</h2>
+    <p class="section-sub">Write a sentence following the prompt — use the correct tense structure</p>`;
+
+  let lastTense = null;
+  AFFIRMATIVE.forEach((q, idx)=>{
+    const qid = `affA_${idx}`;
+    const saved = lessonData.questions[qid];
+    const state = saved && saved.attempted ? (saved.correct ? "correct" : "incorrect") : "";
+    const val = saved && saved.value ? saved.value : "";
+
+    if(q.tense !== lastTense){
+      const t = TENSES.find(t=>t.name===q.tense);
+      html += `<div class="group-title">${q.tense}</div><p class="group-structure">${t ? t.structure : ""}</p>`;
+      lastTense = q.tense;
+    }
+
+    html += `
+      <div class="q-row ${state}" data-qid="${qid}" data-tense="${q.tense}" data-mode="affirmative">
+        <div class="q-top">
+          <span class="q-num">${idx+1}.</span>
+          <span class="q-prompt">${q.prompt}</span>
+        </div>
+        <div class="q-input-row">
+          <input class="q-input" type="text" placeholder="Type your English sentence..." value="${val.replace(/"/g,'&quot;')}">
+          <div class="q-feedback">${state === "correct" ? "✅" : state === "incorrect" ? "❌" : ""}</div>
+          <button class="check-btn" type="button">Check</button>
+          <button class="ai-btn" type="button" data-ai="1" title="AI se feedback lo">✨ AI Check</button>
+        </div>
+        <div class="ai-feedback-box" id="ai-box-${qid}"></div>
+        <div class="q-hint">Example: ${q.model}</div>
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
+  container.addEventListener("click", handleCheckClick);
+  container.addEventListener("keydown", handleEnterKey);
+}
+
+/* ===================== Render Section B: Negative & Question ===================== */
+function renderSectionB(){
+  const progress = loadProgress();
+  const lessonData = getLessonData(progress);
+  const container = document.getElementById("sectionB");
+
+  let html = `<h2 class="section-title">Section B: Negative & Question</h2>
+    <p class="section-sub">1 Negative + 1 Question sentence for each tense</p>`;
+
+  let lastTense = null;
+  NEGQ.forEach((q, idx)=>{
+    const qid = `negq_${idx}`;
+    const saved = lessonData.questions[qid];
+    const state = saved && saved.attempted ? (saved.correct ? "correct" : "incorrect") : "";
+    const val = saved && saved.value ? saved.value : "";
+    const mode = q.type === "Negative" ? "negative" : "question";
+
+    if(q.tense !== lastTense){
+      html += `<div class="group-title">${q.tense}</div>`;
+      lastTense = q.tense;
+    }
+
+    html += `
+      <div class="q-row ${state}" data-qid="${qid}" data-tense="${q.tense}" data-mode="${mode}">
+        <div class="q-top">
+          <span class="q-num">${idx+1}.</span>
+          <span class="q-prompt">${q.prompt}</span>
+          <span class="q-type-badge ${mode==='question'?'q':''}">${q.type}</span>
+        </div>
+        <div class="q-input-row">
+          <input class="q-input" type="text" placeholder="Type your English sentence..." value="${val.replace(/"/g,'&quot;')}">
+          <div class="q-feedback">${state === "correct" ? "✅" : state === "incorrect" ? "❌" : ""}</div>
+          <button class="check-btn" type="button">Check</button>
+          <button class="ai-btn" type="button" data-ai="1" title="AI se feedback lo">✨ AI Check</button>
+        </div>
+        <div class="ai-feedback-box" id="ai-box-${qid}"></div>
+        <div class="q-hint">Structure: ${q.structure}</div>
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
+  container.addEventListener("click", handleCheckClick);
+  container.addEventListener("keydown", handleEnterKey);
+}
+
+/* ===================== Interaction ===================== */
+function handleCheckClick(e){
+  if(!e.target.classList.contains("check-btn")) return;
+  checkRow(e.target.closest(".q-row"));
+}
+function handleEnterKey(e){
+  if(e.key === "Enter" && e.target.classList.contains("q-input")){
+    e.preventDefault();
+    checkRow(e.target.closest(".q-row"));
+  }
+}
+
+function checkRow(row){
+  const qid = row.dataset.qid;
+  const tense = row.dataset.tense;
+  const mode = row.dataset.mode;
+  const input = row.querySelector(".q-input");
+  const text = input.value;
+
+  const progress = loadProgress();
+  const lessonData = getLessonData(progress);
+
+  if(!text.trim()){
+    delete lessonData.questions[qid];
+    row.classList.remove("correct","incorrect");
+    row.querySelector(".q-feedback").textContent = "";
+    saveProgress(progress);
+    updateProgressBar();
+    return;
+  }
+
+  let isCorrect = false;
+  if(mode === "affirmative") isCorrect = checkAffirmative(text, tense);
+  else if(mode === "negative") isCorrect = checkNegative(text, tense);
+  else if(mode === "question") isCorrect = checkQuestion(text, tense);
+
+  const urduEl = row.querySelector(".q-prompt");
+  lessonData.questions[qid] = {
+    attempted:true, correct:isCorrect, value:text,
+    tense:tense, mode:mode,
+    question: urduEl ? urduEl.textContent : "",
+    lastAttempt:new Date().toISOString()
+  };
+  row.classList.remove("correct","incorrect");
+  row.classList.add(isCorrect ? "correct" : "incorrect");
+  row.querySelector(".q-feedback").textContent = isCorrect ? "✅" : "❌";
+
+  saveProgress(progress);
+  updateProgressBar();
+}
+
+function updateProgressBar(){
+  const progress = loadProgress();
+  const lessonData = getLessonData(progress);
+  const qs = Object.values(lessonData.questions);
+  const correct = qs.filter(q=>q.correct).length;
+  const pct = TOTAL_QUESTIONS > 0 ? Math.round((correct/TOTAL_QUESTIONS)*100) : 0;
+
+  document.getElementById("progress-fill").style.width = pct + "%";
+  document.getElementById("progress-stat").textContent = `${correct} / ${TOTAL_QUESTIONS} correct`;
+  document.getElementById("topbar-status").textContent = progress.plan === "paid" ? "Paid Plan" : "Free Plan";
+}
+
+renderRef();
+renderSectionA();
+renderSectionB();
+updateProgressBar();
+
+/* ===================== AI Feedback ===================== */
+const FREE_AI_LIMIT = 5;    // free plan
+const STARTER_AI_LIMIT = 50; // Rs.300 plan
+const PAID_AI_LIMIT = 9999;  // Rs.500 unlimited plan
+let aiUsedCount = 0;
+
+function isUnlimitedPlan(p){ return p.plan === "unlimited" || p.plan === "paid"; }
+function isStarterPlan(p){ return p.plan === "starter"; }
+
+function getAiLimit(){
+  const p = loadProgress();
+  if(isUnlimitedPlan(p)) return PAID_AI_LIMIT;
+  if(isStarterPlan(p)) return STARTER_AI_LIMIT;
+  return FREE_AI_LIMIT;
+}
+
+function updateAiCounter(){
+  const limit = getAiLimit();
+  const el = document.getElementById("ai-counter");
+  if(!el) return;
+  const p = loadProgress();
+  if(isUnlimitedPlan(p)){
+    el.textContent = "✨ AI: Unlimited";
+  } else {
+    const left = Math.max(0, limit - aiUsedCount);
+    el.textContent = left > 0 ? `✨ AI: ${left}/${limit} left` : "✨ AI: Limit reached";
+    el.style.color = left === 0 ? "var(--clay)" : "#7B5EA7";
+  }
+}
+
+// Delegate AI button clicks
+document.getElementById("sectionA").addEventListener("click", handleAiClick);
+document.getElementById("sectionB").addEventListener("click", handleAiClick);
+
+function handleAiClick(e){
+  const btn = e.target.closest(".ai-btn");
+  if(!btn) return;
+  const row = btn.closest(".q-row");
+  const input = row.querySelector(".q-input");
+  const userText = input.value.trim();
+
+  if(!userText){
+    showAiFeedback(row, "Please write your answer first, then ask AI.");
+    return;
+  }
+
+  // Plan limit check
+  const p = loadProgress();
+  const limit = getAiLimit();
+  if(!isUnlimitedPlan(p) && aiUsedCount >= limit){
+    showAiFeedback(row,
+      "⚠️ Your plan limit (" + limit + " AI checks) is over. Upgrade for unlimited AI feedback.",
+      true
+    );
+    return;
+  }
+
+  const tense = row.dataset.tense;
+  const mode  = row.dataset.mode;
+  const qid   = row.dataset.qid;
+  const urduEl = row.querySelector(".q-prompt");
+  const promptText = urduEl ? urduEl.textContent : "";
+
+  askAI(btn, row, qid, promptText, userText, tense, mode);
+}
+
+async function askAI(btn, row, qid, promptSentence, userAnswer, expectedTense, mode){
+  btn.disabled = true;
+  btn.textContent = "⏳ ...";
+  btn.classList.add("loading");
+
+  const modeLabel = mode === "affirmative" ? "Affirmative" : mode === "negative" ? "Negative" : "Question";
+
+  const systemPrompt = `You are an English grammar teacher for students learning English.
+Give feedback entirely in simple, clear English — no Urdu or Roman Urdu.
+Keep response SHORT — max 4 lines.
+Format:
+- Line 1: Say if it's correct or incorrect, and briefly why
+- Line 2: Remind the correct tense structure
+- Line 3: Give one correct example sentence
+- Line 4 (optional): One quick tip
+
+Use simple words. Be encouraging and clear.`;
+
+  const userPrompt = `Exercise prompt: "${promptSentence}"
+Expected tense: ${expectedTense} (${modeLabel})
+Student wrote: "${userAnswer}"
+
+Give grammar feedback.`;
+
+  try {
+    const res = await fetch("https://english-notebook-ai.hafiz-hafeez-ur-rehman2022.workers.dev", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-haiku-4-5-20251001",
+        max_tokens: 200,
+        system: systemPrompt,
+        messages: [{ role: "user", content: userPrompt }]
+      })
+    });
+
+    if(!res.ok){
+      const err = await res.json().catch(()=>({}));
+      throw new Error(err.error?.message || "API error " + res.status);
+    }
+
+    const data = await res.json();
+    const feedback = data.content?.find(b => b.type === "text")?.text || "No feedback received.";
+    
+    aiUsedCount++;
+    updateAiCounter();
+    showAiFeedback(row, feedback);
+
+  } catch(err) {
+    console.error("AI error:", err);
+    showAiFeedback(row, "Could not connect to AI. Please try again. (" + err.message + ")");
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "✨ Ask AI";
+    btn.classList.remove("loading");
+  }
+}
+
+function showAiFeedback(row, text, isLimit=false){
+  const qid = row.dataset.qid;
+  const box = document.getElementById("ai-box-" + qid);
+  if(!box) return;
+  box.innerHTML = `<div class="ai-label">🤖 AI Feedback</div>${text.replace(/\n/g,"<br>")}`;
+  box.classList.add("show");
+  box.style.borderColor = isLimit ? "rgba(181,72,42,0.3)" : "rgba(74,144,217,0.25)";
+}
+
+// Init counter
+updateAiCounter();
+
+</script>
+
+
+<div class="ai-upgrade-popup" id="ai-upgrade-popup">
+  <button onclick="document.getElementById('ai-upgrade-popup').classList.remove('show')" style="position:absolute;top:8px;right:12px;cursor:pointer;background:none;border:none;color:white;font-size:18px;">✕</button>
+  <div style="width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center;margin:0 auto 8px;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4"/><path d="M12 18v4"/><path d="M4.9 4.9l2.8 2.8"/><path d="M16.3 16.3l2.8 2.8"/><path d="M2 12h4"/><path d="M18 12h4"/><path d="M4.9 19.1l2.8-2.8"/><path d="M16.3 7.7l2.8-2.8"/><circle cx="12" cy="12" r="3"/></svg></div>
+  <strong>AI Grammar Coach</strong><br>
+  <span style="opacity:0.8;font-size:12.5px;">You've used your 5 free AI checks.</span><br><br>
+  Upgrade for more AI feedback — plans start at <strong>Rs. 300/month</strong><br><br>
+  <a href="pricing.html">Upgrade Now →</a>
+</div>
+
+
+
+<script src="en-plan.js"></script>
+<script src="en-ai.js">
+/* ── Dark Mode ── */
+function toggleDark(){
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const newTheme = isDark ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', newTheme);
+  localStorage.setItem('en_theme', newTheme);
+  const btn = document.getElementById('dark-toggle');
+  if(btn) btn.textContent = newTheme === 'dark' ? '☀️ Light' : '🌙 Dark';
+}
+(function(){
+  const saved = localStorage.getItem('en_theme');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const theme = saved || (prefersDark ? 'dark' : 'light');
+  if(theme === 'dark'){
+    document.documentElement.setAttribute('data-theme', 'dark');
+    const btn = document.getElementById('dark-toggle');
+    if(btn) btn.textContent = '☀️ Light';
+  }
+})();
+
+</script>
+
+<script src="en-gamification.js"></script>
+</body>
+</html>

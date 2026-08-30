@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="en-guard.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — EnglishNotebook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1B2A4A; --paper:#F7F4EC; --paper-line:#E4DFD0;
+    --green:#2F6F5E; --clay:#B5482A; --muted:#8A8370; --card:#FFFFFF;
+    --red:#C0392B; --yellow:#D48C00;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;overflow-x:hidden;max-width:100vw;}
+  body{background:var(--paper); color:var(--ink); font-family:'Inter',sans-serif; min-height:100vh;}
+
+  header.topbar{
+    position:sticky; top:0; z-index:10;
+    background:rgba(247,244,236,0.94); backdrop-filter:blur(6px);
+    border-bottom:2px solid var(--ink); padding:16px 24px;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .back-link{font-size:14px; font-weight:600; color:var(--ink); text-decoration:none; display:flex; align-items:center; gap:6px;}
+  .back-link:hover{color:var(--green);}
+  .brand{font-family:'Fraunces',serif; font-weight:700; font-size:18px;}
+  .brand span{color:var(--green);}
+
+  main{max-width:900px; margin:0 auto; padding:40px 24px 80px;}
+  .eyebrow{font-size:13px; letter-spacing:0.08em; text-transform:uppercase; color:var(--green); font-weight:600; margin-bottom:10px;}
+  h1.title{font-family:'Fraunces',serif; font-weight:600; font-size:clamp(28px,4.5vw,40px); line-height:1.15; margin:0 0 32px;}
+
+  /* ── Tabs ── */
+  .tabs{display:flex; gap:0; border-bottom:2px solid var(--ink); margin-bottom:28px;}
+  .tab-btn{
+    font-family:'Inter',sans-serif; font-size:14px; font-weight:600;
+    padding:10px 22px; background:none; border:none; border-bottom:3px solid transparent;
+    cursor:pointer; color:var(--muted); margin-bottom:-2px; transition:color 0.15s;
+  }
+  .tab-btn.active{color:var(--green); border-bottom-color:var(--green);}
+  .tab-btn:hover:not(.active){color:var(--ink);}
+  .tab-panel{display:none;}
+  .tab-panel.active{display:block;}
+
+  /* ── Summary card ── */
+  .summary-card{
+    background:var(--card); border:2px solid var(--ink); border-radius:14px;
+    padding:24px 28px; margin-bottom:28px;
+    display:flex; align-items:center; gap:24px;
+    box-shadow:4px 4px 0 var(--ink);
+  }
+  .ring-wrap{flex-shrink:0;}
+  .summary-text{flex:1;}
+  .summary-text .s-label{font-size:12px; text-transform:uppercase; letter-spacing:0.07em; color:var(--muted); font-weight:600;}
+  .summary-text .s-stat{font-family:'Fraunces',serif; font-size:28px; margin:4px 0 2px;}
+  .summary-text .s-sub{font-size:13px; color:var(--muted);}
+  .summary-right{text-align:right;}
+  .summary-right .s-label{font-size:12px; text-transform:uppercase; letter-spacing:0.07em; color:var(--muted); font-weight:600;}
+  .summary-right .big-pct{font-family:'Fraunces',serif; font-size:46px; line-height:1; color:var(--green);}
+
+  /* ── Col headers + rows ── */
+  .col-headers{
+    display:grid; grid-template-columns:1fr 70px 70px 70px 130px;
+    gap:14px; padding:0 18px; margin-bottom:6px;
+  }
+  .col-lbl{font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--muted); font-weight:600; text-align:center;}
+  .col-lbl:first-child{text-align:left;}
+
+  .lesson-card{
+    background:var(--card); border:1.5px solid var(--paper-line); border-radius:12px;
+    padding:14px 18px; margin-bottom:8px;
+    display:grid; grid-template-columns:1fr 70px 70px 70px 130px;
+    align-items:center; gap:14px;
+    text-decoration:none; color:inherit;
+    transition:border-color 0.15s, box-shadow 0.15s;
+  }
+  .lesson-card:hover{border-color:var(--green); box-shadow:2px 2px 0 var(--green);}
+  .lesson-card.ref-only{cursor:default;}
+  .lesson-card.ref-only:hover{border-color:var(--paper-line); box-shadow:none;}
+  .lc-name{font-family:'Fraunces',serif; font-size:15px; font-weight:600;}
+  .lc-name small{display:block; font-family:'Inter',sans-serif; font-size:11.5px; color:var(--muted); font-weight:400; margin-top:2px;}
+  .lc-num{font-size:14px; font-weight:600; text-align:center;}
+  .lc-num.dim{color:var(--muted); font-weight:400;}
+  .mini-bar-wrap{display:flex; flex-direction:column; gap:3px;}
+  .mini-bar-track{height:6px; background:var(--paper-line); border-radius:3px; overflow:hidden;}
+  .mini-bar-fill{height:100%; border-radius:3px; transition:width 0.4s ease;}
+  .mini-bar-fill.strong{background:var(--green);}
+  .mini-bar-fill.average{background:var(--yellow);}
+  .mini-bar-fill.weak{background:var(--red);}
+  .mini-bar-fill.zero{background:var(--paper-line);}
+  .mini-pct{font-size:11.5px; color:var(--muted);}
+
+  .total-row{
+    background:var(--ink); color:var(--paper); border-radius:12px;
+    padding:14px 18px; margin-top:14px;
+    display:grid; grid-template-columns:1fr 70px 70px 70px 130px;
+    align-items:center; gap:14px;
+  }
+  .total-row .lc-name{color:var(--paper);}
+  .total-row .lc-num{color:var(--paper);}
+  .total-row .mini-bar-fill.strong{background:#7EC8B0;}
+  .total-row .mini-pct{color:rgba(255,255,255,0.55);}
+
+  /* ── Score Dashboard (tenses) ── */
+  .status-badge{
+    display:inline-block; font-size:11.5px; font-weight:700; padding:2px 9px;
+    border-radius:20px; white-space:nowrap;
+  }
+  .status-badge.strong{background:rgba(47,111,94,0.12); color:var(--green);}
+  .status-badge.average{background:rgba(212,140,0,0.12); color:var(--yellow);}
+  .status-badge.weak{background:rgba(192,57,43,0.12); color:var(--red);}
+  .status-badge.none{background:var(--paper-line); color:var(--muted);}
+
+  .tense-col-headers{
+    display:grid; grid-template-columns:1fr 80px 80px 80px 110px;
+    gap:14px; padding:0 18px; margin-bottom:6px;
+  }
+  .tense-row{
+    background:var(--card); border:1.5px solid var(--paper-line); border-radius:12px;
+    padding:12px 18px; margin-bottom:8px;
+    display:grid; grid-template-columns:1fr 80px 80px 80px 110px;
+    align-items:center; gap:14px;
+  }
+  .tense-row.weak-row{border-color:rgba(192,57,43,0.3);}
+  .tense-name{font-family:'Fraunces',serif; font-size:14.5px; font-weight:600;}
+  .tense-num{font-size:13.5px; font-weight:600; text-align:center; color:var(--ink);}
+  .tense-num.dim{color:var(--muted); font-weight:400;}
+
+  /* ── Mistakes tracker ── */
+  .mistake-filter{display:flex; gap:10px; margin-bottom:18px; flex-wrap:wrap;}
+  .filter-btn{
+    font-family:'Inter',sans-serif; font-size:12.5px; font-weight:600;
+    padding:6px 14px; border-radius:20px; border:1.5px solid var(--paper-line);
+    background:var(--card); color:var(--muted); cursor:pointer;
+  }
+  .filter-btn.active{background:var(--ink); color:var(--paper); border-color:var(--ink);}
+  .mistake-count{font-size:13px; color:var(--muted); margin-bottom:14px;}
+
+  .mistake-card{
+    background:var(--card); border:1.5px solid rgba(181,72,42,0.25); border-radius:12px;
+    padding:14px 18px; margin-bottom:8px;
+  }
+  .mistake-card .m-top{display:flex; align-items:baseline; gap:10px; margin-bottom:6px; flex-wrap:wrap;}
+  .m-lesson-badge{
+    font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.04em;
+    padding:2px 8px; border-radius:20px; background:var(--paper-line); color:var(--muted);
+    white-space:nowrap;
+  }
+  .m-text{font-family:'Fraunces',serif; font-size:15px; font-weight:600; flex:1;}
+  .m-time{font-size:11.5px; color:var(--muted); white-space:nowrap;}
+  .m-answer{font-size:12.5px; color:var(--clay); margin-bottom:8px;}
+  .m-retry{
+    display:inline-block; font-size:12px; font-weight:600; color:var(--green);
+    text-decoration:none; border-bottom:1.5px solid var(--green); padding-bottom:1px;
+  }
+  .no-mistakes{
+    text-align:center; padding:48px 24px;
+    font-family:'Fraunces',serif; font-size:18px; color:var(--muted);
+  }
+
+  /* ── Reset button ── */
+  .reset-wrap{margin-top:32px; padding-top:24px; border-top:1px solid var(--paper-line);}
+  .reset-wrap p{font-size:13px; color:var(--muted); margin:0 0 12px;}
+  .btn-reset{
+    font-family:'Inter',sans-serif; font-size:13px; font-weight:600;
+    padding:9px 20px; border-radius:20px; border:1.5px solid var(--clay);
+    background:none; color:var(--clay); cursor:pointer;
+  }
+  .btn-reset:hover{background:var(--clay); color:var(--paper);}
+
+  /* ── Modal confirm ── */
+  .modal-overlay{
+    display:none; position:fixed; inset:0; background:rgba(27,42,74,0.5);
+    z-index:100; align-items:center; justify-content:center;
+  }
+  .modal-overlay.show{display:flex;}
+  .modal-box{
+    background:var(--card); border:2px solid var(--ink); border-radius:14px;
+    padding:28px 28px 24px; max-width:380px; width:90%;
+    box-shadow:4px 4px 0 var(--ink);
+  }
+  .modal-box h3{font-family:'Fraunces',serif; font-size:20px; margin:0 0 10px;}
+  .modal-box p{font-size:13.5px; color:var(--muted); margin:0 0 20px; line-height:1.6;}
+  .modal-btns{display:flex; gap:10px; justify-content:flex-end;}
+  .btn-cancel{font-family:'Inter',sans-serif; font-size:13px; font-weight:600; padding:9px 18px; border-radius:20px; border:1.5px solid var(--paper-line); background:none; color:var(--ink); cursor:pointer;}
+  .btn-confirm{font-family:'Inter',sans-serif; font-size:13px; font-weight:600; padding:9px 18px; border-radius:20px; border:none; background:var(--clay); color:var(--paper); cursor:pointer;}
+
+  @media(max-width:600px){
+    .lesson-card,.col-headers,.total-row{grid-template-columns:1fr 60px 60px;}
+    .lesson-card .mini-bar-wrap,.col-lbl:nth-child(4),.lesson-card .lc-num:nth-child(4){display:none;}
+    .tense-row,.tense-col-headers{grid-template-columns:1fr 60px 60px 100px;}
+    .tense-row .tense-num:nth-child(3),.tense-col-headers span:nth-child(3){display:none;}
+    .summary-card{flex-direction:column; align-items:flex-start;}
+    .summary-right{text-align:left;}
+  }
+  @media(prefers-reduced-motion:reduce){.mini-bar-fill,.lesson-card{transition:none;}}
+
+  /* ── Dark Mode ── */
+  [data-theme="dark"]{
+    --ink:#E8E4DA; --paper:#141B2D; --paper-line:#1F2D45;
+    --green:#4CAF8A; --clay:#E07055; --muted:#7A8FA6; --card:#1A2540;
+  }
+  [data-theme="dark"] body{ background:var(--paper); color:var(--ink); }
+  [data-theme="dark"] header.topbar{ background:rgba(20,27,45,0.96)!important; }
+  [data-theme="dark"] .q-row,
+  [data-theme="dark"] .kind-card,
+  [data-theme="dark"] .lesson-card,
+  [data-theme="dark"] .tense-row,
+  [data-theme="dark"] .mistake-card,
+  [data-theme="dark"] .story-card,
+  [data-theme="dark"] .ref-table-wrap table,
+  [data-theme="dark"] .summary-card{ background:var(--card)!important; border-color:var(--paper-line)!important; }
+  [data-theme="dark"] input,
+  [data-theme="dark"] select,
+  [data-theme="dark"] textarea{ background:var(--paper)!important; color:var(--ink)!important; border-color:var(--paper-line)!important; }
+  [data-theme="dark"] .progress-bar-wrap{ background:rgba(20,27,45,0.97)!important; border-color:var(--paper-line)!important; }
+
+  #dark-toggle{
+    background:none; border:1.5px solid var(--paper-line); border-radius:20px;
+    padding:5px 11px; cursor:pointer; color:var(--ink); font-family:'Inter',sans-serif;
+    font-size:12px; font-weight:600; transition:all 0.2s;
+  }
+  #dark-toggle:hover{ border-color:var(--green); color:var(--green); }
+
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a href="index.html" class="back-link">← Home</a>
+  <div class="brand">English<span>Notebook</span></div>
+</header>
+
+<main>
+  <div class="eyebrow">Score Dashboard</div>
+  <h1 class="title">Combined Progress</h1>
+
+  <!-- Summary card -->
+  <div class="summary-card">
+    <div class="ring-wrap">
+      <svg width="72" height="72" viewBox="0 0 72 72">
+        <circle cx="36" cy="36" r="30" fill="none" stroke="#E4DFD0" stroke-width="8"/>
+        <circle id="ring-fill" cx="36" cy="36" r="30" fill="none" stroke="#2F6F5E" stroke-width="8"
+          stroke-linecap="round" stroke-dasharray="188.5" stroke-dashoffset="188.5"
+          transform="rotate(-90 36 36)"/>
+        <text id="ring-pct-text" x="36" y="41" text-anchor="middle"
+          font-family="Inter" font-weight="700" font-size="14" fill="#1B2A4A">0%</text>
+      </svg>
+    </div>
+    <div class="summary-text">
+      <div class="s-label">Total Correct</div>
+      <div class="s-stat" id="total-correct-stat">0 / 0</div>
+      <div class="s-sub" id="total-lessons-stat">No lessons attempted yet</div>
+    </div>
+    <div class="summary-right">
+      <div class="s-label">Overall Accuracy</div>
+      <div class="big-pct" id="big-pct">0%</div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('overview')">All Lessons</button>
+    <button class="tab-btn" onclick="switchTab('tenses')">⏱ Tense Breakdown</button>
+    <button class="tab-btn" onclick="switchTab('mistakes')">❌ Mistake Tracker</button>
+  </div>
+
+  <!-- Tab 1: Overview -->
+  <div class="tab-panel active" id="tab-overview">
+    <div class="col-headers">
+      <span class="col-lbl">Lesson</span>
+      <span class="col-lbl">Correct</span>
+      <span class="col-lbl">Attempted</span>
+      <span class="col-lbl">Accuracy</span>
+      <span class="col-lbl">Progress</span>
+    </div>
+    <div id="lesson-rows"></div>
+    <div id="total-row-wrap"></div>
+
+    <div class="reset-wrap">
+      <p>Want to reset all lessons? This action cannot be undone.</p>
+      <button class="btn-reset" onclick="confirmReset()">Reset All Progress</button>
+    </div>
+  </div>
+
+  <!-- Tab 2: Tense Breakdown -->
+  <div class="tab-panel" id="tab-tenses">
+    <div class="tense-col-headers">
+      <span class="col-lbl" style="text-align:left">Tense</span>
+      <span class="col-lbl">Correct</span>
+      <span class="col-lbl">Attempted</span>
+      <span class="col-lbl">Accuracy</span>
+      <span class="col-lbl">Status</span>
+    </div>
+    <div id="tense-rows"></div>
+  </div>
+
+  <!-- Tab 3: Mistake Tracker -->
+  <div class="tab-panel" id="tab-mistakes">
+    <div class="mistake-filter" id="mistake-filter"></div>
+    <div class="mistake-count" id="mistake-count"></div>
+    <div id="mistake-list"></div>
+  </div>
+</main>
+
+<!-- Reset confirm modal -->
+<div class="modal-overlay" id="reset-modal">
+  <div class="modal-box">
+    <h3>Reset All Progress?</h3>
+    <p>All lesson progress will be permanently deleted — including tenses, conjunctions, modals, verbs and everything else. This cannot be undone.</p>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-confirm" onclick="doReset()">Yes, Reset Everything</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = "englishnotebook_progress_v1";
+
+// ─── Lesson definitions ───
+const LESSONS = [
+  { id:"l1_noun",         name:"Noun",              num:"1",    desc:"8 kinds — 45 questions",          route:"lesson-noun.html"         },
+  { id:"l2_pronoun",      name:"Pronoun",            num:"2",    desc:"5 kinds + table — 27 questions",  route:"lesson-pronoun.html"      },
+  { id:"l3_verbforms",    name:"Verb Forms",         num:"3",    desc:"15 verbs × 4 forms",              route:"lesson-verbforms.html"    },
+  { id:"l4_5_tenses",     name:"12 Tenses",          num:"4–5",  desc:"84 sentences (aff + neg/Q)",       route:"lesson-tenses.html"       },
+  { id:"l6_conjunctions", name:"Conjunctions",       num:"6",    desc:"20 fill-in-the-blank",             route:"lesson-conjunctions.html" },
+  { id:"l7_tensepairs",   name:"Tense Pairs",        num:"7",    desc:"14 classify sentences",            route:"lesson-tensepairs.html"   },
+  { id:"l8_paragraph",    name:"Paragraph Practice", num:"8",    desc:"13 blanks in a real story",        route:"lesson-paragraph.html"    },
+  { id:"l9_13_modals",    name:"Modal Verbs",        num:"9–13", desc:"23 classify + formula questions",  route:"lesson-modals.html"       },
+  { id:"v300",            name:"300 Verbs Quiz",     num:"—",    desc:"30-verb random quiz",              route:"lesson-300verbs.html"     },
+  { id:"tense_chart_ref", name:"Tense Chart",        num:"—",    desc:"Reference only — no practice",    route:"tense-chart.html", refOnly:true },
+];
+
+// ─── Tense QID map (index → tense name) ───
+// affA_0..4=Present Simple, affA_5..9=Past Simple, etc. (5 per tense × 12 tenses = 60)
+// negq_0..1=Present Simple, negq_2..3=Past Simple, etc. (2 per tense × 12 tenses = 24)
+const TENSE_NAMES = [
+  "Present Simple","Past Simple","Future Simple",
+  "Present Continuous","Past Continuous","Future Continuous",
+  "Present Perfect","Past Perfect","Future Perfect",
+  "Present Perfect Continuous","Past Perfect Continuous","Future Perfect Continuous"
+];
+const TENSE_QID_MAP = {}; // qid → tense name
+TENSE_NAMES.forEach((tense, ti) => {
+  for(let i = 0; i < 5; i++) TENSE_QID_MAP[`affA_${ti*5+i}`] = tense;
+  TENSE_QID_MAP[`negq_${ti*2}`]   = tense;
+  TENSE_QID_MAP[`negq_${ti*2+1}`] = tense;
+});
+
+// ─── Question text maps for mistake tracker ───
+// These mirror the data in each lesson file exactly
+const Q_TEXT = {
+  // Tenses — Urdu prompts
+  affA_0:"Main roz school jata hoon.", affA_1:"Woh cricket khelta hai.", affA_2:"Hum Quran parhte hain.", affA_3:"Ali roz English seekhta hai.", affA_4:"Meri behen khana pakati hai.",
+  affA_5:"Main kal school gaya.", affA_6:"Usne ek kitab parhi.", affA_7:"Humne kal cricket kheli.", affA_8:"Ali ne apna homework kiya.", affA_9:"Meri behen ne khana pakaya.",
+  affA_10:"Main kal school jaunga.", affA_11:"Woh kal cricket khelega.", affA_12:"Hum English seekhenge.", affA_13:"Ali apna homework karega.", affA_14:"Meri behen khana pakayegi.",
+  affA_15:"Main abhi English parh raha hoon.", affA_16:"Woh cricket khel raha hai.", affA_17:"Hum khana kha rahe hain.", affA_18:"Ali apna homework kar raha hai.", affA_19:"Meri behen TV dekh rahi hai.",
+  affA_20:"Main kal English parh raha tha.", affA_21:"Woh cricket khel raha tha.", affA_22:"Hum khana kha rahe the.", affA_23:"Ali apna homework kar raha tha.", affA_24:"Meri behen TV dekh rahi thi.",
+  affA_25:"Main kal is waqt English parh raha honga.", affA_26:"Woh kal cricket khel raha hoga.", affA_27:"Hum shaam ko khana kha rahe honge.", affA_28:"Ali kal homework kar raha hoga.", affA_29:"Meri behen raat ko TV dekh rahi hogi.",
+  affA_30:"Main apna homework kar chuka hoon.", affA_31:"Usne khana kha liya hai.", affA_32:"Hum school pahunch chuke hain.", affA_33:"Ali ne kitab parh li hai.", affA_34:"Meri behen ne kamra saaf kar diya hai.",
+  affA_35:"Main apna homework kar chuka tha.", affA_36:"Usne khana kha liya tha.", affA_37:"Hum school pahunch chuke the.", affA_38:"Ali ne kitab parh li thi.", affA_39:"Meri behen ne kamra saaf kar diya tha.",
+  affA_40:"Main kal tak apna homework kar chuka honga.", affA_41:"Woh shaam tak khana kha chuka hoga.", affA_42:"Hum kal tak project complete kar chuke honge.", affA_43:"Ali agle hafte tak kitab parh chuka hoga.", affA_44:"Meri behen raat tak kamra saaf kar chuki hogi.",
+  affA_45:"Main do ghante se English parh raha hoon.", affA_46:"Woh subah se cricket khel raha hai.", affA_47:"Hum do ghante se kaam kar rahe hain.", affA_48:"Ali teen din se is project par kaam kar raha hai.", affA_49:"Meri behen ek ghante se TV dekh rahi hai.",
+  affA_50:"Main do ghante se English parh raha tha.", affA_51:"Woh subah se cricket khel raha tha.", affA_52:"Hum do ghante se kaam kar rahe the.", affA_53:"Ali teen din se is project par kaam kar raha tha.", affA_54:"Meri behen ek ghante se TV dekh rahi thi.",
+  affA_55:"Main kal tak do ghante se English parh raha honga.", affA_56:"Woh shaam tak teen ghante se cricket khel raha hoga.", affA_57:"Hum kal tak do din se kaam kar rahe honge.", affA_58:"Ali agle hafte tak ek mahine se is project par kaam kar raha hoga.", affA_59:"Meri behen raat tak do ghante se TV dekh rahi hogi.",
+  negq_0:"Main roz school nahi jata.", negq_1:"Kya woh cricket khelta hai?", negq_2:"Usne kitab nahi parhi.", negq_3:"Kya tumne homework kiya?",
+  negq_4:"Woh kal school nahi jayega.", negq_5:"Kya hum English seekhenge?", negq_6:"Main abhi nahi parh raha.", negq_7:"Kya woh cricket khel raha hai?",
+  negq_8:"Hum khana nahi kha rahe the.", negq_9:"Kya Ali homework kar raha tha?", negq_10:"Meri behen kal TV nahi dekh rahi hogi.", negq_11:"Kya woh kal is waqt parh raha hoga?",
+  negq_12:"Usne khana nahi khaya.", negq_13:"Kya tumne apna kaam kar liya hai?", negq_14:"Hum school nahi pahunche the.", negq_15:"Kya Ali ne kitab parh li thi?",
+  negq_16:"Meri behen kamra saaf nahi kar chuki hogi.", negq_17:"Kya hum project kal tak complete kar chuke honge?",
+  negq_18:"Woh subah se cricket nahi khel raha.", negq_19:"Kya tum do ghante se kaam kar rahe ho?",
+  negq_20:"Main do ghante se nahi parh raha tha.", negq_21:"Kya woh subah se khel raha tha?",
+  negq_22:"Hum kal tak do din se kaam nahi kar rahe honge.", negq_23:"Kya Ali agle hafte tak ek mahine se kaam kar raha hoga?",
+};
+
+// Lesson-level question labels (for mistake tracker for non-tense lessons)
+const LESSON_Q_LABELS = {
+  l1_noun: (qid) => {
+    const parts = qid.split("_"); 
+    const sections = {secA:["boy","river","mountain","pen","school","Ali","Lahore","Ramadan","Everest","Nokia","team","army","jury","herd","committee","iron","wood","cotton","glass","silver","love","honesty","freedom","courage","wisdom"],secB:["table","dog","phone","tree","car","happiness","honesty","freedom","courage","patience"],secC:["book","apple","chair","student","car","water","sugar","milk","air","rice"]};
+    return sections[parts[0]] ? sections[parts[0]][parseInt(parts[1])] : qid;
+  },
+  l2_pronoun: (qid) => {
+    const secA = ["I","we","you","he","my","our","your","his","myself","ourselves","yourself","himself","this","these","that","those","who","what","where","why"];
+    const secB = ["I → ?","We → ?","You → ?","They → ?","He → ?","She → ?","It → ?"];
+    if(qid.startsWith("secA_")) return secA[parseInt(qid.split("_")[1])] || qid;
+    if(qid.startsWith("secB_")) return secB[parseInt(qid.split("_")[1])] || qid;
+    return qid;
+  },
+  l3_verbforms: (qid) => {
+    const verbs = ["accept","begin","break","catch","come","drink","eat","fly","go","know","make","read","see","write","speak"];
+    return verbs[parseInt(qid.split("_")[1])] || qid;
+  },
+  l6_conjunctions: (qid) => {
+    const qs = ["___ it rains, we fry fritters.","I have a head-ache ___ I am taking rest.","___ I got to know, I told you.","You had told me ___ I forgot.","Sarah drinks tea ___ she feels tired.","We often visit Lahore ___ my grand parents live there.","Ahmed likes English ___ he does not have anyone to speak with.","People accompany you ___ you are beneficial to them.","I often miss my old friends ___ I do not have time to meet them.","Sarah is learning English ___ she wants to speak English fluently.","We do not have conveyance ___ we are waiting for somebody to pick us.","You are over-reacting ___ you know your mistake.","She cooked food ___ immediately served it.","___ he misbehaved with you, why did you not slap him?","I will complete my work ___ I will call you.","I will not talk to you ___ you do not tell the truth.","We will serve the food ___ the chief-guest arrives.","She will stand by me ___ I need her.","I will go with you ___ you feed me burger.","He had seen me ___ he did not meet me."];
+    return qs[parseInt(qid.split("_")[1])] || qid;
+  },
+  l7_tensepairs: (qid) => {
+    const qs = ["Whenever she is free, she reads books.","We visit our grandparents whenever we get a holiday.","I am tired that is why I am resting.","She loves music because she is learning guitar.","As soon as I heard the news, I called him.","She finished her work and left the office.","He missed the bus because he had woken up late.","I recognized her although I had not seen her for years.","The phone rang while I was cooking dinner.","She was reading a book when the lights went out.","I will call you after I reach home.","She will study first then she will watch TV.","I will help you if you ask me.","We will not go out unless it stops raining."];
+    return qs[parseInt(qid.split("_")[1])] || qid;
+  },
+  l8_paragraph: (qid) => `Blank ${parseInt(qid.split("_")[1])+1} in story`,
+  l9_13_modals: (qid) => {
+    const secA = ["I can drive a car.","She could speak French when she was young.","We will be able to finish the project by Friday.","You should drink more water.","She should have called before visiting.","They should apologize to him.","You must wear a seatbelt while driving.","Students must submit their assignments on time.","You must not lie to your parents.","I have to finish this report today.","She had to leave early yesterday.","We will have to change our plans.","He must be at home now.","She must have finished her work by now.","They must have been waiting for a long time."];
+    const secB = ["Present Simple","Present Continuous","Present Perfect","Present Perfect Continuous","Past Simple","Past Continuous","Past Perfect","Past Perfect Continuous"];
+    if(qid.startsWith("secA_")) return secA[parseInt(qid.split("_")[1])] || qid;
+    if(qid.startsWith("secB_")) return `Formula: ${secB[parseInt(qid.split("_")[1])]}` || qid;
+    return qid;
+  },
+  v300: (qid) => `Quiz verb #${parseInt(qid.split("_")[1])+1}`,
+};
+
+// ─── Utilities ───
+function loadProgress(){
+  try{ const r=localStorage.getItem(STORAGE_KEY); return r?JSON.parse(r):{plan:"free",lessons:{}}; }
+  catch(e){ return {plan:"free",lessons:{}}; }
+}
+function pct(correct, attempted){ return attempted>0 ? Math.round((correct/attempted)*100) : 0; }
+function statusClass(p){ return p>=80?"strong": p>=50?"average": p>0?"weak":"none"; }
+function statusLabel(p, attempted){
+  if(!attempted) return "—";
+  if(p>=80) return "🟢 Strong";
+  if(p>=50) return "🟡 Average";
+  return "🔴 Weak";
+}
+function timeAgo(iso){
+  if(!iso) return "";
+  const diff = Date.now() - new Date(iso).getTime();
+  const mins = Math.floor(diff/60000);
+  if(mins<1) return "just now";
+  if(mins<60) return `${mins}m ago`;
+  const hrs = Math.floor(mins/60);
+  if(hrs<24) return `${hrs}h ago`;
+  return `${Math.floor(hrs/24)}d ago`;
+}
+
+function switchTab(tab){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(`tab-${tab}`).classList.add('active');
+  event.target.classList.add('active');
+  if(tab==='mistakes') renderMistakes();
+  if(tab==='tenses') renderTenseBreakdown();
+}
+
+// ─── Tab 1: Overview ───
+function renderOverview(){
+  const progress = loadProgress();
+  const container = document.getElementById("lesson-rows");
+  container.innerHTML = "";
+  let grandCorrect=0, grandAttempted=0, lessonsAttempted=0;
+
+  LESSONS.forEach(lesson => {
+    if(lesson.refOnly){
+      const div = document.createElement("div");
+      div.className = "lesson-card ref-only";
+      div.innerHTML = `
+        <div class="lc-name">${lesson.name}<small>${lesson.desc}</small></div>
+        <div class="lc-num dim">—</div><div class="lc-num dim">—</div><div class="lc-num dim">—</div>
+        <div class="mini-bar-wrap"><div class="mini-bar-track"><div class="mini-bar-fill zero" style="width:0%"></div></div><span class="mini-pct">Reference</span></div>
+      `;
+      container.appendChild(div);
+      return;
+    }
+    const l = progress.lessons[lesson.id];
+    const qs = l && l.questions ? Object.values(l.questions) : [];
+    const correct = qs.filter(q=>q.correct).length;
+    const attempted = qs.filter(q=>q.attempted).length;
+    const p = pct(correct, attempted);
+    if(attempted>0) lessonsAttempted++;
+    grandCorrect += correct;
+    grandAttempted += attempted;
+
+    const sc = statusClass(p);
+    const a = document.createElement("a");
+    a.href = lesson.route;
+    a.className = "lesson-card";
+    a.innerHTML = `
+      <div class="lc-name">${lesson.name}<small>${lesson.desc}</small></div>
+      <div class="lc-num">${correct}</div>
+      <div class="lc-num">${attempted}</div>
+      <div class="lc-num">${attempted>0?p+"%":"—"}</div>
+      <div class="mini-bar-wrap">
+        <div class="mini-bar-track"><div class="mini-bar-fill ${sc||'zero'}" style="width:${p}%"></div></div>
+        <span class="mini-pct">${attempted>0?p+"% accuracy":"Not started"}</span>
+      </div>
+    `;
+    container.appendChild(a);
+  });
+
+  const gp = pct(grandCorrect, grandAttempted);
+  document.getElementById("total-row-wrap").innerHTML = `
+    <div class="total-row">
+      <div class="lc-name">TOTAL — All Lessons</div>
+      <div class="lc-num">${grandCorrect}</div>
+      <div class="lc-num">${grandAttempted}</div>
+      <div class="lc-num">${grandAttempted>0?gp+"%":"—"}</div>
+      <div class="mini-bar-wrap">
+        <div class="mini-bar-track"><div class="mini-bar-fill ${gp>0?"strong":"zero"}" style="width:${gp}%"></div></div>
+        <span class="mini-pct">${grandAttempted>0?gp+"% overall":"Nothing attempted yet"}</span>
+      </div>
+    </div>
+  `;
+
+  // Summary ring
+  const offset = 188.5 - (gp/100)*188.5;
+  document.getElementById("ring-fill").setAttribute("stroke-dashoffset", offset);
+  document.getElementById("ring-pct-text").textContent = gp+"%";
+  document.getElementById("total-correct-stat").textContent = `${grandCorrect} / ${grandAttempted}`;
+  document.getElementById("total-lessons-stat").textContent =
+    lessonsAttempted===0 ? "No lessons attempted yet"
+    : `${lessonsAttempted} lesson${lessonsAttempted===1?"":"s"} attempted`;
+  document.getElementById("big-pct").textContent = gp+"%";
+}
+
+// ─── Tab 2: Tense Breakdown ───
+function renderTenseBreakdown(){
+  const progress = loadProgress();
+  const l = progress.lessons["l4_5_tenses"];
+  const qs = l && l.questions ? l.questions : {};
+  const container = document.getElementById("tense-rows");
+
+  // Per-tense aggregation
+  const tenseStats = {};
+  TENSE_NAMES.forEach(t => tenseStats[t] = {correct:0, attempted:0});
+
+  Object.entries(qs).forEach(([qid, data]) => {
+    const tense = TENSE_QID_MAP[qid];
+    if(!tense) return;
+    if(data.attempted) tenseStats[tense].attempted++;
+    if(data.correct)   tenseStats[tense].correct++;
+  });
+
+  let html = "";
+  TENSE_NAMES.forEach(tense => {
+    const {correct, attempted} = tenseStats[tense];
+    const p = pct(correct, attempted);
+    const sc = statusClass(p);
+    const sl = statusLabel(p, attempted);
+    html += `
+      <div class="tense-row ${sc==='weak'?'weak-row':''}">
+        <div class="tense-name">${tense}</div>
+        <div class="tense-num">${correct}</div>
+        <div class="tense-num">${attempted}</div>
+        <div class="tense-num ${attempted?'':'dim'}">${attempted?p+"%":"—"}</div>
+        <div><span class="status-badge ${sc}">${sl}</span></div>
+      </div>
+    `;
+  });
+
+  if(!l || !Object.keys(qs).length){
+    html = `<div class="no-mistakes">Tenses lesson not attempted yet — please complete Lesson 4-5 first.</div>`;
+  }
+  container.innerHTML = html;
+}
+
+// ─── Tab 3: Mistake Tracker ───
+let activeFilter = "all";
+
+function getQuestionLabel(lessonId, qid, savedData){
+  if(lessonId === "l4_5_tenses"){
+    return Q_TEXT[qid] || qid;
+  }
+  const fn = LESSON_Q_LABELS[lessonId];
+  return fn ? fn(qid) : qid;
+}
+
+function renderMistakes(){
+  const progress = loadProgress();
+  const filterWrap = document.getElementById("mistake-filter");
+
+  // Collect all mistakes
+  const mistakes = [];
+  LESSONS.forEach(lesson => {
+    if(lesson.refOnly) return;
+    const l = progress.lessons[lesson.id];
+    if(!l || !l.questions) return;
+    Object.entries(l.questions).forEach(([qid, data]) => {
+      if(data.attempted && !data.correct){
+        mistakes.push({
+          lessonId: lesson.id,
+          lessonName: lesson.name,
+          route: lesson.route,
+          qid,
+          label: getQuestionLabel(lesson.id, qid, data),
+          userAnswer: data.value || (data.values ? JSON.stringify(data.values) : ""),
+          lastAttempt: data.lastAttempt || ""
+        });
+      }
+    });
+  });
+
+  // Sort by lastAttempt descending
+  mistakes.sort((a,b) => new Date(b.lastAttempt) - new Date(a.lastAttempt));
+
+  // Build filter buttons
+  const lessonGroups = [...new Set(mistakes.map(m=>m.lessonName))];
+  let filterHtml = `<button class="filter-btn ${activeFilter==='all'?'active':''}" onclick="setFilter('all')">All (${mistakes.length})</button>`;
+  lessonGroups.forEach(name => {
+    const count = mistakes.filter(m=>m.lessonName===name).length;
+    const lid = mistakes.find(m=>m.lessonName===name).lessonId;
+    filterHtml += `<button class="filter-btn ${activeFilter===lid?'active':''}" onclick="setFilter('${lid}')">${name} (${count})</button>`;
+  });
+  filterWrap.innerHTML = filterHtml;
+
+  // Filter
+  const filtered = activeFilter==='all' ? mistakes : mistakes.filter(m=>m.lessonId===activeFilter);
+  document.getElementById("mistake-count").textContent =
+    filtered.length===0 ? "" : `${filtered.length} incorrect answer${filtered.length===1?"":"s"}`;
+
+  if(mistakes.length===0){
+    document.getElementById("mistake-list").innerHTML =
+      `<div class="no-mistakes">No incorrect answers — everything is correct!</div>`;
+    return;
+  }
+  if(filtered.length===0){
+    document.getElementById("mistake-list").innerHTML =
+      `<div class="no-mistakes">No incorrect answers in this lesson.</div>`;
+    return;
+  }
+
+  document.getElementById("mistake-list").innerHTML = filtered.map(m => `
+    <div class="mistake-card">
+      <div class="m-top">
+        <span class="m-lesson-badge">${m.lessonName}</span>
+        <span class="m-text">${m.label}</span>
+        <span class="m-time">${timeAgo(m.lastAttempt)}</span>
+      </div>
+      ${m.userAnswer ? `<div class="m-answer">Tumhara jawab: "${m.userAnswer}"</div>` : ""}
+      <a href="${m.route}" class="m-retry">↩ Go to Practice →</a>
+    </div>
+  `).join("");
+}
+
+function setFilter(lid){
+  activeFilter = lid;
+  renderMistakes();
+}
+
+// ─── Reset ───
+function confirmReset(){ document.getElementById("reset-modal").classList.add("show"); }
+function closeModal(){ document.getElementById("reset-modal").classList.remove("show"); }
+function doReset(){
+  localStorage.removeItem(STORAGE_KEY);
+  closeModal();
+  renderOverview();
+  renderTenseBreakdown();
+  if(document.getElementById("tab-mistakes").classList.contains("active")) renderMistakes();
+}
+
+// ─── Init ───
+renderOverview();
+</script>
+
+<script src="en-ai.js"></script>
+<script src="dark-mode.js"></script>
+
+<script src="en-gamification.js"></script>
+</body>
+</html>

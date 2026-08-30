@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EnglishNotebook — Home</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1B2A4A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="EnglishNotebook">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1B2A4A; --paper:#F7F4EC; --paper-line:#E4DFD0;
+    --green:#2F6F5E; --clay:#B5482A; --muted:#8A8370; --card:#FFFFFF; --radius:14px;
+  }
+  [data-theme="dark"]{
+    --ink:#E8E4DA; --paper:#141B2D; --paper-line:#1F2D45;
+    --green:#4CAF8A; --clay:#E07055; --muted:#7A8FA6; --card:#1A2540;
+  }
+  *{box-sizing:border-box;}
+  html,body{overflow-x:hidden;max-width:100vw;margin:0;padding:0;}
+  body{background:var(--paper);color:var(--ink);font-family:'Inter',sans-serif;min-height:100vh;}
+  [data-theme="dark"] body{background:var(--paper);color:var(--ink);}
+  .hero,.overall{background-image:linear-gradient(var(--paper-line) 1px,transparent 1px);background-size:100% 42px;}
+
+  /* Header */
+  header.topbar{position:sticky;top:0;z-index:10;background:rgba(247,244,236,0.92);backdrop-filter:blur(6px);border-bottom:2px solid var(--ink);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:nowrap;}
+  [data-theme="dark"] header.topbar{background:rgba(20,27,45,0.96);border-color:var(--paper-line);}
+  .brand{font-family:'Fraunces',serif;font-weight:700;font-size:20px;letter-spacing:0.2px;flex-shrink:0;}
+  .brand span{color:var(--green);}
+
+  /* Hero */
+  .hero{max-width:960px;margin:0 auto;padding:56px 24px 32px;}
+  .eyebrow{font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:var(--green);font-weight:600;margin-bottom:10px;}
+  h1.title{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(32px,5vw,48px);line-height:1.15;margin:0 0 14px;}
+  p.sub{font-size:16px;color:var(--ink);opacity:0.75;max-width:560px;line-height:1.6;margin:0 0 6px;}
+
+  /* Overall Progress */
+  .overall{max-width:960px;margin:24px auto 0;padding:0 24px 8px;}
+  .overall-card{background:var(--card);border:1.5px solid var(--ink);border-radius:var(--radius);padding:20px 24px;display:flex;align-items:center;gap:20px;box-shadow:3px 3px 0 var(--ink);}
+  [data-theme="dark"] .overall-card{border-color:var(--paper-line);box-shadow:3px 3px 0 var(--paper-line);}
+  .ring-wrap{flex-shrink:0;}
+  .overall-text{flex:1;}
+  .overall-text .label{font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;font-weight:600;}
+  .overall-text .stat{font-family:'Fraunces',serif;font-size:26px;margin-top:2px;}
+  .overall-cta{font-size:13px;font-weight:600;color:var(--green);text-decoration:none;border-bottom:2px solid var(--green);padding-bottom:2px;white-space:nowrap;}
+
+  /* Lessons */
+  main{max-width:960px;margin:0 auto;padding:36px 24px 80px;}
+  .section-label{font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);font-weight:600;margin:0 0 18px;border-bottom:1px solid var(--paper-line);padding-bottom:10px;}
+  .lesson-grid{display:flex;flex-direction:column;gap:0;}
+  .lesson-row{display:grid;grid-template-columns:56px 1fr auto 44px;align-items:center;gap:18px;padding:16px 10px 16px 14px;border-bottom:1px solid var(--paper-line);cursor:pointer;transition:background 0.18s ease,transform 0.18s ease;text-decoration:none;color:inherit;position:relative;}
+  .lesson-row::before{content:"";position:absolute;left:0;top:8px;bottom:8px;width:3px;background:var(--green);border-radius:2px;transform:scaleY(0);transform-origin:center;transition:transform 0.22s ease;}
+  .lesson-row:hover{background:rgba(47,111,94,0.06);transform:translateX(6px);}
+  .lesson-row:hover::before{transform:scaleY(1);}
+  .lesson-row:hover .lesson-num{border-color:var(--green);color:var(--green);}
+  .lesson-row:focus-visible{outline:2.5px solid var(--green);outline-offset:-2px;}
+  [data-theme="dark"] .lesson-row{color:var(--ink);}
+  [data-theme="dark"] .lesson-row:hover{background:rgba(76,175,138,0.08);}
+  .lesson-num{font-family:'Fraunces',serif;font-size:15px;font-weight:600;color:var(--muted);background:var(--card);border:1.5px solid var(--paper-line);border-radius:10px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  [data-theme="dark"] .lesson-num{background:var(--card);border-color:var(--paper-line);}
+  .lesson-info .lname{font-family:'Fraunces',serif;font-weight:600;font-size:18px;margin:0 0 3px;}
+  .lesson-info .ldesc{font-size:13.5px;color:var(--muted);margin:0;}
+  .lesson-meta{font-size:12.5px;color:var(--muted);white-space:nowrap;text-align:right;}
+  .lesson-arrow{font-size:18px;color:var(--ink);opacity:0.35;justify-self:end;}
+  .lesson-row:hover .lesson-arrow{opacity:0.9;color:var(--green);}
+  .lesson-ring-wrap{position:relative;flex-shrink:0;}
+  .ring-pct-text{font-size:9px;font-weight:700;font-family:'Inter',sans-serif;}
+  .lesson-row.last-visited{background:rgba(47,111,94,0.05);border-left:3px solid var(--green);}
+  .last-visited-badge{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--green);background:rgba(47,111,94,0.1);padding:2px 8px;border-radius:10px;white-space:nowrap;}
+  .lesson-time{font-size:11px;color:var(--muted);margin-top:2px;}
+  svg.ring circle{transition:stroke-dashoffset 0.4s ease;}
+
+  footer{text-align:center;padding:30px 24px 50px;font-size:12.5px;color:var(--muted);}
+
+  /* Dark toggle */
+  #dark-toggle{background:none;border:1.5px solid var(--paper-line);border-radius:20px;padding:6px 12px;cursor:pointer;color:var(--ink);transition:all 0.2s;display:flex;align-items:center;gap:5px;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;}
+  #dark-toggle:hover{border-color:var(--green);color:var(--green);}
+
+  /* Welcome overlay */
+  .welcome-overlay{position:fixed;inset:0;background:rgba(27,42,74,0.6);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;}
+  .welcome-overlay.show{display:flex;}
+  .welcome-card{background:#F7F4EC;border:2px solid #1B2A4A;border-radius:20px;padding:32px 28px;max-width:400px;width:100%;text-align:center;box-shadow:6px 6px 0 #1B2A4A;animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);}
+  @keyframes popIn{from{opacity:0;transform:scale(0.8)}to{opacity:1;transform:scale(1)}}
+
+  /* Auth guard overlay */
+  #auth-blocker{position:fixed;inset:0;z-index:999;background:var(--paper);display:flex;align-items:center;justify-content:center;}
+  #auth-blocker .spinner{width:32px;height:32px;border:3px solid var(--paper-line);border-top-color:var(--green);border-radius:50%;animation:spin 0.8s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;}}
+  @media (max-width:600px){
+    header.topbar{padding:10px 12px;}
+    .brand{font-size:17px;}
+    #dark-toggle{padding:4px 8px;font-size:11px;}
+    .hero{padding:28px 16px 20px;text-align:center;}
+    h1.title{font-size:26px;}
+    p.sub{font-size:14px;text-align:center;max-width:100%;}
+    .eyebrow{text-align:center;}
+    .overall{padding:0 16px 8px;}
+    .overall-card{flex-direction:column;align-items:center;text-align:center;padding:16px;}
+    .overall-text{text-align:center;}
+    .overall-cta{text-align:center;}
+    .ai-banner{padding:24px 16px!important;}
+    .ai-banner-inner{flex-direction:column!important;align-items:center!important;text-align:center!important;gap:14px!important;}
+    .ai-banner-icon{width:44px!important;height:44px!important;}
+    .ai-banner-title{font-size:19px!important;}
+    .ai-banner-desc{font-size:13.5px!important;}
+    .ai-banner-cta{width:100%!important;margin-top:4px;}
+    .ai-banner-cta a{display:block!important;text-align:center;width:100%;}
+    .feature-grid{grid-template-columns:1fr!important;}
+    .lesson-row{grid-template-columns:44px 1fr;gap:10px;padding:12px 10px;}
+    .lesson-meta{display:none;}
+    .lesson-arrow{display:none;}
+    main{padding:20px 14px 80px;}
+    .settings-card{grid-template-columns:1fr!important;padding:16px!important;}
+  }
+</style>
+</head>
+<body>
+
+<!-- Auth blocker shown while checking login -->
+<div id="auth-blocker"><div class="spinner"></div></div>
+
+<header class="topbar">
+  <div class="brand">English<span>Notebook</span></div>
+  <div style="display:flex;align-items:center;gap:8px;flex-wrap:nowrap;">
+    <a href="pricing.html" style="font-size:12px;font-weight:600;color:var(--green);text-decoration:none;white-space:nowrap;">Upgrade ↗</a>
+    <span id="user-name" style="font-size:13px;font-weight:600;color:var(--muted);display:none;"></span>
+    <a href="auth.html" id="auth-link" style="font-size:13px;font-weight:600;color:var(--ink);text-decoration:none;border:1.5px solid var(--ink);padding:6px 14px;border-radius:20px;">Login</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="eyebrow">12-Lesson Course</div>
+  <h1 class="title">Your grammar notebook, now digital.</h1>
+  <p class="sub">Every lesson comes with practice and instant ✅/❌ feedback. Pick up right where you left off.</p>
+  <div style="margin-top:20px;display:flex;gap:12px;flex-wrap:wrap;">
+    <a href="#lesson-grid" onclick="document.getElementById('lesson-grid').scrollIntoView({behavior:'smooth'});return false;" style="display:inline-flex;align-items:center;gap:8px;background:var(--green);color:white;padding:12px 28px;border-radius:25px;text-decoration:none;font-family:'Inter',sans-serif;font-size:15px;font-weight:700;box-shadow:0 4px 14px rgba(47,111,94,0.3);transition:transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+      📚 Start Learning
+    </a>
+    <a href="pricing.html" style="display:inline-flex;align-items:center;gap:8px;background:none;border:2px solid var(--ink);color:var(--ink);padding:12px 28px;border-radius:25px;text-decoration:none;font-family:'Inter',sans-serif;font-size:15px;font-weight:700;transition:all 0.2s;" onmouseover="this.style.background='var(--ink)';this.style.color='white'" onmouseout="this.style.background='none';this.style.color='var(--ink)'">
+      ⚡ Upgrade
+    </a>
+  </div>
+</section>
+
+<div class="overall">
+  <div class="overall-card">
+    <div class="ring-wrap">
+      <svg class="ring" width="64" height="64" viewBox="0 0 64 64">
+        <circle cx="32" cy="32" r="27" fill="none" stroke="#E4DFD0" stroke-width="7"/>
+        <circle id="overall-ring" cx="32" cy="32" r="27" fill="none" stroke="#2F6F5E" stroke-width="7"
+          stroke-linecap="round" stroke-dasharray="169.6" stroke-dashoffset="169.6"
+          transform="rotate(-90 32 32)"/>
+        <text id="overall-pct" x="32" y="37" text-anchor="middle" font-family="Inter" font-weight="600" font-size="13" fill="#1B2A4A">0%</text>
+      </svg>
+    </div>
+    <div class="overall-text">
+      <div class="label">Overall Progress</div>
+      <div class="stat" id="overall-stat">0 / 0 correct</div>
+    </div>
+    <a href="dashboard.html" class="overall-cta">View dashboard →</a>
+  </div>
+</div>
+
+<main>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;border-bottom:1px solid var(--paper-line);padding-bottom:10px;">
+    <p class="section-label" style="margin:0;border:none;padding:0;">Lessons</p>
+    <a href="badges.html" style="font-size:13px;font-weight:600;color:var(--green);text-decoration:none;display:flex;align-items:center;gap:6px;">
+      🏆 My Badges & Streak →
+    </a>
+  </div>
+  <div class="lesson-grid" id="lesson-grid"></div>
+</main>
+
+<div style="max-width:960px;margin:0 auto;padding:24px 24px;">
+  <div class="section-label" style="font-size:12px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin:0 0 14px;text-align:center;">More Features</div>
+  <div class="feature-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;">
+    <a href="custom-quiz.html" style="background:linear-gradient(135deg,#1B2A4A,#2F4A7A);color:white;border-radius:16px;padding:22px 24px;text-decoration:none;display:flex;align-items:center;gap:16px;transition:transform 0.2s,box-shadow 0.2s;box-shadow:3px 3px 0 rgba(0,0,0,0.2);" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+      <div style="width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5.5"/><circle cx="12" cy="12" r="2"/></svg>
+      </div>
+      <div>
+        <div style="font-family:'Fraunces',serif;font-size:17px;font-weight:600;margin-bottom:4px;">Custom Quiz</div>
+        <div style="font-size:12.5px;opacity:0.8;line-height:1.5;">Pick topics, difficulty & questions — test yourself anytime</div>
+      </div>
+    </a>
+    <a href="pronunciation.html" style="background:linear-gradient(135deg,#4A90D9,#7B5EA7);color:white;border-radius:16px;padding:22px 24px;text-decoration:none;display:flex;align-items:center;gap:16px;transition:transform 0.2s,box-shadow 0.2s;box-shadow:3px 3px 0 rgba(0,0,0,0.2);" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+      <div style="width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+      </div>
+      <div>
+        <div style="font-family:'Fraunces',serif;font-size:17px;font-weight:600;margin-bottom:4px;">AI Pronunciation</div>
+        <div style="font-size:12.5px;opacity:0.8;line-height:1.5;">Learn correct pronunciation with AI — clear tips included</div>
+      </div>
+    </a>
+    <a href="certificate.html" style="background:linear-gradient(135deg,#B8860B,#D4AF37);color:white;border-radius:16px;padding:22px 24px;text-decoration:none;display:flex;align-items:center;gap:16px;transition:transform 0.2s,box-shadow 0.2s;box-shadow:3px 3px 0 rgba(0,0,0,0.2);" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+      <div style="width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10 12 5 2 10l10 5 10-5Z"/><path d="M6 12v5c0 1.5 3 3 6 3s6-1.5 6-3v-5"/></svg>
+      </div>
+      <div>
+        <div style="font-family:'Fraunces',serif;font-size:17px;font-weight:600;margin-bottom:4px;">Certificate</div>
+        <div style="font-size:12.5px;opacity:0.8;line-height:1.5;">Complete 80% of course — download your certificate of completion</div>
+      </div>
+    </a>
+    <a href="leaderboard.html" style="background:linear-gradient(135deg,#B5482A,#E07055);color:white;border-radius:16px;padding:22px 24px;text-decoration:none;display:flex;align-items:center;gap:16px;transition:transform 0.2s,box-shadow 0.2s;box-shadow:3px 3px 0 rgba(0,0,0,0.2);" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+      <div style="width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8"/><path d="M12 17v4"/><path d="M7 4h10v5a5 5 0 0 1-10 0V4Z"/><path d="M17 5h3a2 2 0 0 1-2 4h-1"/><path d="M7 5H4a2 2 0 0 0 2 4h1"/></svg>
+      </div>
+      <div>
+        <div style="font-family:'Fraunces',serif;font-size:17px;font-weight:600;margin-bottom:4px;">Leaderboard</div>
+        <div style="font-size:12.5px;opacity:0.8;line-height:1.5;">Compete with other students — see top rankings</div>
+      </div>
+    </a>
+  </div>
+</div>
+
+<!-- Settings Section -->
+<div style="max-width:960px;margin:0 auto;padding:0 24px 24px;">
+  <div style="text-align:center;margin-bottom:16px;">
+    <span class="section-label" style="font-size:12px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);font-weight:600;">Settings</span>
+  </div>
+  <div class="settings-card" style="background:var(--card);border:1.5px solid var(--paper-line);border-radius:14px;padding:20px 24px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;">
+    <div style="display:flex;align-items:center;gap:14px;">
+      <div style="width:44px;height:44px;border-radius:12px;background:rgba(47,111,94,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><span style="font-size:22px;">🌙</span></div>
+      <div style="flex:1;"><div style="font-family:'Fraunces',serif;font-size:15px;font-weight:600;margin-bottom:2px;">Dark Mode</div><div style="font-size:12px;color:var(--muted);">Switch between light & dark</div></div>
+      <button id="dark-toggle" onclick="toggleDark()">🌙 Dark</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:14px;">
+      <div style="width:44px;height:44px;border-radius:12px;background:rgba(181,72,42,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><span style="font-size:22px;">🔄</span></div>
+      <div style="flex:1;"><div style="font-family:'Fraunces',serif;font-size:15px;font-weight:600;margin-bottom:2px;">Reset Progress</div><div style="font-size:12px;color:var(--muted);">Clear all saved progress</div></div>
+      <button onclick="if(confirm('Are you sure? This will delete ALL your progress!')){localStorage.removeItem('englishnotebook_progress_v1');location.reload();}" style="background:none;border:1.5px solid var(--clay);border-radius:20px;padding:6px 12px;cursor:pointer;font-size:12px;font-weight:600;color:var(--clay);font-family:'Inter',sans-serif;white-space:nowrap;">Reset</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:14px;">
+      <div style="width:44px;height:44px;border-radius:12px;background:rgba(74,144,217,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><span style="font-size:22px;">👤</span></div>
+      <div style="flex:1;"><div style="font-family:'Fraunces',serif;font-size:15px;font-weight:600;margin-bottom:2px;">Account</div><div style="font-size:12px;color:var(--muted);">Manage your profile</div></div>
+      <a href="dashboard.html" style="background:none;border:1.5px solid var(--green);border-radius:20px;padding:6px 12px;cursor:pointer;font-size:12px;font-weight:600;color:var(--green);font-family:'Inter',sans-serif;white-space:nowrap;text-decoration:none;">View</a>
+    </div>
+    <div style="display:flex;align-items:center;gap:14px;">
+      <div style="width:44px;height:44px;border-radius:12px;background:rgba(181,72,42,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><span style="font-size:22px;">🚪</span></div>
+      <div style="flex:1;"><div style="font-family:'Fraunces',serif;font-size:15px;font-weight:600;margin-bottom:2px;">Logout</div><div style="font-size:12px;color:var(--muted);">Sign out from account</div></div>
+      <button onclick="if(confirm('Logout?')){localStorage.removeItem('en_logged_in');localStorage.removeItem('en_user_name');window.location.href='auth.html';}" style="background:none;border:1.5px solid var(--clay);border-radius:20px;padding:6px 12px;cursor:pointer;font-size:12px;font-weight:600;color:var(--clay);font-family:'Inter',sans-serif;white-space:nowrap;">Logout</button>
+    </div>
+  </div>
+</div>
+
+<!-- AI Banner -->
+<div class="ai-banner" style="background:linear-gradient(135deg,#1B2A4A 0%,#2F6F5E 100%);color:white;padding:32px 24px;margin:0 0 24px 0;">
+  <div class="ai-banner-inner" style="max-width:960px;margin:0 auto;display:flex;align-items:center;gap:22px;">
+    <div class="ai-banner-icon" style="width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4"/><path d="M12 18v4"/><path d="M4.9 4.9l2.8 2.8"/><path d="M16.3 16.3l2.8 2.8"/><path d="M2 12h4"/><path d="M18 12h4"/><path d="M4.9 19.1l2.8-2.8"/><path d="M16.3 7.7l2.8-2.8"/><circle cx="12" cy="12" r="3"/></svg>
+    </div>
+    <div style="flex:1;min-width:200px;">
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:rgba(255,255,255,0.6);font-weight:700;margin-bottom:6px;">New Feature</div>
+      <div class="ai-banner-title" style="font-family:'Fraunces',serif;font-size:22px;font-weight:600;margin-bottom:8px;line-height:1.3;">AI Grammar Coach — Powered by Groq + LLaMA 3</div>
+      <div class="ai-banner-desc" style="font-size:14px;color:rgba(255,255,255,0.8);line-height:1.65;">
+        Get instant AI feedback on your English sentences — it explains <em>why</em> your answer is wrong and shows the correct structure.
+      </div>
+    </div>
+    <div class="ai-banner-cta" style="flex-shrink:0;">
+      <a href="pricing.html" style="display:inline-block;background:white;color:#1B2A4A;font-family:'Inter',sans-serif;font-size:13.5px;font-weight:700;padding:13px 26px;border-radius:25px;text-decoration:none;box-shadow:0 4px 14px rgba(0,0,0,0.25);white-space:nowrap;">✨ Unlock AI — from Rs. 300/mo</a>
+      <div style="font-size:11.5px;color:rgba(255,255,255,0.55);text-align:center;margin-top:9px;">5 free AI checks included</div>
+    </div>
+  </div>
+</div>
+
+<footer>Made for EnglishNotebook · Progress is saved on this device</footer>
+
+<!-- Welcome popup -->
+<div class="welcome-overlay" id="welcome-overlay">
+  <div class="welcome-card">
+    <div style="width:64px;height:64px;border-radius:50%;background:rgba(47,111,94,0.1);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#2F6F5E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+    </div>
+    <h2 style="font-family:'Fraunces',serif;font-size:26px;font-weight:600;margin:0 0 8px;color:#1B2A4A;">Welcome, <span id="welcome-name">Student</span>!</h2>
+    <p style="font-size:14px;color:#8A8370;margin:0 0 20px;line-height:1.6;">Your personal English learning notebook is ready.<br>Practice grammar, get <strong>AI feedback</strong>, and track your progress.</p>
+    <div style="background:linear-gradient(135deg,rgba(74,144,217,0.1),rgba(123,94,167,0.1));border-radius:12px;padding:12px;margin-bottom:20px;font-size:13px;color:#4A90D9;font-weight:600;">🤖 5 free AI Grammar checks included!</div>
+    <button onclick="document.getElementById('welcome-overlay').classList.remove('show')" style="background:#1B2A4A;color:white;border:none;padding:13px 32px;border-radius:25px;font-family:'Inter',sans-serif;font-size:15px;font-weight:700;cursor:pointer;width:100%;margin-bottom:10px;">Start Learning →</button>
+    <button onclick="document.getElementById('welcome-overlay').classList.remove('show')" style="font-size:12.5px;color:#8A8370;cursor:pointer;text-decoration:underline;background:none;border:none;">Maybe later</button>
+  </div>
+</div>
+
+<!-- ==================== MAIN SCRIPT ==================== -->
+<script>
+(function(){
+  'use strict';
+
+  /* ===== DATA ===== */
+  var STORAGE_KEY = "englishnotebook_progress_v1";
+  var LESSONS = [
+    {id:"l1_noun",         num:"1",   name:"Noun",              desc:"8 kinds of noun — classify words",               route:"lesson-noun.html",        time:"~10 min", total:45},
+    {id:"l2_pronoun",      num:"2",   name:"Pronoun",           desc:"5 kinds + possessive/self table",                route:"lesson-pronoun.html",     time:"~12 min", total:27},
+    {id:"l3_verbforms",    num:"3",   name:"Verb Forms",        desc:"s/es, 2nd, 3rd, 4th form drills",               route:"lesson-verbforms.html",   time:"~15 min", total:15},
+    {id:"l4_5_tenses",     num:"4-5", name:"12 Tenses",         desc:"84 sentences — affirmative, negative, question", route:"lesson-tenses.html",      time:"~30 min", total:84},
+    {id:"tense_chart",     num:"--",  name:"Tense Chart",       desc:"Quick reference chart",                          route:"tense-chart.html",        time:"~5 min",  total:0},
+    {id:"l6_conjunctions", num:"6",   name:"Conjunctions",      desc:"Fill-in-the-blank with conjunctions",            route:"lesson-conjunctions.html",time:"~15 min", total:20},
+    {id:"l7_tensepairs",   num:"7",   name:"Tense Pairs",       desc:"Identify connected-sentence patterns",           route:"lesson-tensepairs.html",  time:"~10 min", total:14},
+    {id:"l8_paragraph",    num:"8",   name:"Paragraph Practice",desc:"Real story — find the conjunctions",             route:"lesson-paragraph.html",   time:"~10 min", total:13},
+    {id:"l9_13_modals",    num:"9-13",name:"Modal Verbs",       desc:"can / should / must / have to / conclusion",     route:"lesson-modals.html",      time:"~15 min", total:23},
+    {id:"v300",            num:"--",  name:"300 Verbs",         desc:"Full reference + 30-verb quiz",                  route:"lesson-300verbs.html",    time:"~20 min", total:30}
+  ];
+
+  function loadProgress(){
+    try{var r=localStorage.getItem(STORAGE_KEY);return r?JSON.parse(r):{plan:"free",lessons:{}};}
+    catch(e){return{plan:"free",lessons:{}};}
+  }
+  function lessonStats(progress,lid){
+    var l=progress.lessons[lid];if(!l||!l.questions)return{attempted:0,correct:0,total:0};
+    var qs=Object.values(l.questions);
+    return{attempted:qs.filter(function(q){return q.attempted;}).length,correct:qs.filter(function(q){return q.correct;}).length,total:qs.length};
+  }
+
+  /* ===== RENDER ===== */
+  function render(){
+    var grid=document.getElementById("lesson-grid");
+    if(!grid)return;
+    grid.innerHTML="";
+    var progress=loadProgress();
+    var totalCorrect=0,totalAttempted=0;
+    var lastVisited=localStorage.getItem("en_last_visited")||"";
+
+    LESSONS.forEach(function(lesson){
+      var stats=lessonStats(progress,lesson.id);
+      totalCorrect+=stats.correct;
+      totalAttempted+=stats.attempted;
+      var pct=lesson.total>0?Math.round((stats.correct/lesson.total)*100):0;
+      var circumference=56.5;
+      var offset=circumference-(pct/100)*circumference;
+      var ringColor=pct>=80?"#2F6F5E":pct>=40?"#D48C00":pct>0?"#B5482A":"#E4DFD0";
+      var isLast=lesson.route===lastVisited;
+
+      var row=document.createElement("a");
+      row.href=lesson.route;
+      row.className="lesson-row"+(isLast?" last-visited":"");
+      row.setAttribute("aria-label",lesson.name+" — "+stats.correct+" correct");
+      row.onclick=function(){localStorage.setItem("en_last_visited",lesson.route);};
+
+      var metaText=stats.attempted>0?(stats.correct+"/"+(lesson.total>0?lesson.total:stats.attempted)+" ✅"):"";
+      var resumeHtml=isLast?" <span class=\"last-visited-badge\">Resume &rarr;</span>":"";
+      var timeText=lesson.time+(lesson.total>0?" \u00B7 "+lesson.total+" questions":"");
+
+      row.innerHTML="<div class=\"lesson-ring-wrap\">"
+        +"<svg width=\"44\" height=\"44\" viewBox=\"0 0 44 44\">"
+        +"<circle cx=\"22\" cy=\"22\" r=\"18\" fill=\"none\" stroke=\"#E4DFD0\" stroke-width=\"4\"/>"
+        +"<circle cx=\"22\" cy=\"22\" r=\"18\" fill=\"none\" stroke=\""+ringColor+"\" stroke-width=\"4\" stroke-linecap=\"round\" stroke-dasharray=\""+circumference+"\" stroke-dashoffset=\""+offset+"\" transform=\"rotate(-90 22 22)\"/>"
+        +"<text x=\"22\" y=\"26\" text-anchor=\"middle\" class=\"ring-pct-text\" fill=\""+ringColor+"\">"+(pct>0?pct+"%":lesson.num)+"</text>"
+        +"</svg></div>"
+        +"<div class=\"lesson-info\">"
+        +"<p class=\"lname\">"+lesson.name+resumeHtml+"</p>"
+        +"<p class=\"ldesc\">"+lesson.desc+"</p>"
+        +"<p class=\"lesson-time\">\u23F1 "+timeText+"</p>"
+        +"</div>"
+        +"<div class=\"lesson-meta\">"+metaText+"</div>"
+        +"<div class=\"lesson-arrow\">\u2192</div>";
+
+      grid.appendChild(row);
+    });
+
+    // Overall stats
+    var pct=totalAttempted>0?Math.round((totalCorrect/totalAttempted)*100):0;
+    var circumference=169.6;
+    var offset=circumference-(pct/100)*circumference;
+    var ring=document.getElementById("overall-ring");
+    if(ring)ring.setAttribute("stroke-dashoffset",offset);
+    var pctText=document.getElementById("overall-pct");
+    if(pctText)pctText.textContent=pct+"%";
+    var statText=document.getElementById("overall-stat");
+    if(statText)statText.textContent=totalCorrect+" / "+totalAttempted+" correct";
+  }
+
+  /* ===== DARK MODE ===== */
+  window.toggleDark=function(){
+    var isDark=document.documentElement.getAttribute("data-theme")==="dark";
+    var next=isDark?"light":"dark";
+    document.documentElement.setAttribute("data-theme",next);
+    localStorage.setItem("en_theme",next);
+    var btn=document.getElementById("dark-toggle");
+    if(btn)btn.textContent=next==="dark"?"\u2600\uFE0F Light":"\uD83C\uDF19 Dark";
+  };
+  (function(){
+    var saved=localStorage.getItem("en_theme");
+    var prefersDark=window.matchMedia&&window.matchMedia("(prefers-color-scheme:dark)").matches;
+    var theme=saved||(prefersDark?"dark":"light");
+    if(theme==="dark"){document.documentElement.setAttribute("data-theme","dark");}
+    var btn=document.getElementById("dark-toggle");
+    if(btn)btn.textContent=theme==="dark"?"\u2600\uFE0F Light":"\uD83C\uDF19 Dark";
+  })();
+
+  /* ===== BACK BUTTON EXIT ===== */
+  (function(){
+    history.pushState(null,"",location.href);
+    var lastBack=0;
+    var toast=null;
+    function showToast(){
+      if(toast)return;
+      toast=document.createElement("div");
+      toast.style.cssText="position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);background:#1B2A4A;color:white;padding:14px 28px;border-radius:30px;font-family:Inter,sans-serif;font-size:14px;font-weight:600;box-shadow:0 6px 20px rgba(0,0,0,0.3);z-index:9999;opacity:0;transition:all 0.3s ease;white-space:nowrap;pointer-events:none;";
+      toast.textContent="\u2B05\uFE0F Press back again to exit";
+      document.body.appendChild(toast);
+      setTimeout(function(){toast.style.opacity="1";toast.style.transform="translateX(-50%) translateY(0)";},10);
+    }
+    function hideToast(){
+      if(!toast)return;
+      toast.style.opacity="0";
+      toast.style.transform="translateX(-50%) translateY(20px)";
+      setTimeout(function(){if(toast&&toast.parentNode)toast.remove();toast=null;},300);
+    }
+    window.addEventListener("popstate",function(){
+      var now=Date.now();
+      if(now-lastBack<2000){hideToast();window.history.back();setTimeout(function(){try{window.close();}catch(e){}},100);}
+      else{lastBack=now;history.pushState(null,"",location.href);showToast();setTimeout(hideToast,2000);}
+    });
+  })();
+
+  /* ===== SERVICE WORKER ===== */
+  if("serviceWorker" in navigator){
+    window.addEventListener("load",function(){
+      navigator.serviceWorker.register("sw.js").catch(function(){});
+    });
+  }
+
+  /* ===== AUTH CHECK ===== */
+  function initAuth(){
+    // Load Supabase from CDN
+    var script=document.createElement("script");
+    script.src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
+    script.onload=function(){
+      try{
+        var sb=supabase.createClient("https://dcjiwlncugqihnkjbncm.supabase.co","sb_publishable_sQ-QfG_obdW1FN_js9_0ww_WqRGStRd");
+        sb.auth.getSession().then(function(result){
+          var session=result.data&&result.data.session;
+          var hasLoggedIn=localStorage.getItem("en_logged_in");
+
+          if(!session&&!hasLoggedIn){
+            // Not logged in — redirect to auth
+            window.location.replace("auth.html");
+            return;
+          }
+
+          // User is logged in (or has been) — reveal page and render
+          revealPage();
+
+          if(session){
+            localStorage.setItem("en_logged_in","1");
+            // Get user profile
+            var user=session.user;
+            sb.from("profiles").select("full_name,plan").eq("id",user.id).single().then(function(profileResult){
+              var profile=profileResult.data;
+              var fullName=(profile&&profile.full_name)||user.email.split("@")[0];
+              var firstName=fullName.split(" ")[0];
+
+              // Show name
+              var nameEl=document.getElementById("user-name");
+              if(nameEl){nameEl.textContent="Hi, "+firstName;nameEl.style.display="inline";}
+
+              // Change login to logout
+              var link=document.getElementById("auth-link");
+              if(link){link.textContent="Logout";link.href="#";link.onclick=function(){sb.auth.signOut().then(function(){localStorage.removeItem("en_logged_in");location.reload();});return false;};}
+
+              // Save plan
+              var p=loadProgress();
+              p.plan=(profile&&profile.plan)||p.plan||"free";
+              localStorage.setItem(STORAGE_KEY,JSON.stringify(p));
+
+              // Welcome popup for new users
+              var welcomeKey="en_welcomed_"+user.id;
+              if(!localStorage.getItem(welcomeKey)){
+                document.getElementById("welcome-name").textContent=firstName;
+                document.getElementById("welcome-overlay").classList.add("show");
+                localStorage.setItem(welcomeKey,"1");
+              }
+            }).catch(function(){});
+          } else if(hasLoggedIn){
+            // Had localStorage login but session expired — still show page
+            // Set login link
+            var link2=document.getElementById("auth-link");
+            if(link2){link2.textContent="Login";link2.href="auth.html";}
+          }
+        }).catch(function(){
+          // Session check failed — if has localStorage flag, reveal anyway
+          if(localStorage.getItem("en_logged_in")){revealPage();}
+          else{window.location.replace("auth.html");}
+        });
+      }catch(e){
+        console.error("Supabase init error:",e);
+        // Fallback: if localStorage says logged in, show page
+        if(localStorage.getItem("en_logged_in")){revealPage();}
+        else{window.location.replace("auth.html");}
+      }
+    };
+    script.onerror=function(){
+      // CDN failed — fallback to localStorage
+      if(localStorage.getItem("en_logged_in")){revealPage();}
+      else{window.location.replace("auth.html");}
+    };
+    document.head.appendChild(script);
+  }
+
+  /* ===== REVEAL PAGE ===== */
+  function revealPage(){
+    // Remove auth blocker
+    var blocker=document.getElementById("auth-blocker");
+    if(blocker)blocker.remove();
+    // Render lessons
+    render();
+  }
+
+  /* ===== INIT ===== */
+  // Always render immediately as backup
+  render();
+  // Then do auth check (may redirect or just reveal)
+  initAuth();
+
+})();
+</script>
+
+<script src="en-ai.js"></script>
+<script src="en-gamification.js"></script>
+
+</body>
+</html>

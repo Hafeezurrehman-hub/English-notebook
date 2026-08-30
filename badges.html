@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="en-guard.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Badges — EnglishNotebook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--ink:#1B2A4A;--paper:#F7F4EC;--paper-line:#E4DFD0;--green:#2F6F5E;--clay:#B5482A;--muted:#8A8370;--card:#FFFFFF;}
+  [data-theme="dark"]{--ink:#E8E4DA;--paper:#141B2D;--paper-line:#1F2D45;--green:#4CAF8A;--clay:#E07055;--muted:#7A8FA6;--card:#1A2540;}
+  *{box-sizing:border-box;} html,body{margin:0;padding:0;overflow-x:hidden;max-width:100vw;}
+  body{background:var(--paper);color:var(--ink);font-family:'Inter',sans-serif;min-height:100vh;}
+  header{border-bottom:2px solid var(--ink);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:rgba(247,244,236,0.94);backdrop-filter:blur(6px);z-index:10;}
+  [data-theme="dark"] header{background:rgba(20,27,45,0.96)!important;}
+  .brand{font-family:'Fraunces',serif;font-weight:700;font-size:20px;}
+  .brand span{color:var(--green);}
+  .back-link{font-size:14px;font-weight:600;color:var(--ink);text-decoration:none;}
+  .back-link:hover{color:var(--green);}
+  #dark-toggle{background:none;border:1.5px solid var(--paper-line);border-radius:20px;padding:5px 11px;cursor:pointer;color:var(--ink);font-family:'Inter',sans-serif;font-size:12px;font-weight:600;}
+  main{max-width:860px;margin:0 auto;padding:40px 24px 80px;}
+  .eyebrow{font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:var(--green);font-weight:600;margin-bottom:10px;}
+  h1{font-family:'Fraunces',serif;font-size:36px;margin:0 0 8px;}
+  .sub{font-size:14px;color:var(--muted);margin:0 0 32px;}
+
+  /* Streak card */
+  .streak-card{background:var(--card);border:2px solid var(--ink);border-radius:16px;padding:24px 28px;margin-bottom:28px;display:flex;align-items:center;gap:20px;box-shadow:4px 4px 0 var(--ink);}
+  .streak-num{font-family:'Fraunces',serif;font-size:52px;font-weight:700;line-height:1;}
+  .streak-info .label{font-size:11px;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted);font-weight:700;}
+  .streak-info .msg{font-size:14px;color:var(--muted);margin-top:4px;}
+  .streak-calendar{display:flex;gap:5px;margin-top:12px;}
+  .streak-day{width:28px;height:28px;border-radius:6px;border:1.5px solid var(--paper-line);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--muted);}
+  .streak-day.active{background:var(--green);border-color:var(--green);color:white;}
+  .streak-day.today{border-color:var(--ink);font-weight:700;}
+
+  /* Badge grid */
+  .section-title{font-family:'Fraunces',serif;font-size:20px;font-weight:600;margin:0 0 16px;}
+  .badge-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;margin-bottom:32px;}
+  .badge-card{background:var(--card);border:1.5px solid var(--paper-line);border-radius:14px;padding:20px 16px;text-align:center;transition:transform 0.2s,box-shadow 0.2s;}
+  .badge-card.earned{border-color:var(--green);box-shadow:3px 3px 0 var(--green);}
+  .badge-card:hover{transform:translateY(-3px);}
+  .badge-icon{font-size:44px;margin-bottom:10px;display:block;}
+  .badge-card:not(.earned) .badge-icon{filter:grayscale(1);opacity:0.3;}
+  .badge-name{font-family:'Fraunces',serif;font-size:15px;font-weight:600;margin-bottom:4px;}
+  .badge-desc{font-size:12px;color:var(--muted);line-height:1.5;}
+  .badge-card.earned .badge-name{color:var(--green);}
+  .earned-stamp{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--green);margin-top:8px;}
+
+  /* Progress summary */
+  .progress-summary{background:var(--card);border:1.5px solid var(--paper-line);border-radius:14px;padding:20px 24px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:28px;}
+  .ps-item{text-align:center;}
+  .ps-val{font-family:'Fraunces',serif;font-size:28px;font-weight:700;}
+  .ps-label{font-size:11.5px;color:var(--muted);margin-top:2px;}
+
+  @media(max-width:500px){.badge-grid{grid-template-columns:1fr 1fr;}.streak-card{flex-direction:column;align-items:flex-start;}.progress-summary{grid-template-columns:1fr 1fr;}}
+</style>
+</head>
+<body>
+<header>
+  <a href="index.html" class="back-link">← Home</a>
+  <div class="brand">English<span>Notebook</span></div>
+  <button id="dark-toggle" onclick="toggleDark()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px;"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>Dark</button>
+</header>
+<main>
+  <div class="eyebrow">My Progress</div>
+  <h1>Badges & Streak</h1>
+  <p class="sub">Track your achievements and daily learning streak</p>
+
+  <div class="streak-card" id="streak-card">
+    <div>
+      <div style="width:64px;height:64px;border-radius:50%;background:rgba(224,112,85,0.15);display:flex;align-items:center;justify-content:center;">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#E07055" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
+      </div>
+    </div>
+    <div style="flex:1;">
+      <div class="streak-info">
+        <div class="label">Current Streak</div>
+        <div style="display:flex;align-items:baseline;gap:10px;">
+          <div class="streak-num" id="streak-num">0</div>
+          <div style="font-size:18px;color:var(--muted);">days</div>
+        </div>
+        <div class="msg" id="streak-msg">Study daily to build your streak!</div>
+      </div>
+      <div class="streak-calendar" id="streak-calendar"></div>
+    </div>
+    <div style="text-align:right;">
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);font-weight:700;">Best Streak</div>
+      <div style="font-family:'Fraunces',serif;font-size:24px;font-weight:700;" id="best-streak">0</div>
+    </div>
+  </div>
+
+  <!-- Progress summary -->
+  <div class="progress-summary" id="progress-summary"></div>
+
+  <!-- Earned badges -->
+  <div class="section-title">🏆 Earned Badges (<span id="earned-count">0</span>)</div>
+  <div class="badge-grid" id="earned-badges"></div>
+
+  <!-- Locked badges -->
+  <div class="section-title" style="color:var(--muted);">🔒 Locked Badges</div>
+  <div class="badge-grid" id="locked-badges"></div>
+</main>
+<script src="en-gamification.js"></script>
+<script src="en-ai.js"></script>
+<script src="dark-mode.js"></script>
+<script>
+function render(){
+  const streak = EN_GAME.getStreak();
+  const count = streak.count;
+  const best = parseInt(localStorage.getItem('en_best_streak')||'0');
+  const newBest = Math.max(best, count);
+  if(newBest > best) localStorage.setItem('en_best_streak', newBest);
+
+  document.getElementById('streak-num').textContent = count;
+  document.getElementById('best-streak').textContent = newBest;
+  
+  const msgs = ["Study daily to build your streak!","Keep it up! You're on a roll! 🔥","3 days strong! Don't break it! ⚡","Amazing progress! Keep going! 🌟","One week warrior! You're incredible! 🏆"];
+  document.getElementById('streak-msg').textContent = msgs[Math.min(count, msgs.length-1)];
+
+  // Last 7 days calendar
+  const cal = document.getElementById('streak-calendar');
+  cal.innerHTML = '';
+  const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  for(let i=6;i>=0;i--){
+    const d = new Date(Date.now() - i*86400000);
+    const isToday = i===0;
+    const isActive = i < count;
+    const div = document.createElement('div');
+    div.className = 'streak-day' + (isActive?' active':'') + (isToday?' today':'');
+    div.textContent = days[d.getDay()].substring(0,2);
+    cal.appendChild(div);
+  }
+
+  // Progress summary
+  const stats = EN_GAME.getLessonStats();
+  const earned = EN_GAME.getEarnedBadges();
+  document.getElementById('progress-summary').innerHTML = `
+    <div class="ps-item"><div class="ps-val" style="color:var(--green)">${stats.completedLessons}</div><div class="ps-label">Lessons Completed (80%+)</div></div>
+    <div class="ps-item"><div class="ps-val">${stats.totalCorrect}</div><div class="ps-label">Total Correct Answers</div></div>
+    <div class="ps-item"><div class="ps-val" style="color:#4A90D9">${earned.length}</div><div class="ps-label">Badges Earned</div></div>
+  `;
+
+  // Badges
+  const earnedBadges = EN_GAME.BADGES.filter(b=>earned.includes(b.id));
+  const lockedBadges = EN_GAME.BADGES.filter(b=>!earned.includes(b.id));
+  
+  document.getElementById('earned-count').textContent = earnedBadges.length;
+  document.getElementById('earned-badges').innerHTML = earnedBadges.map(b=>`
+    <div class="badge-card earned">
+      <span class="badge-icon">${b.icon}</span>
+      <div class="badge-name">${b.name}</div>
+      <div class="badge-desc">${b.desc}</div>
+      <div class="earned-stamp">✅ Earned</div>
+    </div>
+  `).join('') || '<div style="color:var(--muted);font-size:14px;">Complete lessons to earn badges!</div>';
+
+  document.getElementById('locked-badges').innerHTML = lockedBadges.map(b=>`
+    <div class="badge-card">
+      <span class="badge-icon">${b.icon}</span>
+      <div class="badge-name">${b.name}</div>
+      <div class="badge-desc">${b.desc}</div>
+    </div>
+  `).join('');
+}
+
+render();
+</script>
+</body>
+</html>

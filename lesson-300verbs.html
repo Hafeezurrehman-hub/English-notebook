@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="en-guard.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>300 Verbs — EnglishNotebook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;600&display=swap" rel="stylesheet">
+<style>.urdu{font-family:'Noto Nastaliq Urdu',serif!important; direction:rtl; font-size:15px; line-height:1.8;}
+  /* ── Filters ── */
+  .filter-section{margin-bottom:18px;}
+  .filter-row{display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:10px;}
+  .filter-label{font-size:11.5px; text-transform:uppercase; letter-spacing:0.05em;
+    color:var(--muted); font-weight:600; white-space:nowrap; min-width:80px;}
+  .filter-btn{
+    font-family:'Inter',sans-serif; font-size:12px; font-weight:600;
+    padding:5px 12px; border-radius:20px; border:1.5px solid var(--paper-line);
+    background:var(--card); color:var(--muted); cursor:pointer; transition:all 0.15s;
+  }
+  .filter-btn:hover{border-color:var(--green); color:var(--green);}
+  .filter-btn.active{background:var(--ink); color:var(--paper); border-color:var(--ink);}
+  .filter-btn.alpha{font-size:11px; padding:4px 9px;}
+  .filter-btn.tag-regular{--tc:var(--green);}
+  .filter-btn.tag-irr-all{--tc:var(--clay);}
+  .filter-btn.tag-irr-same{--tc:#D48C00;}
+  .filter-btn.tag-irr-eq{--tc:#4A90D9;}
+  .filter-btn.tag-regular.active{background:var(--green); border-color:var(--green);}
+  .filter-btn.tag-irr-all.active{background:var(--clay); border-color:var(--clay);}
+  .filter-btn.tag-irr-same.active{background:#D48C00; border-color:#D48C00;}
+  .filter-btn.tag-irr-eq.active{background:#4A90D9; border-color:#4A90D9;}
+  .filter-divider{width:100%; height:1px; background:var(--paper-line); margin:6px 0;}
+  .filter-result{font-size:12.5px; color:var(--muted); margin-bottom:10px;}
+  .alpha-row{display:flex; gap:5px; flex-wrap:wrap;}
+  @media(max-width:600px){.filter-btn{font-size:11px;padding:4px 9px;}}
+  @media(prefers-reduced-motion:reduce){.filter-btn{transition:none;}}
+
+
+  /* ── Dark Mode ── */
+  [data-theme="dark"]{
+    --ink:#E8E4DA; --paper:#141B2D; --paper-line:#1F2D45;
+    --green:#4CAF8A; --clay:#E07055; --muted:#7A8FA6; --card:#1A2540;
+  }
+  [data-theme="dark"] body{ background:var(--paper); color:var(--ink); }
+  [data-theme="dark"] header.topbar{ background:rgba(20,27,45,0.96)!important; }
+  [data-theme="dark"] .q-row,
+  [data-theme="dark"] .kind-card,
+  [data-theme="dark"] .lesson-card,
+  [data-theme="dark"] .tense-row,
+  [data-theme="dark"] .mistake-card,
+  [data-theme="dark"] .story-card,
+  [data-theme="dark"] .ref-table-wrap table,
+  [data-theme="dark"] .summary-card{ background:var(--card)!important; border-color:var(--paper-line)!important; }
+  [data-theme="dark"] input,
+  [data-theme="dark"] select,
+  [data-theme="dark"] textarea{ background:var(--paper)!important; color:var(--ink)!important; border-color:var(--paper-line)!important; }
+  [data-theme="dark"] .progress-bar-wrap{ background:rgba(20,27,45,0.97)!important; border-color:var(--paper-line)!important; }
+
+  #dark-toggle{
+    background:none; border:1.5px solid var(--paper-line); border-radius:20px;
+    padding:5px 11px; cursor:pointer; color:var(--ink); font-family:'Inter',sans-serif;
+    font-size:12px; font-weight:600; transition:all 0.2s;
+  }
+  #dark-toggle:hover{ border-color:var(--green); color:var(--green); }
+
+</style>
+<style>
+  :root{
+    --ink:#1B2A4A; --paper:#F7F4EC; --paper-line:#E4DFD0;
+    --green:#2F6F5E; --clay:#B5482A; --muted:#8A8370; --card:#FFFFFF; --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;overflow-x:hidden;max-width:100vw;}
+  body{background:var(--paper); color:var(--ink); font-family:'Inter',sans-serif; min-height:100vh;}
+  .urdu{font-family:'Noto Nastaliq Urdu',serif; direction:rtl; font-size:15px;}
+
+  header.topbar{
+    position:sticky; top:0; z-index:10;
+    background:rgba(247,244,236,0.94); backdrop-filter:blur(6px);
+    border-bottom:2px solid var(--ink); padding:16px 24px;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .back-link{font-size:14px; font-weight:600; color:var(--ink); text-decoration:none; display:flex; align-items:center; gap:6px;}
+  .back-link:hover{color:var(--green);}
+  .brand{font-family:'Fraunces',serif; font-weight:700; font-size:18px;}
+  .brand span{color:var(--green);}
+  .topbar-status{font-size:13px; color:var(--muted);}
+
+  main{max-width:1100px; margin:0 auto; padding:40px 24px 120px;}
+  .eyebrow{font-size:13px; letter-spacing:0.08em; text-transform:uppercase; color:var(--green); font-weight:600; margin-bottom:10px;}
+  h1.title{font-family:'Fraunces',serif; font-weight:600; font-size:clamp(28px,4.5vw,40px); line-height:1.15; margin:0 0 10px;}
+  p.note{font-size:13.5px; color:var(--muted); margin:0 0 28px; line-height:1.6;}
+
+  /* ── Tabs ── */
+  .tabs{display:flex; gap:0; border-bottom:2px solid var(--ink); margin-bottom:28px;}
+  .tab-btn{
+    font-family:'Inter',sans-serif; font-size:14px; font-weight:600;
+    padding:10px 24px; background:none; border:none; border-bottom:3px solid transparent;
+    cursor:pointer; color:var(--muted); margin-bottom:-2px; transition:color 0.15s;
+  }
+  .tab-btn.active{color:var(--green); border-bottom-color:var(--green);}
+  .tab-btn:hover:not(.active){color:var(--ink);}
+
+  /* ── Search bar ── */
+  .search-wrap{position:relative; margin-bottom:16px;}
+  .search-wrap input{
+    width:100%; font-family:'Inter',sans-serif; font-size:14.5px; padding:11px 14px 11px 40px;
+    border-radius:10px; border:1.5px solid var(--paper-line); background:var(--card); color:var(--ink);
+  }
+  .search-wrap input:focus-visible{outline:2px solid var(--green); outline-offset:1px;}
+  .search-icon{position:absolute; left:13px; top:50%; transform:translateY(-50%); color:var(--muted); font-size:16px; pointer-events:none;}
+  .search-count{font-size:12.5px; color:var(--muted); margin-bottom:12px;}
+
+  /* ── Reference table ── */
+  .ref-table-wrap{overflow-x:auto;}
+  table.ref-table{
+    width:100%; border-collapse:collapse; background:var(--card);
+    border-radius:12px; overflow:hidden; border:1.5px solid var(--paper-line); min-width:680px;
+  }
+  table.ref-table th{
+    background:var(--ink); color:var(--paper); font-size:12px; text-transform:uppercase;
+    letter-spacing:0.04em; padding:10px 14px; text-align:left; font-weight:600;
+  }
+  table.ref-table td{padding:9px 14px; font-size:13.5px; border-top:1px solid var(--paper-line); vertical-align:middle;}
+  table.ref-table tr:nth-child(even) td{background:rgba(47,111,94,0.025);}
+  table.ref-table tr:hover td{background:rgba(47,111,94,0.07);}
+  table.ref-table td.v-num{color:var(--muted); font-size:12px; font-weight:600; width:40px;}
+  table.ref-table td.v-first{font-family:'Fraunces',serif; font-weight:600; font-size:15px;}
+  table.ref-table td.v-urdu{min-width:140px;}
+
+  /* ── Quiz section ── */
+  #tab-quiz{display:none;}
+  #tab-quiz.active{display:block;}
+  #tab-ref.active{display:block;}
+  #tab-ref{display:none;}
+
+  .quiz-controls{display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin-bottom:24px;}
+  .btn-primary{
+    background:var(--ink); color:var(--paper); border:none;
+    font-family:'Inter',sans-serif; font-size:13.5px; font-weight:600;
+    padding:10px 22px; border-radius:20px; cursor:pointer;
+  }
+  .btn-primary:hover{background:var(--green);}
+  .quiz-note{font-size:13px; color:var(--muted);}
+
+  .q-row{
+    background:var(--card); border:1.5px solid var(--paper-line); border-radius:12px;
+    padding:16px 18px; margin-bottom:10px;
+    display:grid; grid-template-columns: 32px 100px repeat(4, 1fr) 28px;
+    align-items:center; gap:10px;
+    transition:border-color 0.15s ease;
+  }
+  .q-row.correct{border-color:var(--green);}
+  .q-row.incorrect{border-color:var(--clay);}
+  .q-num{font-size:13px; color:var(--muted); font-weight:600;}
+  .q-word{font-size:16px; font-weight:600; font-family:'Fraunces',serif; line-height:1.2;}
+  .q-word small{display:block; font-size:11px; font-weight:400; color:var(--muted); font-family:'Inter',sans-serif; margin-top:2px;}
+  .field-wrap{display:flex; flex-direction:column; gap:4px;}
+  .field-label{font-size:10.5px; color:var(--muted); text-transform:uppercase; letter-spacing:0.03em;}
+  input.q-input{
+    font-family:'Inter',sans-serif; font-size:13.5px; padding:7px 9px;
+    border-radius:8px; border:1.5px solid var(--paper-line); background:var(--paper); color:var(--ink); width:100%;
+  }
+  input.q-input:focus-visible{outline:2px solid var(--green); outline-offset:1px;}
+  .q-feedback{font-size:18px; text-align:center;}
+  .q-hint{
+    grid-column:1 / -1; font-size:12.5px; color:var(--clay); margin-top:8px;
+    padding-top:8px; border-top:1px dashed var(--paper-line); display:none;
+  }
+  .q-row.incorrect .q-hint{display:block;}
+  .check-btn{
+    grid-column:1 / -1; justify-self:start; margin-top:4px;
+    background:var(--ink); color:var(--paper); border:none;
+    font-family:'Inter',sans-serif; font-size:12px; font-weight:600;
+    padding:5px 14px; border-radius:20px; cursor:pointer;
+  }
+  .check-btn:hover{background:var(--green);}
+
+  @media (max-width:720px){
+    .q-row{grid-template-columns:1fr 1fr; row-gap:10px;}
+    .q-row .q-num, .q-row .q-feedback{display:none;}
+    .q-word{grid-column:1/-1;}
+  }
+
+  /* ── Progress bar ── */
+  .progress-bar-wrap{
+    position:sticky; bottom:0; z-index:5;
+    background:rgba(247,244,236,0.95); backdrop-filter:blur(6px);
+    border-top:1.5px solid var(--ink); padding:14px 24px;
+    display:flex; align-items:center; gap:16px;
+  }
+  .progress-bar-wrap .pb-label{font-size:13px; color:var(--muted); white-space:nowrap;}
+  .progress-track{flex:1; height:8px; background:var(--paper-line); border-radius:4px; overflow:hidden;}
+  .progress-fill{height:100%; background:var(--green); width:0%; transition:width 0.3s ease;}
+  .pb-stat{font-size:13px; font-weight:600; white-space:nowrap;}
+  #progress-wrap{display:none;}
+
+  @media (prefers-reduced-motion:reduce){.q-row,.progress-fill{transition:none;}}
+
+  /* ── Filters ── */
+  .filter-bar{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px; align-items:center;}
+  .filter-label{font-size:12px; color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:0.05em; margin-right:4px;}
+  .f-btn{
+    font-family:'Inter',sans-serif; font-size:12.5px; font-weight:600;
+    padding:5px 13px; border-radius:20px; border:1.5px solid var(--paper-line);
+    background:var(--card); color:var(--muted); cursor:pointer; transition:all 0.12s;
+  }
+  .f-btn:hover{border-color:var(--ink); color:var(--ink);}
+  .f-btn.active{background:var(--ink); color:var(--paper); border-color:var(--ink);}
+  .f-btn.reg.active{background:#2F6F5E; border-color:#2F6F5E; color:#fff;}
+  .f-btn.irr-diff.active{background:#B5482A; border-color:#B5482A; color:#fff;}
+  .f-btn.irr-same.active{background:#D48C00; border-color:#D48C00; color:#fff;}
+  .f-btn.irr-eq.active{background:#4A90D9; border-color:#4A90D9; color:#fff;}
+  .alpha-bar{display:flex; flex-wrap:wrap; gap:4px; margin-bottom:14px;}
+  .a-btn{
+    font-family:'Fraunces',serif; font-size:13px; font-weight:600;
+    width:30px; height:30px; border-radius:8px; border:1.5px solid var(--paper-line);
+    background:var(--card); color:var(--muted); cursor:pointer; display:flex;
+    align-items:center; justify-content:center; transition:all 0.12s;
+  }
+  .a-btn:hover{border-color:var(--ink); color:var(--ink);}
+  .a-btn.active{background:var(--green); color:var(--paper); border-color:var(--green);}
+  .a-btn.disabled{opacity:0.3; cursor:default; pointer-events:none;}
+  .type-badge{
+    display:inline-block; font-size:10px; font-weight:700; padding:1px 6px;
+    border-radius:10px; margin-left:4px; vertical-align:middle;
+  }
+  .type-badge.reg{background:rgba(47,111,94,0.12); color:#2F6F5E;}
+  .type-badge.irr-diff{background:rgba(181,72,42,0.12); color:#B5482A;}
+  .type-badge.irr-same{background:rgba(212,140,0,0.12); color:#D48C00;}
+  .type-badge.irr-eq{background:rgba(74,144,217,0.12); color:#4A90D9;}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a href="index.html" class="back-link">← Home</a>
+  <div class="brand">English<span>Notebook</span></div>
+  <div class="topbar-status" id="topbar-status">Free Plan</div>
+</header>
+
+<main>
+  <div class="eyebrow">Reference &amp; Practice</div>
+  <h1 class="title">300 Verbs</h1>
+  <p class="note">Browse and search all 300 verbs in the Reference tab (5 forms each). Take a 30-verb random quiz in the Practice tab — same style as Lesson 3.</p>
+
+  <div class="tabs">
+    <button class="tab-btn active" id="btn-ref" onclick="switchTab('ref')">📖 Reference Table</button>
+    <button class="tab-btn" id="btn-quiz" onclick="switchTab('quiz')">✏️ 30-Verb Quiz</button>
+  </div>
+
+  <!-- ── REFERENCE TAB ── -->
+  <div id="tab-ref" class="active">
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="search-input" placeholder="Search verb..." oninput="applyFilters()">
+    </div>
+
+    <div class="filter-bar">
+      <span class="filter-label">Category:</span>
+      <button class="f-btn active" id="f-all" onclick="setTypeFilter('all')">All 300</button>
+      <button class="f-btn reg" id="f-reg" onclick="setTypeFilter('regular')">✅ Regular — ed/ed (204)</button>
+      <button class="f-btn irr-diff" id="f-irr-diff" onclick="setTypeFilter('irr-diff')">🔴 Irregular — All Different (49)</button>
+      <button class="f-btn irr-same" id="f-irr-same" onclick="setTypeFilter('irr-same')">🟡 Irregular — 2nd=3rd (46)</button>
+      <button class="f-btn irr-eq" id="f-irr-eq" onclick="setTypeFilter('irr-eq')">🔵 All Three Same (6)</button>
+    </div>
+
+    <div class="alpha-bar" id="alpha-bar"></div>
+    <div class="search-count" id="search-count">Showing all 300 verbs</div>
+    <div class="ref-table-wrap">
+      <table class="ref-table">
+        <thead>
+          <tr>
+            <th>#</th>
+                        <th>1st Form</th>
+            <th>s/es Form</th>
+            <th>2nd Form</th>
+            <th>3rd Form</th>
+            <th>4th Form</th>
+          </tr>
+        </thead>
+        <tbody id="ref-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── QUIZ TAB ── -->
+  <div id="tab-quiz">
+    <div class="quiz-controls">
+      <button class="btn-primary" onclick="startQuiz()">🎲 New Quiz (30 random verbs)</button>
+      <span class="quiz-note" id="quiz-note">Click the button — 30 random verbs will be selected</span>
+    </div>
+    <div id="quiz-container"></div>
+  </div>
+</main>
+
+<div class="progress-bar-wrap" id="progress-wrap">
+  <span class="pb-label">Quiz progress</span>
+  <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+  <span class="pb-stat" id="progress-stat">0 / 30 correct</span>
+</div>
+
+<script>
+
+const LESSON_ID = "v300";
+const STORAGE_KEY = "englishnotebook_progress_v1";
+const ALL_VERBS = [{"num": 1, "first": "abide", "ses": "abides", "second": "abode", "third": "abiden", "fourth": "abiding"}, {"num": 2, "first": "abuse", "ses": "abuses", "second": "abused", "third": "abused", "fourth": "abusing"}, {"num": 3, "first": "accept", "ses": "accepts", "second": "accepted", "third": "accepted", "fourth": "accepting"}, {"num": 4, "first": "accuse", "ses": "accuses", "second": "accused", "third": "accused", "fourth": "accusing"}, {"num": 5, "first": "act", "ses": "acts", "second": "acted", "third": "acted", "fourth": "acting"}, {"num": 6, "first": "admire", "ses": "admires", "second": "admired", "third": "admired", "fourth": "admiring"}, {"num": 7, "first": "admit", "ses": "admits", "second": "admitted", "third": "admitted", "fourth": "admitting"}, {"num": 8, "first": "adopt", "ses": "adopts", "second": "adopted", "third": "adopted", "fourth": "adopting"}, {"num": 9, "first": "advise", "ses": "advises", "second": "advised", "third": "advised", "fourth": "advising"}, {"num": 10, "first": "agree", "ses": "agrees", "second": "agreed", "third": "agreed", "fourth": "agreeing"}, {"num": 11, "first": "aid", "ses": "aids", "second": "aided", "third": "aided", "fourth": "aiding"}, {"num": 12, "first": "allow", "ses": "allows", "second": "allowed", "third": "allowed", "fourth": "allowing"}, {"num": 13, "first": "annoy", "ses": "annoys", "second": "annoyed", "third": "annoyed", "fourth": "annoying"}, {"num": 14, "first": "answer", "ses": "answers", "second": "answered", "third": "answered", "fourth": "answering"}, {"num": 15, "first": "appear", "ses": "appears", "second": "appeared", "third": "appeared", "fourth": "appearing"}, {"num": 16, "first": "apply", "ses": "applies", "second": "applied", "third": "applied", "fourth": "applying"}, {"num": 17, "first": "appreciate", "ses": "appreciates", "second": "appreciated", "third": "appreciated", "fourth": "appreciating"}, {"num": 18, "first": "arise", "ses": "arises", "second": "arose", "third": "arisen", "fourth": "arising"}, {"num": 19, "first": "arrange", "ses": "arranges", "second": "arranged", "third": "arranged", "fourth": "arranging"}, {"num": 20, "first": "arrest", "ses": "arrests", "second": "arrested", "third": "arrested", "fourth": "arresting"}, {"num": 21, "first": "arrive", "ses": "arrives", "second": "arrived", "third": "arrived", "fourth": "arriving"}, {"num": 22, "first": "ask", "ses": "asks", "second": "asked", "third": "asked", "fourth": "asking"}, {"num": 23, "first": "attack", "ses": "attacks", "second": "attacked", "third": "attacked", "fourth": "attacking"}, {"num": 24, "first": "attain", "ses": "attains", "second": "attained", "third": "attained", "fourth": "attaining"}, {"num": 25, "first": "attempt", "ses": "attempts", "second": "attempted", "third": "attempted", "fourth": "attempting"}, {"num": 26, "first": "attend", "ses": "attends", "second": "attended", "third": "attended", "fourth": "attending"}, {"num": 27, "first": "awake", "ses": "awakes", "second": "awoke", "third": "awoken", "fourth": "awaking"}, {"num": 28, "first": "bake", "ses": "bakes", "second": "baked", "third": "baked", "fourth": "baking"}, {"num": 29, "first": "bargain", "ses": "bargains", "second": "bargained", "third": "bargained", "fourth": "bargaining"}, {"num": 30, "first": "bear", "ses": "bears", "second": "bore", "third": "born", "fourth": "bearing"}, {"num": 31, "first": "beat", "ses": "beats", "second": "beat", "third": "beaten", "fourth": "beating"}, {"num": 32, "first": "become", "ses": "becomes", "second": "became", "third": "become", "fourth": "becoming"}, {"num": 33, "first": "beg", "ses": "begs", "second": "begged", "third": "begged", "fourth": "begging"}, {"num": 34, "first": "begin", "ses": "begins", "second": "began", "third": "begun", "fourth": "beginning"}, {"num": 35, "first": "behave", "ses": "behaves", "second": "behaved", "third": "behaved", "fourth": "behaving"}, {"num": 36, "first": "behold", "ses": "beholds", "second": "beheld", "third": "beheld", "fourth": "beholding"}, {"num": 37, "first": "believe", "ses": "believes", "second": "believed", "third": "believed", "fourth": "believing"}, {"num": 38, "first": "belong", "ses": "belongs", "second": "belonged", "third": "belonged", "fourth": "belonging"}, {"num": 39, "first": "bet", "ses": "bets", "second": "bet", "third": "bet", "fourth": "betting"}, {"num": 40, "first": "bid", "ses": "bids", "second": "bid", "third": "bid", "fourth": "bidding"}, {"num": 41, "first": "bind", "ses": "binds", "second": "bound", "third": "bound", "fourth": "binding"}, {"num": 42, "first": "bite", "ses": "bites", "second": "bit", "third": "bitten", "fourth": "biting"}, {"num": 43, "first": "blame", "ses": "blames", "second": "blamed", "third": "blamed", "fourth": "blaming"}, {"num": 44, "first": "blow", "ses": "blows", "second": "blew", "third": "blown", "fourth": "blowing"}, {"num": 45, "first": "boil", "ses": "boils", "second": "boiled", "third": "boiled", "fourth": "boiling"}, {"num": 46, "first": "borrow", "ses": "borrows", "second": "borrowed", "third": "borrowed", "fourth": "borrowing"}, {"num": 47, "first": "break", "ses": "breaks", "second": "broke", "third": "broken", "fourth": "breaking"}, {"num": 48, "first": "bring", "ses": "brings", "second": "brought", "third": "brought", "fourth": "bringing"}, {"num": 49, "first": "build", "ses": "builds", "second": "built", "third": "built", "fourth": "building"}, {"num": 50, "first": "burry", "ses": "burries", "second": "burried", "third": "burried", "fourth": "burrying"}, {"num": 51, "first": "calculate", "ses": "calculates", "second": "calculated", "third": "calculated", "fourth": "calculating"}, {"num": 52, "first": "call", "ses": "calls", "second": "called", "third": "called", "fourth": "calling"}, {"num": 53, "first": "care", "ses": "cares", "second": "cared", "third": "cared", "fourth": "caring"}, {"num": 54, "first": "cash", "ses": "cashes", "second": "cashed", "third": "cashed", "fourth": "cashing"}, {"num": 55, "first": "catch", "ses": "catches", "second": "caught", "third": "caught", "fourth": "catching"}, {"num": 56, "first": "cease", "ses": "ceases", "second": "ceased", "third": "ceased", "fourth": "ceasing"}, {"num": 57, "first": "challenge", "ses": "challenges", "second": "challenged", "third": "challenged", "fourth": "challenging"}, {"num": 58, "first": "change", "ses": "changes", "second": "changed", "third": "changed", "fourth": "changing"}, {"num": 59, "first": "chase", "ses": "chases", "second": "chased", "third": "chased", "fourth": "chasing"}, {"num": 60, "first": "check", "ses": "checks", "second": "checked", "third": "checked", "fourth": "checking"}, {"num": 61, "first": "cherish", "ses": "cherishes", "second": "cherished", "third": "cherished", "fourth": "cherishing"}, {"num": 62, "first": "chew", "ses": "chews", "second": "chewed", "third": "chewed", "fourth": "chewing"}, {"num": 63, "first": "chirp", "ses": "chirps", "second": "chirped", "third": "chirped", "fourth": "chirping"}, {"num": 64, "first": "choose", "ses": "chooses", "second": "chose", "third": "chosen", "fourth": "choosing"}, {"num": 65, "first": "chop", "ses": "chops", "second": "chopped", "third": "chopped", "fourth": "chopping"}, {"num": 66, "first": "claim", "ses": "claims", "second": "claimed", "third": "claimed", "fourth": "claiming"}, {"num": 67, "first": "clap", "ses": "claps", "second": "clapped", "third": "clapped", "fourth": "clapping"}, {"num": 68, "first": "climb", "ses": "climbs", "second": "climbed", "third": "climbed", "fourth": "climbing"}, {"num": 69, "first": "come", "ses": "comes", "second": "came", "third": "come", "fourth": "coming"}, {"num": 70, "first": "compel", "ses": "compels", "second": "compelled", "third": "compelled", "fourth": "compelling"}, {"num": 71, "first": "complain", "ses": "complains", "second": "complained", "third": "complained", "fourth": "complaining"}, {"num": 72, "first": "condole", "ses": "condoles", "second": "condoled", "third": "condoled", "fourth": "condoling"}, {"num": 73, "first": "connect", "ses": "connects", "second": "connected", "third": "connected", "fourth": "connecting"}, {"num": 74, "first": "consist", "ses": "consists", "second": "consisted", "third": "consisted", "fourth": "consisting"}, {"num": 75, "first": "console", "ses": "consoles", "second": "consoled", "third": "consoled", "fourth": "consoling"}, {"num": 76, "first": "contest", "ses": "contests", "second": "contested", "third": "contested", "fourth": "contesting"}, {"num": 77, "first": "continue", "ses": "continues", "second": "continued", "third": "continued", "fourth": "continuing"}, {"num": 78, "first": "contrast", "ses": "contrasts", "second": "contrasted", "third": "contrasted", "fourth": "contrasting"}, {"num": 79, "first": "contribute", "ses": "contributes", "second": "contributed", "third": "contributed", "fourth": "contributing"}, {"num": 80, "first": "convince", "ses": "convinces", "second": "convinced", "third": "convinced", "fourth": "convincing"}, {"num": 81, "first": "copy", "ses": "copies", "second": "copied", "third": "copied", "fourth": "copying"}, {"num": 82, "first": "corrupt", "ses": "corrupts", "second": "corrupted", "third": "corrupted", "fourth": "corrupting"}, {"num": 83, "first": "cough", "ses": "coughs", "second": "coughed", "third": "coughed", "fourth": "coughing"}, {"num": 84, "first": "cover", "ses": "covers", "second": "covered", "third": "covered", "fourth": "covering"}, {"num": 85, "first": "cradle", "ses": "cradles", "second": "cradled", "third": "cradled", "fourth": "cradling"}, {"num": 86, "first": "cram", "ses": "crams", "second": "crammed", "third": "crammed", "fourth": "cramming"}, {"num": 87, "first": "crash", "ses": "crashes", "second": "crashed", "third": "crashed", "fourth": "crashing"}, {"num": 88, "first": "crave", "ses": "craves", "second": "craved", "third": "craved", "fourth": "craving"}, {"num": 89, "first": "crawl", "ses": "crawls", "second": "crawled", "third": "crawled", "fourth": "crawling"}, {"num": 90, "first": "create", "ses": "creates", "second": "created", "third": "created", "fourth": "creating"}, {"num": 91, "first": "creep", "ses": "creeps", "second": "crept", "third": "crept", "fourth": "creeping"}, {"num": 92, "first": "cremate", "ses": "cremates", "second": "cremated", "third": "cremated", "fourth": "cremating"}, {"num": 93, "first": "cripple", "ses": "cripples", "second": "crippled", "third": "crippled", "fourth": "crippling"}, {"num": 94, "first": "cross", "ses": "crosses", "second": "crossed", "third": "crossed", "fourth": "crossing"}, {"num": 95, "first": "crush", "ses": "crushes", "second": "crushed", "third": "crushed", "fourth": "crushing"}, {"num": 96, "first": "cry", "ses": "cries", "second": "cried", "third": "cried", "fourth": "crying"}, {"num": 97, "first": "cut", "ses": "cuts", "second": "cut", "third": "cut", "fourth": "cutting"}, {"num": 98, "first": "damage", "ses": "damages", "second": "damaged", "third": "damaged", "fourth": "damaging"}, {"num": 99, "first": "dance", "ses": "dances", "second": "danced", "third": "danced", "fourth": "dancing"}, {"num": 100, "first": "dare", "ses": "dares", "second": "dared", "third": "dared", "fourth": "daring"}, {"num": 101, "first": "deceive", "ses": "deceives", "second": "deceived", "third": "deceived", "fourth": "deceiveing"}, {"num": 102, "first": "declare", "ses": "declares", "second": "declared", "third": "declared", "fourth": "declaring"}, {"num": 103, "first": "defeat", "ses": "defeats", "second": "defeated", "third": "defeated", "fourth": "defeating"}, {"num": 104, "first": "depend", "ses": "depends", "second": "depended", "third": "depended", "fourth": "depending"}, {"num": 105, "first": "describe", "ses": "describes", "second": "described", "third": "described", "fourth": "describing"}, {"num": 106, "first": "destroy", "ses": "destroys", "second": "destroyed", "third": "destroyed", "fourth": "destroying"}, {"num": 107, "first": "dig", "ses": "digs", "second": "dug", "third": "dug", "fourth": "digging"}, {"num": 108, "first": "disappear", "ses": "disappears", "second": "disappeared", "third": "disappeared", "fourth": "disappearing"}, {"num": 109, "first": "disappoint", "ses": "disappoints", "second": "disappointed", "third": "disappointed", "fourth": "disappointing"}, {"num": 110, "first": "do", "ses": "does", "second": "did", "third": "done", "fourth": "doing"}, {"num": 111, "first": "do ablution", "ses": "does ablution", "second": "did ablution", "third": "done ablution", "fourth": "doing ablution"}, {"num": 112, "first": "dream", "ses": "dreams", "second": "dreamed/dreamt", "third": "dreamed/dreamt", "fourth": "dreaming"}, {"num": 113, "first": "drink", "ses": "drinks", "second": "drank", "third": "drunk", "fourth": "drinking"}, {"num": 114, "first": "drive", "ses": "drives", "second": "drove", "third": "driven", "fourth": "driving"}, {"num": 115, "first": "drop", "ses": "drops", "second": "dropped", "third": "dropped", "fourth": "dropping"}, {"num": 116, "first": "eat", "ses": "eats", "second": "ate", "third": "eaten", "fourth": "eating"}, {"num": 117, "first": "encourage", "ses": "encourages", "second": "encouraged", "third": "encouraged", "fourth": "encouraging"}, {"num": 118, "first": "enjoy", "ses": "enjoys", "second": "enjoyed", "third": "enjoyed", "fourth": "enjoying"}, {"num": 119, "first": "erase", "ses": "erases", "second": "erased", "third": "erased", "fourth": "erasing"}, {"num": 120, "first": "exaggerate", "ses": "exaggerates", "second": "exaggerated", "third": "exaggerated", "fourth": "exaggerating"}, {"num": 121, "first": "fail", "ses": "fails", "second": "failed", "third": "failed", "fourth": "failing"}, {"num": 122, "first": "fall", "ses": "falls", "second": "fell", "third": "fallen", "fourth": "falling"}, {"num": 123, "first": "fall ill", "ses": "falls ill", "second": "fell ill", "third": "fallen ill", "fourth": "falling ill"}, {"num": 124, "first": "feel", "ses": "feels", "second": "felt", "third": "felt", "fourth": "feeling"}, {"num": 125, "first": "fight", "ses": "fights", "second": "fought", "third": "fought", "fourth": "fighting"}, {"num": 126, "first": "find", "ses": "finds", "second": "found", "third": "found", "fourth": "finding"}, {"num": 127, "first": "finish", "ses": "finishes", "second": "finished", "third": "finished", "fourth": "finishing"}, {"num": 128, "first": "fly", "ses": "flies", "second": "flew", "third": "flown", "fourth": "flying"}, {"num": 129, "first": "fold", "ses": "folds", "second": "folded", "third": "folded", "fourth": "folding"}, {"num": 130, "first": "forbid", "ses": "forbids", "second": "forbade", "third": "forbidden", "fourth": "forbidding"}, {"num": 131, "first": "forget", "ses": "forgets", "second": "forgot", "third": "forgotten", "fourth": "forgetting"}, {"num": 132, "first": "forgive", "ses": "forgives", "second": "forgave", "third": "forgiven", "fourth": "forgiving"}, {"num": 133, "first": "found", "ses": "founds", "second": "founded", "third": "founded", "fourth": "founding"}, {"num": 134, "first": "freeze", "ses": "freezes", "second": "froze", "third": "frozen", "fourth": "freezing"}, {"num": 135, "first": "gain", "ses": "gains", "second": "gained", "third": "gained", "fourth": "gaining"}, {"num": 136, "first": "gamble", "ses": "gambles", "second": "gambled", "third": "gambled", "fourth": "gambling"}, {"num": 137, "first": "gather", "ses": "gathers", "second": "gathered", "third": "gathered", "fourth": "gathering"}, {"num": 138, "first": "get", "ses": "gets", "second": "got", "third": "got", "fourth": "getting"}, {"num": 139, "first": "get angry", "ses": "gets angry", "second": "got angry", "third": "got angry", "fourth": "getting angry"}, {"num": 140, "first": "get confused", "ses": "gets confused", "second": "got confused", "third": "got confused", "fourth": "getting confused"}, {"num": 141, "first": "get disappointed", "ses": "gets disappointed", "second": "got disappointed", "third": "got disappointed", "fourth": "getting disappointed"}, {"num": 142, "first": "get fat", "ses": "gets fat", "second": "got fat", "third": "got fat", "fourth": "getting fat"}, {"num": 143, "first": "get happy", "ses": "gets happy", "second": "got happy", "third": "got happy", "fourth": "getting happy"}, {"num": 144, "first": "get healthy", "ses": "gets healthy", "second": "got healthy", "third": "got healthy", "fourth": "getting healthy"}, {"num": 145, "first": "get hurt", "ses": "gets hurt", "second": "got hurt", "third": "got hurt", "fourth": "getting hurt"}, {"num": 146, "first": "get mad", "ses": "gets mad", "second": "got mad", "third": "got mad", "fourth": "getting mad"}, {"num": 147, "first": "get sad", "ses": "gets sad", "second": "got sad", "third": "got sad", "fourth": "getting sad"}, {"num": 148, "first": "get satisfied", "ses": "gets satisfied", "second": "got satisfied", "third": "got satisfied", "fourth": "getting satisfied"}, {"num": 149, "first": "get scared", "ses": "gets scared", "second": "got scared", "third": "got scared", "fourth": "getting scared"}, {"num": 150, "first": "get slim", "ses": "gets slim", "second": "got slim", "third": "got slim", "fourth": "getting slim"}, {"num": 151, "first": "get sulky", "ses": "gets sulky", "second": "got sulky", "third": "got sulky", "fourth": "getting sulky"}, {"num": 152, "first": "get to know", "ses": "gets to know", "second": "got to know", "third": "got to know", "fourth": "getting to know"}, {"num": 153, "first": "give", "ses": "gives", "second": "gave", "third": "given", "fourth": "giving"}, {"num": 154, "first": "go", "ses": "goes", "second": "went", "third": "gone", "fourth": "going"}, {"num": 155, "first": "graze", "ses": "grazes", "second": "grazed", "third": "grazed", "fourth": "grazing"}, {"num": 156, "first": "greet", "ses": "greets", "second": "greeted", "third": "greeted", "fourth": "greeting"}, {"num": 157, "first": "grip", "ses": "grips", "second": "gripped", "third": "gripped", "fourth": "gripping"}, {"num": 158, "first": "grow", "ses": "grows", "second": "grew", "third": "grown", "fourth": "growing"}, {"num": 159, "first": "guess", "ses": "guesses", "second": "guessed", "third": "guessed", "fourth": "guessing"}, {"num": 160, "first": "hang", "ses": "hangs", "second": "hanged/hung", "third": "hanged/hung", "fourth": "hanging"}, {"num": 161, "first": "harm", "ses": "harms", "second": "harmed", "third": "harmed", "fourth": "harming"}, {"num": 162, "first": "harvest", "ses": "harvests", "second": "harvested", "third": "harvested", "fourth": "harvesting"}, {"num": 163, "first": "hatch", "ses": "hatches", "second": "hatched", "third": "hatched", "fourth": "hatching"}, {"num": 164, "first": "hate", "ses": "hates", "second": "hated", "third": "hated", "fourth": "hating"}, {"num": 165, "first": "have", "ses": "has", "second": "had", "third": "had", "fourth": "having"}, {"num": 166, "first": "heal", "ses": "heals", "second": "healed", "third": "healed", "fourth": "healing"}, {"num": 167, "first": "heap", "ses": "heaps", "second": "heaped", "third": "heaped", "fourth": "heaping"}, {"num": 168, "first": "hear", "ses": "hears", "second": "heard", "third": "heard", "fourth": "hearing"}, {"num": 169, "first": "help", "ses": "helps", "second": "helped", "third": "helped", "fourth": "helping"}, {"num": 170, "first": "hide", "ses": "hides", "second": "hid", "third": "hidden", "fourth": "hiding"}, {"num": 171, "first": "hire", "ses": "hires", "second": "hired", "third": "hired", "fourth": "hiring"}, {"num": 172, "first": "hold", "ses": "holds", "second": "held", "third": "held", "fourth": "holding"}, {"num": 173, "first": "hunt", "ses": "hunts", "second": "hunted", "third": "hunted", "fourth": "hunting"}, {"num": 174, "first": "hurt", "ses": "hurts", "second": "hurt", "third": "hurt", "fourth": "hurting"}, {"num": 175, "first": "import", "ses": "imports", "second": "imported", "third": "imported", "fourth": "importing"}, {"num": 176, "first": "impress", "ses": "impresses", "second": "impressed", "third": "impressed", "fourth": "impressing"}, {"num": 177, "first": "improve", "ses": "improves", "second": "improved", "third": "improved", "fourth": "improving"}, {"num": 178, "first": "include", "ses": "includes", "second": "included", "third": "included", "fourth": "including"}, {"num": 179, "first": "increase", "ses": "increases", "second": "increased", "third": "increased", "fourth": "increasing"}, {"num": 180, "first": "inform", "ses": "informs", "second": "informed", "third": "informed", "fourth": "informing"}, {"num": 181, "first": "inherit", "ses": "inherits", "second": "inherited", "third": "inherited", "fourth": "inheriting"}, {"num": 182, "first": "injure", "ses": "injures", "second": "injured", "third": "injured", "fourth": "injuring"}, {"num": 183, "first": "inquire", "ses": "inquires", "second": "inquired", "third": "inquired", "fourth": "inquiring"}, {"num": 184, "first": "insist", "ses": "insists", "second": "insisted", "third": "insisted", "fourth": "insisting"}, {"num": 185, "first": "inspect", "ses": "inspects", "second": "inspected", "third": "inspected", "fourth": "inspecting"}, {"num": 186, "first": "invent", "ses": "invents", "second": "invented", "third": "invented", "fourth": "inventing"}, {"num": 187, "first": "invite", "ses": "invites", "second": "invited", "third": "invited", "fourth": "inviting"}, {"num": 188, "first": "involve", "ses": "involves", "second": "involved", "third": "involved", "fourth": "involving"}, {"num": 189, "first": "irrigate", "ses": "irrigates", "second": "irrigated", "third": "irrigated", "fourth": "irrigating"}, {"num": 190, "first": "join", "ses": "joins", "second": "joined", "third": "joined", "fourth": "joining"}, {"num": 191, "first": "joke", "ses": "jokes", "second": "joked", "third": "joked", "fourth": "joking"}, {"num": 192, "first": "keep", "ses": "keeps", "second": "kept", "third": "kept", "fourth": "keeping"}, {"num": 193, "first": "kick", "ses": "kicks", "second": "kicked", "third": "kicked", "fourth": "kicking"}, {"num": 194, "first": "knit", "ses": "knits", "second": "knitted", "third": "knitted", "fourth": "knitting"}, {"num": 195, "first": "knock", "ses": "knocks", "second": "knocked", "third": "knocked", "fourth": "knocking"}, {"num": 196, "first": "know", "ses": "knows", "second": "knew", "third": "known", "fourth": "knowing"}, {"num": 197, "first": "laugh", "ses": "laughs", "second": "laughed", "third": "laughed", "fourth": "laughing"}, {"num": 198, "first": "lie", "ses": "lies", "second": "lied", "third": "lied", "fourth": "lying"}, {"num": 199, "first": "lie", "ses": "lies", "second": "lay", "third": "lain", "fourth": "lying"}, {"num": 200, "first": "listen", "ses": "listens", "second": "listened", "third": "listened", "fourth": "listening"}, {"num": 201, "first": "live", "ses": "lives", "second": "lived", "third": "lived", "fourth": "living"}, {"num": 202, "first": "lock", "ses": "locks", "second": "locked", "third": "locked", "fourth": "locking"}, {"num": 203, "first": "look", "ses": "looks", "second": "looked", "third": "looked", "fourth": "looking"}, {"num": 204, "first": "loosen", "ses": "loosens", "second": "loosened", "third": "loosened", "fourth": "loosening"}, {"num": 205, "first": "make", "ses": "makes", "second": "made", "third": "made", "fourth": "making"}, {"num": 206, "first": "make excuse", "ses": "makes excuse", "second": "made excuse", "third": "made excuse", "fourth": "making excuse"}, {"num": 207, "first": "measure", "ses": "measures", "second": "measured", "third": "measured", "fourth": "measuring"}, {"num": 208, "first": "melt", "ses": "melts", "second": "melted", "third": "melted", "fourth": "melting"}, {"num": 209, "first": "migrate", "ses": "migrates", "second": "migrated", "third": "migrated", "fourth": "migrating"}, {"num": 210, "first": "misbehave", "ses": "misbehaves", "second": "misbehaved", "third": "misbehaved", "fourth": "misbehaving"}, {"num": 211, "first": "miss", "ses": "misses", "second": "missed", "third": "missed", "fourth": "missing"}, {"num": 212, "first": "mix", "ses": "mixes", "second": "mixed", "third": "mixed", "fourth": "mixing"}, {"num": 213, "first": "mount", "ses": "mounts", "second": "mounted", "third": "mounted", "fourth": "mounting"}, {"num": 214, "first": "mourn", "ses": "mourns", "second": "mourned", "third": "mourned", "fourth": "mourning"}, {"num": 215, "first": "note", "ses": "notes", "second": "noted", "third": "noted", "fourth": "noting"}, {"num": 216, "first": "obey", "ses": "obeys", "second": "obeyed", "third": "obeyed", "fourth": "obeying"}, {"num": 217, "first": "object", "ses": "objects", "second": "objected", "third": "objected", "fourth": "objecting"}, {"num": 218, "first": "occupy", "ses": "occupies", "second": "occupied", "third": "occupied", "fourth": "occupying"}, {"num": 219, "first": "offer", "ses": "offers", "second": "offered", "third": "offered", "fourth": "offering"}, {"num": 220, "first": "offer prayer", "ses": "offers prayer", "second": "offered prayer", "third": "offered prayer", "fourth": "offering prayer"}, {"num": 221, "first": "open", "ses": "opens", "second": "opened", "third": "opened", "fourth": "opening"}, {"num": 222, "first": "operate", "ses": "operates", "second": "operated", "third": "operated", "fourth": "operating"}, {"num": 223, "first": "oppose", "ses": "opposes", "second": "opposed", "third": "opposed", "fourth": "opposing"}, {"num": 224, "first": "organize", "ses": "organizes", "second": "organized", "third": "organized", "fourth": "organizing"}, {"num": 225, "first": "pacify", "ses": "pacifies", "second": "pacified", "third": "pacified", "fourth": "pacifying"}, {"num": 226, "first": "pack", "ses": "packs", "second": "packed", "third": "packed", "fourth": "packing"}, {"num": 227, "first": "pardon", "ses": "pardons", "second": "pardoned", "third": "pardoned", "fourth": "pardoning"}, {"num": 228, "first": "participate", "ses": "participates", "second": "participated", "third": "participated", "fourth": "participating"}, {"num": 229, "first": "pass", "ses": "passes", "second": "passed", "third": "passed", "fourth": "passing"}, {"num": 230, "first": "paste", "ses": "pastes", "second": "pasted", "third": "pasted", "fourth": "pasting"}, {"num": 231, "first": "pay", "ses": "pays", "second": "paid", "third": "paid", "fourth": "paying"}, {"num": 232, "first": "perform", "ses": "performs", "second": "performed", "third": "performed", "fourth": "performing"}, {"num": 233, "first": "permit", "ses": "permits", "second": "permitted", "third": "permitted", "fourth": "permitting"}, {"num": 234, "first": "practise", "ses": "practises", "second": "practised", "third": "practised", "fourth": "practising"}, {"num": 235, "first": "preach", "ses": "preaches", "second": "preached", "third": "preached", "fourth": "preaching"}, {"num": 236, "first": "pretend", "ses": "pretends", "second": "pretended", "third": "pretended", "fourth": "pretending"}, {"num": 237, "first": "print", "ses": "prints", "second": "printed", "third": "printed", "fourth": "printing"}, {"num": 238, "first": "progress", "ses": "progresses", "second": "progressed", "third": "progressed", "fourth": "progressing"}, {"num": 239, "first": "prohibit", "ses": "prohibits", "second": "prohibited", "third": "prohibited", "fourth": "prohibitting"}, {"num": 240, "first": "protect", "ses": "protects", "second": "protected", "third": "protected", "fourth": "protecting"}, {"num": 241, "first": "protest", "ses": "protests", "second": "protested", "third": "protested", "fourth": "protesting"}, {"num": 242, "first": "publish", "ses": "publishes", "second": "published", "third": "published", "fourth": "publishing"}, {"num": 243, "first": "punish", "ses": "punishes", "second": "punished", "third": "punished", "fourth": "punishing"}, {"num": 244, "first": "qualify", "ses": "qualifies", "second": "qualified", "third": "qualified", "fourth": "qualifying"}, {"num": 245, "first": "quarrel", "ses": "quarrels", "second": "quarrelled", "third": "quarrelled", "fourth": "quarreling"}, {"num": 246, "first": "question", "ses": "questions", "second": "questioned", "third": "questioned", "fourth": "questioning"}, {"num": 247, "first": "rain", "ses": "rains", "second": "rained", "third": "rained", "fourth": "raining"}, {"num": 248, "first": "read", "ses": "reads", "second": "read", "third": "read", "fourth": "reading"}, {"num": 249, "first": "recognize", "ses": "recognizes", "second": "recognized", "third": "recognized", "fourth": "recognizing"}, {"num": 250, "first": "recover", "ses": "recovers", "second": "recovered", "third": "recovered", "fourth": "recovering"}, {"num": 251, "first": "reduce", "ses": "reduces", "second": "reduced", "third": "reduced", "fourth": "reducing"}, {"num": 252, "first": "refuse", "ses": "refuses", "second": "refused", "third": "refused", "fourth": "refusing"}, {"num": 253, "first": "reject", "ses": "rejects", "second": "rejected", "third": "rejected", "fourth": "rejecting"}, {"num": 254, "first": "remove", "ses": "removes", "second": "removed", "third": "removed", "fourth": "removing"}, {"num": 255, "first": "ride", "ses": "rides", "second": "rode", "third": "ridden", "fourth": "riding"}, {"num": 256, "first": "ring", "ses": "rings", "second": "rang", "third": "rung", "fourth": "ringing"}, {"num": 257, "first": "rise", "ses": "rises", "second": "rose", "third": "risen", "fourth": "rising"}, {"num": 258, "first": "run", "ses": "runs", "second": "ran", "third": "run", "fourth": "running"}, {"num": 259, "first": "satisfy", "ses": "satisfies", "second": "satisfied", "third": "satisfied", "fourth": "satisfying"}, {"num": 260, "first": "say", "ses": "says", "second": "said", "third": "said", "fourth": "saying"}, {"num": 261, "first": "scold", "ses": "scolds", "second": "scolded", "third": "scolded", "fourth": "scolding"}, {"num": 262, "first": "see", "ses": "sees", "second": "saw", "third": "seen", "fourth": "seeing"}, {"num": 263, "first": "send", "ses": "sends", "second": "sent", "third": "sent", "fourth": "sending"}, {"num": 264, "first": "sew", "ses": "sews", "second": "sewed", "third": "sewed", "fourth": "sewing"}, {"num": 265, "first": "show", "ses": "shows", "second": "showed", "third": "showed/shown", "fourth": "showing"}, {"num": 266, "first": "shut", "ses": "shuts", "second": "shut", "third": "shut", "fourth": "shutting"}, {"num": 267, "first": "sing", "ses": "sings", "second": "sang", "third": "sung", "fourth": "singing"}, {"num": 268, "first": "sit", "ses": "sits", "second": "sat", "third": "sat", "fourth": "sitting"}, {"num": 269, "first": "smile", "ses": "smiles", "second": "smiled", "third": "smiled", "fourth": "smiling"}, {"num": 270, "first": "soothe", "ses": "soothes", "second": "soothed", "third": "soothed", "fourth": "soothing"}, {"num": 271, "first": "sow", "ses": "sows", "second": "sowed", "third": "sowed", "fourth": "sowing"}, {"num": 272, "first": "speak", "ses": "speaks", "second": "spoke", "third": "spoken", "fourth": "speaking"}, {"num": 273, "first": "spin", "ses": "spins", "second": "span", "third": "spun", "fourth": "spinning"}, {"num": 274, "first": "stand", "ses": "stands", "second": "stood", "third": "stood", "fourth": "standing"}, {"num": 275, "first": "steal", "ses": "steals", "second": "stole", "third": "stolen", "fourth": "stealing"}, {"num": 276, "first": "stick", "ses": "sticks", "second": "stuck", "third": "stuck", "fourth": "sticking"}, {"num": 277, "first": "stitch", "ses": "stitches", "second": "stitched", "third": "stitched", "fourth": "stitching"}, {"num": 278, "first": "submit", "ses": "submits", "second": "submitted", "third": "submitted", "fourth": "submitting"}, {"num": 279, "first": "succeed", "ses": "succeeds", "second": "succeeded", "third": "succeeded", "fourth": "succeeding"}, {"num": 280, "first": "support", "ses": "supports", "second": "supported", "third": "supported", "fourth": "supporting"}, {"num": 281, "first": "swear", "ses": "swears", "second": "swore", "third": "sworn", "fourth": "swearing"}, {"num": 282, "first": "swell", "ses": "swells", "second": "swole", "third": "swollen", "fourth": "swelling"}, {"num": 283, "first": "take", "ses": "takes", "second": "took", "third": "taken", "fourth": "taking"}, {"num": 284, "first": "take bath", "ses": "takes bath", "second": "took bath", "third": "taken bath", "fourth": "taking bath"}, {"num": 285, "first": "talk", "ses": "talks", "second": "talked", "third": "talked", "fourth": "talking"}, {"num": 286, "first": "tear", "ses": "tears", "second": "tore", "third": "torn", "fourth": "tearing"}, {"num": 287, "first": "tell", "ses": "tells", "second": "told", "third": "told", "fourth": "telling"}, {"num": 288, "first": "tell lie", "ses": "tells lie", "second": "told lie", "third": "told lie", "fourth": "telling lie"}, {"num": 289, "first": "tell truth", "ses": "tells truth", "second": "told truth", "third": "told truth", "fourth": "telling truth"}, {"num": 290, "first": "throw", "ses": "throws", "second": "threw", "third": "thrown", "fourth": "throwing"}, {"num": 291, "first": "tolerate", "ses": "tolerates", "second": "tolerated", "third": "tolerated", "fourth": "tolerating"}, {"num": 292, "first": "try", "ses": "tries", "second": "tried", "third": "tried", "fourth": "trying"}, {"num": 293, "first": "understand", "ses": "understands", "second": "understood", "third": "understood", "fourth": "understanding"}, {"num": 294, "first": "wake", "ses": "wakes", "second": "woke", "third": "woken", "fourth": "waking"}, {"num": 295, "first": "walk", "ses": "walks", "second": "walked", "third": "walked", "fourth": "walking"}, {"num": 296, "first": "watch", "ses": "watches", "second": "watched", "third": "watched", "fourth": "watching"}, {"num": 297, "first": "wear", "ses": "wears", "second": "wore", "third": "worn", "fourth": "wearing"}, {"num": 298, "first": "weigh", "ses": "weighs", "second": "weighed", "third": "weighed", "fourth": "weighing"}, {"num": 299, "first": "wring", "ses": "wrings", "second": "wrang", "third": "wrung", "fourth": "wringing"}, {"num": 300, "first": "write", "ses": "writes", "second": "wrote", "third": "written", "fourth": "writing"}];
+
+// ─── Storage ───
+function loadProgress(){
+  try{ const r = localStorage.getItem(STORAGE_KEY); return r ? JSON.parse(r) : {plan:"free",lessons:{}}; }
+  catch(e){ return {plan:"free",lessons:{}}; }
+}
+function saveProgress(data){
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch(e){}
+}
+function getLessonData(progress){
+  if(!progress.lessons[LESSON_ID]) progress.lessons[LESSON_ID] = {questions:{}};
+  return progress.lessons[LESSON_ID];
+}
+function norm(s){ return (s||"").toLowerCase().trim().replace(/\s+/g," "); }
+
+// ─── Tab switch ───
+function switchTab(tab){
+  document.getElementById("tab-ref").classList.toggle("active", tab==="ref");
+  document.getElementById("tab-quiz").classList.toggle("active", tab==="quiz");
+  document.getElementById("btn-ref").classList.toggle("active", tab==="ref");
+  document.getElementById("btn-quiz").classList.toggle("active", tab==="quiz");
+  document.getElementById("progress-wrap").style.display = tab==="quiz" ? "flex" : "none";
+}
+
+// ─── Reference table ───
+function renderRef(verbs){
+  const tbody = document.getElementById("ref-tbody");
+  const BADGE_LABEL = {"reg":"Regular","irr-diff":"Irreg★","irr-same":"Irreg=","irr-eq":"All Same"};
+  tbody.innerHTML = verbs.map(v => {
+    const type = getVerbType(v);
+    const badge = `<span class="type-badge ${type}">${BADGE_LABEL[type]}</span>`;
+    return `
+    <tr>
+      <td class="v-num">${v.num}</td>
+      <td class="v-first">${v.first}${badge}</td>
+      <td>${v.ses}</td>
+      <td>${v.second}</td>
+      <td>${v.third}</td>
+      <td>${v.fourth}</td>
+    </tr>`;
+  }).join("");
+  const regCount   = verbs.filter(v=>isRegular(v)).length;
+  const diffCount  = verbs.filter(v=>isIrrDiff(v)).length;
+  const sameCount  = verbs.filter(v=>isIrrSame(v)).length;
+  const eqCount    = verbs.filter(v=>isIrrEq(v)).length;
+  const total = ALL_VERBS.length;
+  if(verbs.length === total){
+    document.getElementById("search-count").textContent =
+      `All 300 verbs — ✅ ${regCount} regular | 🔴 ${diffCount} irreg-alag | 🟡 ${sameCount} irreg-same | 🔵 ${eqCount} all-same`;
+  } else {
+    document.getElementById("search-count").textContent =
+      `${verbs.length} verb${verbs.length===1?"":"s"} — ✅ ${regCount} | 🔴 ${diffCount} | 🟡 ${sameCount} | 🔵 ${eqCount}`;
+  }
+}
+
+// ─── Filter state ───
+let activeType = "all";
+let activeLetter = "all";
+
+function isRegular(v){
+  const s2 = norm(v.second); const s3 = norm(v.third);
+  return s2.endsWith("ed") && s3.endsWith("ed");
+}
+function isIrrDiff(v){
+  // Irregular AND all three different: go/went/gone
+  if(isRegular(v)) return false;
+  const s1=norm(v.first),s2=norm(v.second),s3=norm(v.third);
+  return s2!==s3 && s1!==s2;
+}
+function isIrrSame(v){
+  // Irregular AND 2nd=3rd (but not all same): bring/brought/brought
+  if(isRegular(v)) return false;
+  const s1=norm(v.first),s2=norm(v.second),s3=norm(v.third);
+  return s2===s3 && s1!==s2;
+}
+function isIrrEq(v){
+  // All three same: cut/cut/cut
+  const s1=norm(v.first),s2=norm(v.second),s3=norm(v.third);
+  return s1===s2 && s2===s3;
+}
+function getVerbType(v){
+  if(isRegular(v)) return "reg";
+  if(isIrrEq(v))   return "irr-eq";
+  if(isIrrSame(v)) return "irr-same";
+  return "irr-diff";
+}
+
+// Build alphabet bar — only show letters that exist in ALL_VERBS
+function buildAlphaBar(){
+  const bar = document.getElementById("alpha-bar");
+  const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+  const existing = new Set(ALL_VERBS.map(v => v.first[0].toUpperCase()));
+  bar.innerHTML = letters.map(l =>
+    `<button class="a-btn ${existing.has(l)?'':'disabled'}" id="al-${l}" onclick="setLetterFilter('${l}')">${l}</button>`
+  ).join("") +
+  `<button class="a-btn active" id="al-all" onclick="setLetterFilter('all')" style="width:auto;padding:0 10px;font-size:11px;">All</button>`;
+}
+
+function setTypeFilter(type){
+  activeType = type;
+  document.querySelectorAll(".f-btn").forEach(b=>b.classList.remove("active"));
+  document.getElementById("f-"+type).classList.add("active");
+  applyFilters();
+}
+
+function setLetterFilter(letter){
+  activeLetter = letter;
+  document.querySelectorAll(".a-btn").forEach(b=>b.classList.remove("active"));
+  document.getElementById("al-"+letter).classList.add("active");
+  applyFilters();
+}
+
+function applyFilters(){
+  const q = norm(document.getElementById("search-input").value);
+  let verbs = ALL_VERBS;
+
+  // Type filter
+  if(activeType === "regular")  verbs = verbs.filter(v => isRegular(v));
+  if(activeType === "irr-diff") verbs = verbs.filter(v => isIrrDiff(v));
+  if(activeType === "irr-same") verbs = verbs.filter(v => isIrrSame(v));
+  if(activeType === "irr-eq")   verbs = verbs.filter(v => isIrrEq(v));
+
+  // Letter filter
+  if(activeLetter !== "all") verbs = verbs.filter(v => v.first[0].toUpperCase() === activeLetter);
+
+  // Search
+  if(q) verbs = verbs.filter(v =>
+    norm(v.first).includes(q) ||
+    norm(v.ses).includes(q) || norm(v.second).includes(q) ||
+    norm(v.third).includes(q) || norm(v.fourth).includes(q)
+  );
+
+  renderRef(verbs);
+}
+
+function filterTable(){ applyFilters(); } // backward compat
+
+
+// ─── Quiz ───
+let currentQuiz = [];
+
+function startQuiz(){
+  // 30 random verbs without repetition
+  const shuffled = [...ALL_VERBS].sort(()=>Math.random()-0.5);
+  currentQuiz = shuffled.slice(0,30);
+
+  // clear old quiz state from storage
+  const progress = loadProgress();
+  const lessonData = getLessonData(progress);
+  lessonData.questions = {};
+  lessonData.quizVerbs = currentQuiz.map(v=>v.num);
+  saveProgress(progress);
+
+  renderQuiz();
+  updateProgressBar();
+  document.getElementById("quiz-note").textContent = "30 verbs — type all forms then click Check";
+}
+
+function renderQuiz(){
+  const progress = loadProgress();
+  const lessonData = getLessonData(progress);
+  const container = document.getElementById("quiz-container");
+
+  const rowsHtml = currentQuiz.map((v, idx) => {
+    const qid = `qz_${idx}`;
+    const saved = lessonData.questions[qid];
+    const state = saved && saved.attempted ? (saved.correct ? "correct" : "incorrect") : "";
+    const vals = saved && saved.values ? saved.values : {ses:"",second:"",third:"",fourth:""};
+    return `
+      <div class="q-row ${state}" data-qid="${qid}"
+           data-ses="${v.ses}" data-second="${v.second}" data-third="${v.third}" data-fourth="${v.fourth}">
+        <div class="q-num">${idx+1}</div>
+        <div class="q-word">${v.first}</div>
+        <div class="field-wrap"><span class="field-label">s/es</span><input class="q-input f-ses" type="text" value="${vals.ses}"></div>
+        <div class="field-wrap"><span class="field-label">2nd</span><input class="q-input f-second" type="text" value="${vals.second}"></div>
+        <div class="field-wrap"><span class="field-label">3rd</span><input class="q-input f-third" type="text" value="${vals.third}"></div>
+        <div class="field-wrap"><span class="field-label">4th</span><input class="q-input f-fourth" type="text" value="${vals.fourth}"></div>
+        <div class="q-feedback">${state==="correct"?"✅":state==="incorrect"?"❌":""}</div>
+        <button class="check-btn" type="button">Check</button>
+        <div class="q-hint">Answer: ${v.first} → ${v.ses}, ${v.second}, ${v.third}, ${v.fourth}</div>
+      </div>
+    `;
+  }).join("");
+
+  container.innerHTML = rowsHtml;
+  container.addEventListener("click", handleCheckClick);
+  container.addEventListener("keydown", handleEnterKey);
+}
+
+function handleCheckClick(e){
+  if(!e.target.classList.contains("check-btn")) return;
+  checkRow(e.target.closest(".q-row"));
+}
+function handleEnterKey(e){
+  if(e.key==="Enter" && e.target.classList.contains("q-input")){
+    e.preventDefault();
+    checkRow(e.target.closest(".q-row"));
+  }
+}
+
+function checkRow(row){
+  const qid = row.dataset.qid;
+  const sesVal   = row.querySelector(".f-ses").value;
+  const secondVal= row.querySelector(".f-second").value;
+  const thirdVal = row.querySelector(".f-third").value;
+  const fourthVal= row.querySelector(".f-fourth").value;
+  const allEmpty = !sesVal.trim() && !secondVal.trim() && !thirdVal.trim() && !fourthVal.trim();
+
+  const progress = loadProgress();
+  const lessonData = getLessonData(progress);
+
+  if(allEmpty){
+    delete lessonData.questions[qid];
+    row.classList.remove("correct","incorrect");
+    row.querySelector(".q-feedback").textContent = "";
+    saveProgress(progress);
+    updateProgressBar();
+    return;
+  }
+
+  const isCorrect =
+    norm(sesVal)    === norm(row.dataset.ses)    &&
+    norm(secondVal) === norm(row.dataset.second) &&
+    norm(thirdVal)  === norm(row.dataset.third)  &&
+    norm(fourthVal) === norm(row.dataset.fourth);
+
+  const wordEl = row.querySelector(".q-word");
+  const firstWord = wordEl ? wordEl.firstChild.textContent.trim() : "";
+  lessonData.questions[qid] = {
+    attempted:true, correct:isCorrect,
+    values:{ses:sesVal, second:secondVal, third:thirdVal, fourth:fourthVal},
+    question: firstWord,
+    correctAnswer: `${row.dataset.ses}, ${row.dataset.second}, ${row.dataset.third}, ${row.dataset.fourth}`,
+    lastAttempt:new Date().toISOString()
+  };
+  row.classList.remove("correct","incorrect");
+  row.classList.add(isCorrect?"correct":"incorrect");
+  row.querySelector(".q-feedback").textContent = isCorrect?"✅":"❌";
+  saveProgress(progress);
+  updateProgressBar();
+}
+
+function updateProgressBar(){
+  const progress = loadProgress();
+  const lessonData = getLessonData(progress);
+  const qs = Object.values(lessonData.questions);
+  const total = currentQuiz.length || 30;
+  const correct = qs.filter(q=>q.correct).length;
+  const pct = total > 0 ? Math.round((correct/total)*100) : 0;
+  document.getElementById("progress-fill").style.width = pct+"%";
+  document.getElementById("progress-stat").textContent = `${correct} / ${total} correct`;
+  document.getElementById("topbar-status").textContent =
+    (progress.plan==="unlimited"||progress.plan==="paid") ? "AI Unlimited" : progress.plan==="starter" ? "AI Starter" : "Free Plan";
+}
+
+// ─── Init ───
+buildAlphaBar();
+renderRef(ALL_VERBS);
+updateProgressBar();
+
+// Restore quiz if it was in progress
+(function restoreQuiz(){
+  const progress = loadProgress();
+  const lessonData = getLessonData(progress);
+  if(lessonData.quizVerbs && lessonData.quizVerbs.length===30){
+    const numSet = new Set(lessonData.quizVerbs);
+    const ordered = lessonData.quizVerbs.map(n => ALL_VERBS.find(v=>v.num===n)).filter(Boolean);
+    if(ordered.length===30){
+      currentQuiz = ordered;
+      // render quiz but don't switch tab
+      renderQuiz();
+      updateProgressBar();
+      document.getElementById("quiz-note").textContent = "Previous quiz restored — continue where you left off";
+    }
+  }
+})();
+
+</script>
+
+
+<script src="en-plan.js"></script>
+<script src="en-ai.js">
+/* ── Dark Mode ── */
+function toggleDark(){
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const newTheme = isDark ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', newTheme);
+  localStorage.setItem('en_theme', newTheme);
+  const btn = document.getElementById('dark-toggle');
+  if(btn) btn.textContent = newTheme === 'dark' ? '☀️ Light' : '🌙 Dark';
+}
+(function(){
+  const saved = localStorage.getItem('en_theme');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const theme = saved || (prefersDark ? 'dark' : 'light');
+  if(theme === 'dark'){
+    document.documentElement.setAttribute('data-theme', 'dark');
+    const btn = document.getElementById('dark-toggle');
+    if(btn) btn.textContent = '☀️ Light';
+  }
+})();
+
+</script>
+
+<script src="en-gamification.js"></script>
+</body>
+</html>

@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="en-guard.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 3: Verb Forms — EnglishNotebook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1B2A4A; --paper:#F7F4EC; --paper-line:#E4DFD0;
+    --green:#2F6F5E; --clay:#B5482A; --muted:#8A8370; --card:#FFFFFF; --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;overflow-x:hidden;max-width:100vw;}
+  body{background:var(--paper); color:var(--ink); font-family:'Inter',sans-serif; min-height:100vh;}
+
+  header.topbar{
+    position:sticky; top:0; z-index:10;
+    background:rgba(247,244,236,0.94); backdrop-filter: blur(6px);
+    border-bottom:2px solid var(--ink); padding:16px 24px;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .back-link{font-size:14px; font-weight:600; color:var(--ink); text-decoration:none; display:flex; align-items:center; gap:6px;}
+  .back-link:hover{color:var(--green);}
+  .brand{font-family:'Fraunces', serif; font-weight:700; font-size:18px;}
+  .brand span{color:var(--green);}
+  .topbar-status{font-size:13px; color:var(--muted);}
+
+  main{max-width:900px; margin:0 auto; padding:40px 24px 100px;}
+  .eyebrow{font-size:13px; letter-spacing:0.08em; text-transform:uppercase; color:var(--green); font-weight:600; margin-bottom:10px;}
+  h1.title{font-family:'Fraunces', serif; font-weight:600; font-size:clamp(28px, 4.5vw, 40px); line-height:1.15; margin:0 0 10px;}
+  p.note{font-size:13.5px; color:var(--muted); margin:0 0 32px;}
+
+  /* Rule table */
+  .rule-wrap{margin-bottom:44px; overflow-x:auto;}
+  table.rule-table{width:100%; border-collapse:collapse; background:var(--card); border-radius:12px; overflow:hidden; border:1.5px solid var(--paper-line); min-width:600px;}
+  table.rule-table th{background:var(--ink); color:var(--paper); font-size:12px; text-transform:uppercase; letter-spacing:0.04em; padding:10px 14px; text-align:left; font-weight:600;}
+  table.rule-table td{padding:12px 14px; font-size:13.5px; border-top:1px solid var(--paper-line); vertical-align:top;}
+  table.rule-table tr:nth-child(even) td{background:rgba(47,111,94,0.03);}
+  table.rule-table td.form-name{font-family:'Fraunces',serif; font-weight:600; font-size:14.5px; white-space:nowrap;}
+  table.rule-table td.example{color:var(--green); font-weight:500;}
+
+  .section-title{font-family:'Fraunces',serif; font-size:20px; font-weight:600; margin:0 0 4px;}
+  .section-sub{font-size:13.5px; color:var(--muted); margin:0 0 20px;}
+
+  .q-row{
+    background:var(--card); border:1.5px solid var(--paper-line); border-radius:12px;
+    padding:16px 18px; margin-bottom:10px;
+    display:grid; grid-template-columns: 32px 100px repeat(4, 1fr) 28px;
+    align-items:center; gap:10px;
+    transition: border-color 0.15s ease;
+  }
+  .q-row.correct{border-color:var(--green);}
+  .q-row.incorrect{border-color:var(--clay);}
+  .q-num{font-size:13px; color:var(--muted); font-weight:600;}
+  .q-word{font-size:16px; font-weight:600; font-family:'Fraunces',serif;}
+  .field-wrap{display:flex; flex-direction:column; gap:4px;}
+  .field-label{font-size:10.5px; color:var(--muted); text-transform:uppercase; letter-spacing:0.03em;}
+  input.q-input{
+    font-family:'Inter',sans-serif; font-size:14px; padding:8px 9px;
+    border-radius:8px; border:1.5px solid var(--paper-line); background:var(--paper);
+    color:var(--ink); width:100%;
+  }
+  input.q-input:focus-visible{outline:2px solid var(--green); outline-offset:1px;}
+  .q-feedback{font-size:18px; text-align:center;}
+  .q-hint{
+    grid-column: 1 / -1; font-size:13px; color:var(--clay); margin-top:8px;
+    padding-top:8px; border-top:1px dashed var(--paper-line); display:none;
+  }
+  .q-row.incorrect .q-hint{display:block;}
+  .check-btn{
+    grid-column: 1 / -1;
+    justify-self:start;
+    margin-top:4px;
+    background:var(--ink); color:var(--paper); border:none;
+    font-family:'Inter',sans-serif; font-size:12.5px; font-weight:600;
+    padding:6px 14px; border-radius:20px; cursor:pointer;
+  }
+  .check-btn:hover{background:var(--green);}
+
+  @media (max-width:720px){
+    .q-row{grid-template-columns: 1fr 1fr; row-gap:10px;}
+    .q-row .q-num, .q-row .q-feedback{display:none;}
+    .q-word{grid-column:1/-1;}
+  }
+
+  .progress-bar-wrap{
+    position:sticky; bottom:0; z-index:5;
+    background:rgba(247,244,236,0.95); backdrop-filter:blur(6px);
+    border-top:1.5px solid var(--ink); padding:14px 24px;
+    display:flex; align-items:center; gap:16px;
+  }
+  .progress-bar-wrap .pb-label{font-size:13px; color:var(--muted); white-space:nowrap;}
+  .progress-track{flex:1; height:8px; background:var(--paper-line); border-radius:4px; overflow:hidden;}
+  .progress-fill{height:100%; background:var(--green); width:0%; transition:width 0.3s ease;}
+  .pb-stat{font-size:13px; font-weight:600; white-space:nowrap;}
+
+  @media (prefers-reduced-motion: reduce){ .q-row, .progress-fill{transition:none;} }
+
+  .ai-btn{background:linear-gradient(135deg,#4A90D9,#7B5EA7);color:#fff;border:none;
+    font-family:'Inter',sans-serif;font-size:11.5px;font-weight:600;
+    padding:6px 12px;border-radius:20px;cursor:pointer;white-space:nowrap;}
+  .ai-btn:hover{opacity:0.88;} .ai-btn:disabled{opacity:0.5;cursor:not-allowed;}
+  .ai-feedback-box{margin-top:8px;padding:11px 13px;font-size:13px;line-height:1.7;
+    background:linear-gradient(135deg,rgba(74,144,217,0.07),rgba(123,94,167,0.07));
+    border:1.5px solid rgba(74,144,217,0.25);border-radius:10px;display:none;color:var(--ink);
+    grid-column:1/-1;}
+  .ai-feedback-box.show{display:block;}
+  .ai-feedback-box .ai-lbl{font-size:10.5px;font-weight:700;text-transform:uppercase;
+    letter-spacing:0.05em;color:#4A90D9;margin-bottom:5px;}
+  .ai-counter{font-size:12px;color:#7B5EA7;font-weight:600;}
+
+  /* ── Dark Mode ── */
+  [data-theme="dark"]{
+    --ink:#E8E4DA; --paper:#141B2D; --paper-line:#1F2D45;
+    --green:#4CAF8A; --clay:#E07055; --muted:#7A8FA6; --card:#1A2540;
+  }
+  [data-theme="dark"] body{ background:var(--paper); color:var(--ink); }
+  [data-theme="dark"] header.topbar{ background:rgba(20,27,45,0.96)!important; }
+  [data-theme="dark"] .q-row,
+  [data-theme="dark"] .kind-card,
+  [data-theme="dark"] .lesson-card,
+  [data-theme="dark"] .tense-row,
+  [data-theme="dark"] .mistake-card,
+  [data-theme="dark"] .story-card,
+  [data-theme="dark"] .ref-table-wrap table,
+  [data-theme="dark"] .summary-card{ background:var(--card)!important; border-color:var(--paper-line)!important; }
+  [data-theme="dark"] input,
+  [data-theme="dark"] select,
+  [data-theme="dark"] textarea{ background:var(--paper)!important; color:var(--ink)!important; border-color:var(--paper-line)!important; }
+  [data-theme="dark"] .progress-bar-wrap{ background:rgba(20,27,45,0.97)!important; border-color:var(--paper-line)!important; }
+
+  #dark-toggle{
+    background:none; border:1.5px solid var(--paper-line); border-radius:20px;
+    padding:5px 11px; cursor:pointer; color:var(--ink); font-family:'Inter',sans-serif;
+    font-size:12px; font-weight:600; transition:all 0.2s;
+  }
+  #dark-toggle:hover{ border-color:var(--green); color:var(--green); }
+
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a href="index.html" class="back-link">← Home</a>
+  <div class="brand">English<span>Notebook</span></div>
+  <span class="ai-counter" id="ai-counter"></span>
+  <div class="topbar-status" id="topbar-status">Free Plan</div>
+</header>
+
+<main>
+  <div class="eyebrow">Lesson 3</div>
+  <h1 class="title">Verb Forms — s/es, 1st, 2nd, 3rd, 4th</h1>
+  <p class="note">Given the 1st form, type the other 4 forms. Case and extra spaces are ignored.</p>
+
+  <div class="rule-wrap">
+    <table class="rule-table">
+      <thead><tr><th>Form</th><th>Helping Verb Rule</th><th>Action Type</th><th>Example</th></tr></thead>
+      <tbody id="rule-body"></tbody>
+    </table>
+  </div>
+
+  <h2 class="section-title">Practice: Fill in All 5 Verb Forms</h2>
+  <p class="section-sub">15 verbs — type the s/es, 2nd, 3rd, and 4th form, then click Check</p>
+  <div id="questions"></div>
+</main>
+
+<div class="progress-bar-wrap">
+  <span class="pb-label">Lesson progress</span>
+  <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+  <span class="pb-stat" id="progress-stat">0 / 15 correct</span>
+</div>
+
+<script>
+const LESSON_ID = "l3_verbforms";
+const STORAGE_KEY = "englishnotebook_progress_v1";
+
+const RULES = [
+  { form:"s/es Form", rule:"(He/She/It) — no helper, verb+s/es | (I/We/You/They) — 1st Form", type:"Repeated Actions", example:"He eats. / I eat." },
+  { form:"2nd Form", rule:"did (Q/Neg) — plain 2nd form in affirmative", type:"Past Actions", example:"I called." },
+  { form:"3rd Form", rule:"has/have, had, will have", type:"Complete Actions", example:"He has gone. / He had gone. / He will have gone." },
+  { form:"4th Form", rule:"is/am/are, was/were, will be", type:"Continued Actions", example:"We are studying. / We were studying. / We will be studying." },
+];
+
+const VERBS = [
+  { first:"accept", ses:"accepts", second:"accepted", third:"accepted", fourth:"accepting" },
+  { first:"begin", ses:"begins", second:"began", third:"begun", fourth:"beginning" },
+  { first:"break", ses:"breaks", second:"broke", third:"broken", fourth:"breaking" },
+  { first:"catch", ses:"catches", second:"caught", third:"caught", fourth:"catching" },
+  { first:"come", ses:"comes", second:"came", third:"come", fourth:"coming" },
+  { first:"drink", ses:"drinks", second:"drank", third:"drunk", fourth:"drinking" },
+  { first:"eat", ses:"eats", second:"ate", third:"eaten", fourth:"eating" },
+  { first:"fly", ses:"flies", second:"flew", third:"flown", fourth:"flying" },
+  { first:"go", ses:"goes", second:"went", third:"gone", fourth:"going" },
+  { first:"know", ses:"knows", second:"knew", third:"known", fourth:"knowing" },
+  { first:"make", ses:"makes", second:"made", third:"made", fourth:"making" },
+  { first:"read", ses:"reads", second:"read", third:"read", fourth:"reading" },
+  { first:"see", ses:"sees", second:"saw", third:"seen", fourth:"seeing" },
+  { first:"write", ses:"writes", second:"wrote", third:"written", fourth:"writing" },
+  { first:"speak", ses:"speaks", second:"spoke", third:"spoken", fourth:"speaking" },
+];
+
+function loadProgress(){
+  try{ const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : { plan:"free", lessons:{} }; }
+  catch(e){ console.error("Progress load failed", e); return { plan:"free", lessons:{} }; }
+}
+function saveProgress(data){
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+  catch(e){ console.error("Progress save failed", e); }
+}
+function getLessonData(progress){
+  if(!progress.lessons[LESSON_ID]) progress.lessons[LESSON_ID] = { questions:{} };
+  return progress.lessons[LESSON_ID];
+}
+function norm(s){ return (s||"").toLowerCase().trim(); }
+
+function renderRules(){
+  document.getElementById("rule-body").innerHTML = RULES.map(r=>`
+    <tr>
+      <td class="form-name">${r.form}</td>
+      <td>${r.rule}</td>
+      <td>${r.type}</td>
+      <td class="example">${r.example}</td>
+    </tr>
+  `).join("");
+}
+
+function renderQuestions(){
+  const progress = loadProgress();
+  const lessonData = getLessonData(progress);
+  const container = document.getElementById("questions");
+
+  const rowsHtml = VERBS.map((v, idx)=>{
+    const qid = `verb_${idx}`;
+    const saved = lessonData.questions[qid];
+    const state = saved && saved.attempted ? (saved.correct ? "correct" : "incorrect") : "";
+    const vals = saved && saved.values ? saved.values : {ses:"",second:"",third:"",fourth:""};
+    return `
+      <div class="q-row ${state}" data-qid="${qid}"
+           data-ses="${v.ses}" data-second="${v.second}" data-third="${v.third}" data-fourth="${v.fourth}">
+        <div class="q-num">${idx+1}</div>
+        <div class="q-word">${v.first}</div>
+        <div class="field-wrap"><span class="field-label">s/es</span><input class="q-input f-ses" type="text" value="${vals.ses}"></div>
+        <div class="field-wrap"><span class="field-label">2nd</span><input class="q-input f-second" type="text" value="${vals.second}"></div>
+        <div class="field-wrap"><span class="field-label">3rd</span><input class="q-input f-third" type="text" value="${vals.third}"></div>
+        <div class="field-wrap"><span class="field-label">4th</span><input class="q-input f-fourth" type="text" value="${vals.fourth}"></div>
+        <div class="q-feedback">${state === "correct" ? "✅" : state === "incorrect" ? "❌" : ""}</div>
+        <button class="check-btn" type="button">Check</button>
+        <button class="ai-btn" type="button" onclick="askVerbAI(this)">✨ AI Check</button>
+        <div class="ai-feedback-box" id="ai-vbox-${qid}"></div>
+        <div class="q-hint">Tip: ${v.first} → ${v.ses}, ${v.second}, ${v.third}, ${v.fourth}</div>
+      </div>
+    `;
+  }).join("");
+
+  container.innerHTML = rowsHtml;
+  container.addEventListener("click", handleCheckClick);
+  container.addEventListener("keydown", (e)=>{
+    if(e.key === "Enter" && e.target.classList.contains("q-input")){
+      e.preventDefault();
+      const row = e.target.closest(".q-row");
+      checkRow(row);
+    }
+  });
+}
+
+function handleCheckClick(e){
+  if(!e.target.classList.contains("check-btn")) return;
+  const row = e.target.closest(".q-row");
+  checkRow(row);
+}
+
+function checkRow(row){
+  const qid = row.dataset.qid;
+  const sesVal = row.querySelector(".f-ses").value;
+  const secondVal = row.querySelector(".f-second").value;
+  const thirdVal = row.querySelector(".f-third").value;
+  const fourthVal = row.querySelector(".f-fourth").value;
+
+  const allEmpty = !sesVal.trim() && !secondVal.trim() && !thirdVal.trim() && !fourthVal.trim();
+
+  const progress = loadProgress();
+  const lessonData = getLessonData(progress);
+
+  if(allEmpty){
+    delete lessonData.questions[qid];
+    row.classList.remove("correct","incorrect");
+    row.querySelector(".q-feedback").textContent = "";
+    saveProgress(progress);
+    updateProgressBar();
+    return;
+  }
+
+  const isCorrect =
+    norm(sesVal) === norm(row.dataset.ses) &&
+    norm(secondVal) === norm(row.dataset.second) &&
+    norm(thirdVal) === norm(row.dataset.third) &&
+    norm(fourthVal) === norm(row.dataset.fourth);
+
+  const wordEl = row.querySelector(".q-word");
+  lessonData.questions[qid] = {
+    attempted:true, correct:isCorrect,
+    values:{ses:sesVal, second:secondVal, third:thirdVal, fourth:fourthVal},
+    question: wordEl ? wordEl.textContent.trim() : "",
+    correctAnswer: `${row.dataset.ses}, ${row.dataset.second}, ${row.dataset.third}, ${row.dataset.fourth}`,
+    lastAttempt:new Date().toISOString()
+  };
+  row.classList.remove("correct","incorrect");
+  row.classList.add(isCorrect ? "correct" : "incorrect");
+  row.querySelector(".q-feedback").textContent = isCorrect ? "✅" : "❌";
+
+  saveProgress(progress);
+  updateProgressBar();
+}
+
+function updateProgressBar(){
+  const progress = loadProgress();
+  const lessonData = getLessonData(progress);
+  const qs = Object.values(lessonData.questions);
+  const total = VERBS.length;
+  const correct = qs.filter(q=>q.correct).length;
+  const pct = total > 0 ? Math.round((correct/total)*100) : 0;
+
+  document.getElementById("progress-fill").style.width = pct + "%";
+  document.getElementById("progress-stat").textContent = `${correct} / ${total} correct`;
+  document.getElementById("topbar-status").textContent = progress.plan === "paid" ? "Paid Plan" : "Free Plan";
+}
+
+renderRules();
+renderQuestions();
+updateProgressBar();
+
+/* === AI for Verb Forms === */
+const FREE_AI_LIMIT = 5;
+const STARTER_AI_LIMIT = 50;
+let aiUsedCount = 0;
+function isUnlimitedPlan(p){ return p.plan==="unlimited"||p.plan==="paid"; }
+function getAiLimit(){
+  const p=loadProgress();
+  if(isUnlimitedPlan(p)) return 9999;
+  if(p.plan==="starter") return STARTER_AI_LIMIT;
+  return FREE_AI_LIMIT;
+}
+function updateAiCounter(){
+  const el=document.getElementById("ai-counter"); if(!el) return;
+  const p=loadProgress();
+  const limit=getAiLimit();
+  if(isUnlimitedPlan(p)){el.textContent="✨ AI: Unlimited";}
+  else{
+    const left=Math.max(0,limit-aiUsedCount);
+    el.textContent=left>0?`✨ AI: ${left}/${limit} left`:"✨ AI: Limit reached";
+    el.style.color=left===0?"var(--clay)":"#7B5EA7";
+  }
+}
+function showVerbAiBox(id,text,isLimit=false){
+  const b=document.getElementById(id); if(!b) return;
+  b.innerHTML=`<div class="ai-lbl">🤖 AI Feedback</div>${text.replace(/\n/g,"<br>")}`;
+  b.style.borderColor=isLimit?"rgba(181,72,42,0.3)":"rgba(74,144,217,0.25)";
+  b.classList.add("show");
+}
+async function askVerbAI(btn){
+  const row=btn.closest(".q-row");
+  const qid=row.dataset.qid;
+  const first=row.querySelector(".q-word")?.textContent||"";
+  const sesVal=row.querySelector(".f-ses")?.value.trim()||"";
+  const secVal=row.querySelector(".f-second")?.value.trim()||"";
+  const thrVal=row.querySelector(".f-third")?.value.trim()||"";
+  const fouVal=row.querySelector(".f-fourth")?.value.trim()||"";
+  const cSes=row.dataset.ses; const cSec=row.dataset.second;
+  const cThr=row.dataset.third; const cFou=row.dataset.fourth;
+  if(!sesVal&&!secVal&&!thrVal&&!fouVal){showVerbAiBox("ai-vbox-"+qid,"Please type the verb forms first.");return;}
+  const p=loadProgress();
+  const limit=getAiLimit();
+  if(!isUnlimitedPlan(p)&&aiUsedCount>=limit){
+    showVerbAiBox("ai-vbox-"+qid,"⚠️ Plan limit reached!",true);
+    document.getElementById("ai-upgrade-popup").classList.add("show");
+    setTimeout(function(){document.getElementById("ai-upgrade-popup").classList.remove("show");},8000);
+    return;
+  }
+  btn.disabled=true;btn.textContent="⏳...";
+  const sys=`You are an English teacher for students learning English. Give feedback on verb forms entirely in simple, clear English — no Urdu or Roman Urdu. Max 4 lines:
+1. Batao konsi form galat hai aur kyun
+2. Sahi forms likho: s/es, 2nd, 3rd, 4th
+3. Ek example sentence with the correct form
+4. Memory trick (if any)
+Keep simple and encouraging.`;
+  const usr=`Verb (1st form): "${first}"
+Student wrote — s/es: "${sesVal}", 2nd: "${secVal}", 3rd: "${thrVal}", 4th: "${fouVal}"
+Correct forms — s/es: "${cSes}", 2nd: "${cSec}", 3rd: "${cThr}", 4th: "${cFou}"
+Give feedback.`;
+  try{
+    const res=await fetch("https://english-notebook-ai.hafiz-hafeez-ur-rehman2022.workers.dev",{method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({model:"claude-haiku-4-5-20251001",max_tokens:220,system:sys,messages:[{role:"user",content:usr}]})});
+    if(!res.ok) throw new Error("API "+res.status);
+    const d=await res.json();
+    const txt=d.content?.find(b=>b.type==="text")?.text||"No feedback received.";
+    aiUsedCount++; updateAiCounter(); showVerbAiBox("ai-vbox-"+qid,txt);
+  }catch(e){showVerbAiBox("ai-vbox-"+qid,"AI error: "+e.message);}
+  finally{btn.disabled=false;btn.textContent="✨ Ask AI";}
+}
+updateAiCounter();
+
+</script>
+
+
+<div class="ai-upgrade-popup" id="ai-upgrade-popup">
+  <button onclick="document.getElementById('ai-upgrade-popup').classList.remove('show')" style="position:absolute;top:8px;right:12px;cursor:pointer;background:none;border:none;color:white;font-size:18px;">✕</button>
+  <div style="width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center;margin:0 auto 8px;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4"/><path d="M12 18v4"/><path d="M4.9 4.9l2.8 2.8"/><path d="M16.3 16.3l2.8 2.8"/><path d="M2 12h4"/><path d="M18 12h4"/><path d="M4.9 19.1l2.8-2.8"/><path d="M16.3 7.7l2.8-2.8"/><circle cx="12" cy="12" r="3"/></svg></div>
+  <strong>AI Grammar Coach</strong><br>
+  <span style="opacity:0.8;font-size:12.5px;">You've used your 5 free AI checks.</span><br><br>
+  Upgrade for more AI feedback — plans start at <strong>Rs. 300/month</strong><br><br>
+  <a href="pricing.html">Upgrade Now →</a>
+</div>
+
+
+<script src="en-ai.js">
+/* ── Dark Mode ── */
+function toggleDark(){
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const newTheme = isDark ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', newTheme);
+  localStorage.setItem('en_theme', newTheme);
+  const btn = document.getElementById('dark-toggle');
+  if(btn) btn.textContent = newTheme === 'dark' ? '☀️ Light' : '🌙 Dark';
+}
+(function(){
+  const saved = localStorage.getItem('en_theme');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const theme = saved || (prefersDark ? 'dark' : 'light');
+  if(theme === 'dark'){
+    document.documentElement.setAttribute('data-theme', 'dark');
+    const btn = document.getElementById('dark-toggle');
+    if(btn) btn.textContent = '☀️ Light';
+  }
+})();
+
+</script>
+
+<script src="en-gamification.js"></script>
+</body>
+</html>

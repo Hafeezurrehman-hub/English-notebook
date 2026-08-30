@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="en-guard.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Custom Quiz — EnglishNotebook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--ink:#1B2A4A;--paper:#F7F4EC;--paper-line:#E4DFD0;--green:#2F6F5E;--clay:#B5482A;--muted:#8A8370;--card:#FFFFFF;}
+  [data-theme="dark"]{--ink:#E8E4DA;--paper:#141B2D;--paper-line:#1F2D45;--green:#4CAF8A;--clay:#E07055;--muted:#7A8FA6;--card:#1A2540;}
+  *{box-sizing:border-box;} html,body{margin:0;padding:0;overflow-x:hidden;max-width:100vw;}
+  body{background:var(--paper);color:var(--ink);font-family:'Inter',sans-serif;min-height:100vh;}
+  [data-theme="dark"] body{background:var(--paper);color:var(--ink);}
+
+  header{border-bottom:2px solid var(--ink);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:rgba(247,244,236,0.94);backdrop-filter:blur(6px);z-index:10;}
+  [data-theme="dark"] header{background:rgba(20,27,45,0.96)!important;}
+  .brand{font-family:'Fraunces',serif;font-weight:700;font-size:20px;}
+  .brand span{color:var(--green);}
+  .back-link{font-size:14px;font-weight:600;color:var(--ink);text-decoration:none;}
+  .back-link:hover{color:var(--green);}
+  #dark-toggle{background:none;border:1.5px solid var(--paper-line);border-radius:20px;padding:5px 11px;cursor:pointer;color:var(--ink);font-family:'Inter',sans-serif;font-size:12px;font-weight:600;}
+
+  main{max-width:860px;margin:0 auto;padding:40px 24px 100px;}
+  .eyebrow{font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:var(--green);font-weight:600;margin-bottom:10px;}
+  h1{font-family:'Fraunces',serif;font-size:36px;margin:0 0 8px;}
+  .sub{font-size:14px;color:var(--muted);margin:0 0 32px;line-height:1.6;}
+
+  /* Setup Screen */
+  #setup-screen{display:block;}
+  #quiz-screen{display:none;}
+  #result-screen{display:none;}
+
+  .setup-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px;}
+  .setup-card{background:var(--card);border:2px solid var(--paper-line);border-radius:14px;padding:20px;cursor:pointer;transition:all 0.15s;position:relative;}
+  .setup-card:hover{border-color:var(--green);}
+  .setup-card.selected{border-color:var(--green);box-shadow:3px 3px 0 var(--green);}
+  .setup-card .sc-icon{width:44px;height:44px;border-radius:50%;background:rgba(47,111,94,0.1);display:flex;align-items:center;justify-content:center;margin-bottom:10px;}
+  .setup-card .sc-icon svg{width:22px;height:22px;}
+  .setup-card .sc-name{font-family:'Fraunces',serif;font-size:17px;font-weight:600;margin-bottom:4px;}
+  .setup-card .sc-desc{font-size:12.5px;color:var(--muted);}
+  .setup-card .sc-check{position:absolute;top:12px;right:14px;font-size:18px;display:none;}
+  .setup-card.selected .sc-check{display:block;}
+
+  .difficulty-row{display:flex;gap:10px;margin-bottom:24px;}
+  .diff-btn{flex:1;padding:10px;border-radius:10px;border:1.5px solid var(--paper-line);background:var(--card);cursor:pointer;text-align:center;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:var(--muted);transition:all 0.15s;}
+  .diff-btn:hover{border-color:var(--ink);color:var(--ink);}
+  .diff-btn.selected{background:var(--ink);color:var(--paper);border-color:var(--ink);}
+
+  .count-row{display:flex;align-items:center;gap:14px;margin-bottom:28px;}
+  .count-row label{font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em;white-space:nowrap;}
+  input[type="range"]{flex:1;accent-color:var(--green);}
+  .count-val{font-family:'Fraunces',serif;font-size:22px;font-weight:700;min-width:40px;text-align:center;}
+
+  .start-btn{width:100%;padding:16px;border-radius:25px;border:none;background:linear-gradient(135deg,#1B2A4A,#2F6F5E);color:white;font-family:'Inter',sans-serif;font-size:16px;font-weight:700;cursor:pointer;letter-spacing:0.02em;}
+  .start-btn:hover{opacity:0.9;}
+  .start-btn:disabled{opacity:0.5;cursor:not-allowed;}
+
+  /* Quiz Screen */
+  .quiz-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;}
+  .quiz-progress-text{font-size:13px;color:var(--muted);}
+  .quiz-score{font-size:13px;font-weight:700;color:var(--green);}
+  .quiz-progress-bar{height:6px;background:var(--paper-line);border-radius:3px;margin-bottom:28px;overflow:hidden;}
+  .quiz-progress-fill{height:100%;background:linear-gradient(90deg,#2F6F5E,#4A90D9);border-radius:3px;transition:width 0.4s ease;}
+
+  .q-card{background:var(--card);border:2px solid var(--paper-line);border-radius:16px;padding:28px 26px;margin-bottom:20px;}
+  [data-theme="dark"] .q-card{background:var(--card);border-color:var(--paper-line);}
+  .q-card.correct{border-color:var(--green);}
+  .q-card.incorrect{border-color:var(--clay);}
+  .q-type-badge{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;padding:3px 10px;border-radius:15px;background:rgba(74,144,217,0.1);color:#4A90D9;display:inline-block;margin-bottom:14px;}
+  .q-text{font-family:'Fraunces',serif;font-size:19px;font-weight:600;margin-bottom:20px;line-height:1.4;}
+
+  .options-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .opt-btn{padding:12px 16px;border-radius:10px;border:1.5px solid var(--paper-line);background:var(--paper);color:var(--ink);font-family:'Inter',sans-serif;font-size:14px;font-weight:500;cursor:pointer;text-align:left;transition:all 0.15s;}
+  .opt-btn:hover:not(:disabled){border-color:var(--green);background:rgba(47,111,94,0.06);}
+  .opt-btn.correct-opt{background:rgba(47,111,94,0.12);border-color:var(--green);color:var(--green);font-weight:700;}
+  .opt-btn.wrong-opt{background:rgba(181,72,42,0.1);border-color:var(--clay);color:var(--clay);}
+  .opt-btn:disabled{cursor:default;}
+
+  .text-input-row{display:flex;gap:10px;}
+  .text-input-row input{flex:1;padding:12px 14px;border-radius:10px;border:1.5px solid var(--paper-line);background:var(--paper);color:var(--ink);font-family:'Inter',sans-serif;font-size:15px;}
+  .text-input-row input:focus-visible{outline:2px solid var(--green);outline-offset:1px;}
+  .check-btn{padding:12px 20px;border-radius:10px;border:none;background:var(--ink);color:var(--paper);font-family:'Inter',sans-serif;font-size:14px;font-weight:700;cursor:pointer;}
+  .check-btn:hover{background:var(--green);}
+
+  .feedback-box{margin-top:14px;padding:12px 16px;border-radius:10px;font-size:13.5px;line-height:1.6;display:none;}
+  .feedback-box.show{display:block;}
+  .feedback-box.correct{background:rgba(47,111,94,0.08);color:var(--green);border:1px solid rgba(47,111,94,0.2);}
+  .feedback-box.incorrect{background:rgba(181,72,42,0.08);color:var(--clay);border:1px solid rgba(181,72,42,0.2);}
+
+  .next-btn{width:100%;padding:13px;border-radius:25px;border:none;background:var(--ink);color:var(--paper);font-family:'Inter',sans-serif;font-size:15px;font-weight:700;cursor:pointer;margin-top:14px;display:none;}
+  .next-btn.show{display:block;}
+  .next-btn:hover{background:var(--green);}
+
+  /* Result Screen */
+  .result-card{background:var(--card);border:3px solid var(--ink);border-radius:20px;padding:40px 32px;text-align:center;box-shadow:6px 6px 0 var(--ink);}
+  .result-emoji{width:88px;height:88px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;}
+  .result-emoji svg{width:44px;height:44px;}
+  .result-title{font-family:'Fraunces',serif;font-size:32px;font-weight:700;margin-bottom:8px;}
+  .result-score{font-family:'Fraunces',serif;font-size:52px;font-weight:700;color:var(--green);margin:16px 0;}
+  .result-breakdown{display:flex;gap:20px;justify-content:center;margin:20px 0;flex-wrap:wrap;}
+  .rb-item{text-align:center;}
+  .rb-val{font-family:'Fraunces',serif;font-size:26px;font-weight:700;}
+  .rb-label{font-size:12px;color:var(--muted);}
+  .result-btns{display:flex;gap:12px;justify-content:center;margin-top:28px;flex-wrap:wrap;}
+  .rbtn{padding:12px 28px;border-radius:25px;font-family:'Inter',sans-serif;font-size:14px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block;}
+  .rbtn.primary{background:var(--ink);color:var(--paper);border:none;}
+  .rbtn.secondary{background:none;border:2px solid var(--ink);color:var(--ink);}
+  .rbtn:hover{opacity:0.85;}
+
+  /* Timer */
+  .timer-badge{font-size:13px;font-weight:700;color:var(--clay);background:rgba(181,72,42,0.1);padding:4px 12px;border-radius:15px;}
+
+  .progress-bar-wrap{position:sticky;bottom:0;z-index:5;background:rgba(247,244,236,0.95);backdrop-filter:blur(6px);border-top:1.5px solid var(--ink);padding:14px 24px;display:flex;align-items:center;gap:16px;}
+  [data-theme="dark"] .progress-bar-wrap{background:rgba(20,27,45,0.97)!important;border-color:var(--paper-line)!important;}
+  .pb-label{font-size:13px;color:var(--muted);}
+  .progress-track{flex:1;height:8px;background:var(--paper-line);border-radius:4px;overflow:hidden;}
+  .progress-fill{height:100%;background:var(--green);transition:width 0.3s;}
+  .pb-stat{font-size:13px;font-weight:700;}
+
+  @media(max-width:600px){
+    .setup-grid{grid-template-columns:1fr;}
+    .options-grid{grid-template-columns:1fr;}
+    .result-score{font-size:40px;}
+  }
+</style>
+</head>
+<body>
+<header>
+  <a href="index.html" class="back-link">← Home</a>
+  <div class="brand">English<span>Notebook</span></div>
+  <button id="dark-toggle" onclick="toggleDark()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px;"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>Dark</button>
+</header>
+
+<main>
+  <!-- SETUP SCREEN -->
+  <div id="setup-screen">
+    <div class="eyebrow">Practice Mode</div>
+    <h1>Custom Quiz</h1>
+    <p class="sub">Choose your topics, difficulty, and number of questions — then test yourself!</p>
+
+    <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);margin-bottom:12px;">Select Topics (pick one or more)</div>
+    <div class="setup-grid" id="topic-grid"></div>
+
+    <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);margin-bottom:10px;">Difficulty</div>
+    <div class="difficulty-row">
+      <button class="diff-btn selected" onclick="selectDiff('easy')" id="diff-easy">Easy</button>
+      <button class="diff-btn" onclick="selectDiff('medium')" id="diff-medium">Medium</button>
+      <button class="diff-btn" onclick="selectDiff('hard')" id="diff-hard">Hard</button>
+      <button class="diff-btn" onclick="selectDiff('mixed')" id="diff-mixed">Mixed</button>
+    </div>
+
+    <div class="count-row">
+      <label>Questions</label>
+      <input type="range" min="5" max="30" value="10" step="5" id="q-count" oninput="document.getElementById('q-count-val').textContent=this.value">
+      <div class="count-val" id="q-count-val">10</div>
+    </div>
+
+    <button class="start-btn" onclick="startQuiz()" id="start-btn">Start Quiz →</button>
+  </div>
+
+  <!-- QUIZ SCREEN -->
+  <div id="quiz-screen">
+    <div class="quiz-header">
+      <span class="quiz-progress-text" id="q-progress-text">Question 1 of 10</span>
+      <span class="timer-badge" id="timer-badge">⏱ 0:00</span>
+      <span class="quiz-score" id="q-score-text">Score: 0</span>
+    </div>
+    <div class="quiz-progress-bar"><div class="quiz-progress-fill" id="q-progress-fill" style="width:0%"></div></div>
+    <div id="q-container"></div>
+  </div>
+
+  <!-- RESULT SCREEN -->
+  <div id="result-screen">
+    <div class="result-card" id="result-card"></div>
+  </div>
+</main>
+
+<div class="progress-bar-wrap" id="bottom-bar" style="display:none">
+  <span class="pb-label">Quiz progress</span>
+  <div class="progress-track"><div class="progress-fill" id="bottom-fill"></div></div>
+  <span class="pb-stat" id="bottom-stat">0 / 0</span>
+</div>
+
+<script src="en-gamification.js"></script>
+<script src="en-ai.js"></script>
+<script src="dark-mode.js"></script>
+<script>
+/* ── Question Banks ── */
+const QUESTION_BANKS = {
+  nouns: {
+    name:"Nouns", icon:'<svg viewBox="0 0 24 24" fill="none" stroke="#2F6F5E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg>',
+    questions:[
+      {type:"mcq",q:"Which is a Proper Noun?",opts:["city","Ali","happiness","team"],ans:"Ali"},
+      {type:"mcq",q:"Which is an Abstract Noun?",opts:["table","book","honesty","river"],ans:"honesty"},
+      {type:"mcq",q:"'Army' is which kind of noun?",opts:["Common","Proper","Collective","Abstract"],ans:"Collective"},
+      {type:"mcq",q:"Which is a Material Noun?",opts:["happiness","gold","school","Ali"],ans:"gold"},
+      {type:"mcq",q:"Which is an Uncountable Noun?",opts:["book","car","water","student"],ans:"water"},
+      {type:"mcq",q:"Which is a Concrete Noun?",opts:["love","table","courage","wisdom"],ans:"table"},
+      {type:"mcq",q:"'Lahore' is which kind of noun?",opts:["Common","Proper","Collective","Material"],ans:"Proper"},
+      {type:"mcq",q:"Which is a Countable Noun?",opts:["milk","sugar","air","apple"],ans:"apple"},
+      {type:"mcq",q:"'Iron' is which kind of noun?",opts:["Abstract","Collective","Material","Proper"],ans:"Material"},
+      {type:"mcq",q:"Which is an Abstract Noun?",opts:["chair","door","phone","freedom"],ans:"freedom"},
+    ]
+  },
+  pronouns: {
+    name:"Pronouns", icon:'<svg viewBox="0 0 24 24" fill="none" stroke="#2F6F5E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-7 8-7s8 3 8 7"/></svg>',
+    questions:[
+      {type:"mcq",q:"Which is a Personal Pronoun?",opts:["my","myself","this","he"],ans:"he"},
+      {type:"mcq",q:"Which is a Possessive Pronoun?",opts:["I","me","my","myself"],ans:"my"},
+      {type:"mcq",q:"Which is a Self/Reflexive Pronoun?",opts:["who","that","myself","their"],ans:"myself"},
+      {type:"mcq",q:"Which is a Demonstrative Pronoun?",opts:["who","he","this","my"],ans:"this"},
+      {type:"mcq",q:"Which is an Interrogative Pronoun?",opts:["myself","those","their","who"],ans:"who"},
+      {type:"mcq",q:"Possessive form of 'They' is?",opts:["them","their","themselves","theirs"],ans:"their"},
+      {type:"mcq",q:"Self form of 'She' is?",opts:["herself","himself","itself","themselves"],ans:"herself"},
+      {type:"mcq",q:"Which pronoun replaces 'the book'?",opts:["he","she","it","they"],ans:"it"},
+      {type:"mcq",q:"'Those' is which kind of pronoun?",opts:["Personal","Possessive","Demonstrative","Interrogative"],ans:"Demonstrative"},
+      {type:"mcq",q:"Possessive of 'I' is?",opts:["me","my","mine","myself"],ans:"my"},
+    ]
+  },
+  verbs: {
+    name:"Verb Forms", icon:'<svg viewBox="0 0 24 24" fill="none" stroke="#2F6F5E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2.1l4 4-4 4"/><path d="M3 12.2v-2a4 4 0 0 1 4-4h14"/><path d="M7 21.9l-4-4 4-4"/><path d="M21 11.8v2a4 4 0 0 1-4 4H3"/></svg>',
+    questions:[
+      {type:"mcq",q:"2nd form of 'go' is?",opts:["goed","goes","went","gone"],ans:"went"},
+      {type:"mcq",q:"3rd form of 'eat' is?",opts:["ate","eaten","eats","eating"],ans:"eaten"},
+      {type:"mcq",q:"4th form of 'write' is?",opts:["wrote","written","writes","writing"],ans:"writing"},
+      {type:"mcq",q:"2nd form of 'break' is?",opts:["broken","broke","breaks","breaking"],ans:"broke"},
+      {type:"mcq",q:"3rd form of 'see' is?",opts:["saw","sees","seen","seeing"],ans:"seen"},
+      {type:"mcq",q:"s/es form of 'fly' is?",opts:["flys","flies","flied","flying"],ans:"flies"},
+      {type:"mcq",q:"2nd form of 'buy' is?",opts:["buyed","boughted","bought","buys"],ans:"bought"},
+      {type:"mcq",q:"4th form of 'run' is?",opts:["ran","run","runs","running"],ans:"running"},
+      {type:"mcq",q:"3rd form of 'make' is?",opts:["maked","made","makes","making"],ans:"made"},
+      {type:"mcq",q:"2nd form of 'know' is?",opts:["knowed","knew","known","knows"],ans:"knew"},
+    ]
+  },
+  tenses: {
+    name:"Tenses", icon:'<svg viewBox="0 0 24 24" fill="none" stroke="#2F6F5E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></svg>',
+    questions:[
+      {type:"mcq",q:"'I have eaten food.' — Which tense?",opts:["Past Simple","Present Perfect","Past Perfect","Present Simple"],ans:"Present Perfect"},
+      {type:"mcq",q:"'She was reading.' — Which tense?",opts:["Past Simple","Present Continuous","Past Continuous","Past Perfect"],ans:"Past Continuous"},
+      {type:"mcq",q:"'They will play.' — Which tense?",opts:["Future Simple","Future Perfect","Present Simple","Future Continuous"],ans:"Future Simple"},
+      {type:"mcq",q:"'He had gone.' — Which tense?",opts:["Past Simple","Present Perfect","Past Perfect","Past Continuous"],ans:"Past Perfect"},
+      {type:"mcq",q:"'We are studying.' — Which tense?",opts:["Present Simple","Present Perfect","Past Continuous","Present Continuous"],ans:"Present Continuous"},
+      {type:"mcq",q:"'She will have finished by 5pm.' — Which tense?",opts:["Future Simple","Future Perfect","Future Continuous","Present Perfect"],ans:"Future Perfect"},
+      {type:"mcq",q:"'I go to school daily.' — Which tense?",opts:["Past Simple","Present Perfect","Present Simple","Present Continuous"],ans:"Present Simple"},
+      {type:"mcq",q:"'He has been working since morning.' — Which tense?",opts:["Present Perfect","Past Perfect Continuous","Present Continuous","Present Perfect Continuous"],ans:"Present Perfect Continuous"},
+      {type:"mcq",q:"Helping verb for Past Simple (Q/Neg)?",opts:["do/does","will","did","had"],ans:"did"},
+      {type:"mcq",q:"'Was/were + 4th form' is structure of?",opts:["Past Simple","Past Perfect","Past Continuous","Past Perfect Continuous"],ans:"Past Continuous"},
+    ]
+  },
+  conjunctions: {
+    name:"Conjunctions", icon:'<svg viewBox="0 0 24 24" fill="none" stroke="#2F6F5E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><line x1="8" y1="12" x2="16" y2="12"/></svg>',
+    questions:[
+      {type:"mcq",q:"'___ it rains, we fry fritters.' — Fill in:",opts:["Because","Although","Whenever","Since"],ans:"Whenever"},
+      {type:"mcq",q:"'I was late ___ the traffic.' — Fill in:",opts:["although","because of","whenever","unless"],ans:"because of"},
+      {type:"mcq",q:"Which is a Coordinating Conjunction?",opts:["although","because","but","whenever"],ans:"but"},
+      {type:"mcq",q:"'___ you study hard, you will pass.' — Fill in:",opts:["Although","Unless","If","Since"],ans:"If"},
+      {type:"mcq",q:"'She left ___ the meeting ended.' — Fill in:",opts:["although","as soon as","unless","whenever"],ans:"as soon as"},
+      {type:"mcq",q:"'FANBOYS' stands for which conjunctions?",opts:["Subordinating","Coordinating","Conditional","Time"],ans:"Coordinating"},
+      {type:"mcq",q:"'___ he is rich, he is not happy.' — Fill in:",opts:["Because","Since","Although","Unless"],ans:"Although"},
+      {type:"mcq",q:"'I will wait ___ you return.' — Fill in:",opts:["although","since","unless","until"],ans:"until"},
+      {type:"mcq",q:"Which means 'if not'?",opts:["although","unless","whenever","since"],ans:"unless"},
+      {type:"mcq",q:"'Since' as conjunction means?",opts:["after","because/as","unless","until"],ans:"because/as"},
+    ]
+  },
+  modals: {
+    name:"Modals", icon:'<svg viewBox="0 0 24 24" fill="none" stroke="#2F6F5E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.4A8.5 8.5 0 1 1 21 11.5Z"/><path d="M8 12h.01"/><path d="M12 12h.01"/><path d="M16 12h.01"/></svg>',
+    questions:[
+      {type:"mcq",q:"'You should drink water.' — Modal means?",opts:["Ability","Obligation","Advice","Logical Conclusion"],ans:"Advice"},
+      {type:"mcq",q:"'I can swim.' — Modal means?",opts:["Obligation","Ability","Strong Advice","Logical Conclusion"],ans:"Ability"},
+      {type:"mcq",q:"'You must wear a helmet.' — Modal means?",opts:["Ability","Advice","Strong Advice","Obligation"],ans:"Strong Advice"},
+      {type:"mcq",q:"'I have to submit this today.' — Modal means?",opts:["Ability","Advice","Strong Advice","Obligation"],ans:"Obligation"},
+      {type:"mcq",q:"'He must be at home.' — Modal means?",opts:["Obligation","Strong Advice","Logical Conclusion","Ability"],ans:"Logical Conclusion"},
+      {type:"mcq",q:"Past of 'can' is?",opts:["will can","could","would","should"],ans:"could"},
+      {type:"mcq",q:"'Must' formula for Present Continuous tense?",opts:["must + 1st form","must be + 4th form","must have + 3rd form","must have been + 4th form"],ans:"must be + 4th form"},
+      {type:"mcq",q:"'Should have + 3rd form' expresses?",opts:["Present advice","Future advice","Past advice/regret","Obligation"],ans:"Past advice/regret"},
+      {type:"mcq",q:"'Will have to' expresses?",opts:["Past obligation","Present obligation","Future obligation","Ability"],ans:"Future obligation"},
+      {type:"mcq",q:"'Must have + 3rd form' is for which tense (logical conclusion)?",opts:["Present Simple","Future Perfect","Past Simple","Present Perfect"],ans:"Past Simple"},
+    ]
+  }
+};
+
+let selectedTopics = [];
+let selectedDiff = 'easy';
+let quizQuestions = [];
+let currentQ = 0;
+let score = 0;
+let startTime = null;
+let timerInterval = null;
+let answered = false;
+
+/* ── Setup ── */
+function renderTopics(){
+  const grid = document.getElementById('topic-grid');
+  grid.innerHTML = Object.entries(QUESTION_BANKS).map(([key, bank])=>`
+    <div class="setup-card" id="topic-${key}" onclick="toggleTopic('${key}')">
+      <div class="sc-icon">${bank.icon}</div>
+      <div class="sc-name">${bank.name}</div>
+      <div class="sc-desc">${bank.questions.length} questions available</div>
+      <div class="sc-check">✅</div>
+    </div>
+  `).join('');
+}
+
+function toggleTopic(key){
+  const idx = selectedTopics.indexOf(key);
+  if(idx === -1) selectedTopics.push(key);
+  else selectedTopics.splice(idx, 1);
+  document.getElementById(`topic-${key}`).classList.toggle('selected', selectedTopics.includes(key));
+  document.getElementById('start-btn').disabled = selectedTopics.length === 0;
+}
+
+function selectDiff(d){
+  selectedDiff = d;
+  document.querySelectorAll('.diff-btn').forEach(b=>b.classList.remove('selected'));
+  document.getElementById(`diff-${d}`).classList.add('selected');
+}
+
+/* ── Quiz Logic ── */
+function startQuiz(){
+  if(selectedTopics.length === 0){ alert('Please select at least one topic!'); return; }
+  const count = parseInt(document.getElementById('q-count').value);
+
+  // Gather questions from selected topics
+  let pool = [];
+  selectedTopics.forEach(topic=>{
+    pool = pool.concat(QUESTION_BANKS[topic].questions.map(q=>({...q, topic})));
+  });
+
+  // Shuffle and pick
+  pool = pool.sort(()=>Math.random()-0.5);
+  quizQuestions = pool.slice(0, Math.min(count, pool.length));
+  currentQ = 0; score = 0;
+
+  document.getElementById('setup-screen').style.display = 'none';
+  document.getElementById('quiz-screen').style.display = 'block';
+  document.getElementById('bottom-bar').style.display = 'flex';
+
+  startTime = Date.now();
+  timerInterval = setInterval(updateTimer, 1000);
+  renderQuestion();
+}
+
+function updateTimer(){
+  const secs = Math.floor((Date.now()-startTime)/1000);
+  const m = Math.floor(secs/60), s = secs%60;
+  document.getElementById('timer-badge').textContent = `⏱ ${m}:${s.toString().padStart(2,'0')}`;
+}
+
+function renderQuestion(){
+  answered = false;
+  const q = quizQuestions[currentQ];
+  const pct = Math.round((currentQ/quizQuestions.length)*100);
+
+  document.getElementById('q-progress-text').textContent = `Question ${currentQ+1} of ${quizQuestions.length}`;
+  document.getElementById('q-score-text').textContent = `Score: ${score}`;
+  document.getElementById('q-progress-fill').style.width = pct+'%';
+  document.getElementById('bottom-fill').style.width = pct+'%';
+  document.getElementById('bottom-stat').textContent = `${currentQ+1} / ${quizQuestions.length}`;
+
+  let optionsHtml = '';
+  if(q.type === 'mcq'){
+    optionsHtml = `<div class="options-grid">
+      ${q.opts.map((opt,i)=>`
+        <button class="opt-btn" onclick="checkMCQ('${opt.replace(/'/g,"\\'")}', this)" data-ans="${opt}">
+          ${['A','B','C','D'][i]}. ${opt}
+        </button>
+      `).join('')}
+    </div>`;
+  } else {
+    optionsHtml = `<div class="text-input-row">
+      <input type="text" id="text-ans" placeholder="Type your answer..." onkeydown="if(event.key==='Enter')checkText()">
+      <button class="check-btn" onclick="checkText()">Check</button>
+    </div>`;
+  }
+
+  document.getElementById('q-container').innerHTML = `
+    <div class="q-card" id="q-card">
+      <span class="q-type-badge">${QUESTION_BANKS[q.topic]?.name || q.topic}</span>
+      <div class="q-text">${q.q}</div>
+      ${optionsHtml}
+      <div class="feedback-box" id="feedback-box"></div>
+      <button class="next-btn" id="next-btn" onclick="nextQuestion()">
+        ${currentQ+1 < quizQuestions.length ? 'Next Question →' : 'See Results →'}
+      </button>
+    </div>
+  `;
+}
+
+function checkMCQ(selected, btn){
+  if(answered) return;
+  answered = true;
+  const q = quizQuestions[currentQ];
+  const isCorrect = selected === q.ans;
+  if(isCorrect) score++;
+
+  document.querySelectorAll('.opt-btn').forEach(b=>{
+    b.disabled = true;
+    if(b.dataset.ans === q.ans) b.classList.add('correct-opt');
+    if(b === btn && !isCorrect) b.classList.add('wrong-opt');
+  });
+
+  showFeedback(isCorrect, q.ans);
+  document.getElementById('q-score-text').textContent = `Score: ${score}`;
+}
+
+function checkText(){
+  if(answered) return;
+  answered = true;
+  const q = quizQuestions[currentQ];
+  const input = document.getElementById('text-ans');
+  const val = input.value.trim().toLowerCase();
+  const isCorrect = val === q.ans.toLowerCase();
+  if(isCorrect) score++;
+  input.disabled = true;
+  showFeedback(isCorrect, q.ans);
+  document.getElementById('q-score-text').textContent = `Score: ${score}`;
+}
+
+function showFeedback(isCorrect, correctAns){
+  const fb = document.getElementById('feedback-box');
+  fb.className = 'feedback-box show ' + (isCorrect?'correct':'incorrect');
+  fb.innerHTML = isCorrect
+    ? `✅ <strong>Correct!</strong> Well done!`
+    : `❌ <strong>Incorrect.</strong> Correct answer: <strong>${correctAns}</strong>`;
+  document.getElementById('q-card').classList.add(isCorrect?'correct':'incorrect');
+  document.getElementById('next-btn').classList.add('show');
+}
+
+function nextQuestion(){
+  currentQ++;
+  if(currentQ >= quizQuestions.length){ showResults(); return; }
+  renderQuestion();
+}
+
+function showResults(){
+  clearInterval(timerInterval);
+  const totalSecs = Math.floor((Date.now()-startTime)/1000);
+  const m = Math.floor(totalSecs/60), s = totalSecs%60;
+  const pct = Math.round((score/quizQuestions.length)*100);
+  const tier = pct>=90 ? 'gold' : pct>=70 ? 'green' : pct>=50 ? 'blue' : 'clay';
+  const tierColors = { gold:['#B8860B','rgba(184,134,11,0.14)'], green:['#2F6F5E','rgba(47,111,94,0.12)'], blue:['#4A90D9','rgba(74,144,217,0.12)'], clay:['#B5482A','rgba(181,72,42,0.12)'] };
+  const [tColor, tBg] = tierColors[tier];
+  const icons = {
+    gold:'<path d="M8 21h8"/><path d="M12 17v4"/><path d="M7 4h10v5a5 5 0 0 1-10 0V4Z"/><path d="M17 5h3a2 2 0 0 1-2 4h-1"/><path d="M7 5H4a2 2 0 0 0 2 4h1"/>',
+    green:'<path d="M12 2l2.5 6.5L21 9l-5 4.5L17.5 21 12 17l-5.5 4L8 13.5 3 9l6.5-.5L12 2z"/>',
+    blue:'<path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H10a2 2 0 0 1-2-2v-8.76a2 2 0 0 1 .5-1.32L13 4a2 2 0 0 1 2 1.88Z"/>',
+    clay:'<path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/>'
+  };
+  const emoji = `<svg viewBox="0 0 24 24" fill="none" stroke="${tColor}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${icons[tier]}</svg>`;
+  const msg = pct>=90?'Outstanding!':pct>=70?'Great Job!':pct>=50?'Good Effort!':'Keep Practicing!';
+
+  document.getElementById('quiz-screen').style.display = 'none';
+  document.getElementById('result-screen').style.display = 'block';
+  document.getElementById('bottom-bar').style.display = 'none';
+
+  document.getElementById('result-card').innerHTML = `
+    <div class="result-emoji" style="background:${tBg}">${emoji}</div>
+    <div class="result-title">${msg}</div>
+    <div class="result-score">${pct}%</div>
+    <div class="result-breakdown">
+      <div class="rb-item"><div class="rb-val" style="color:var(--green)">${score}</div><div class="rb-label">Correct</div></div>
+      <div class="rb-item"><div class="rb-val" style="color:var(--clay)">${quizQuestions.length-score}</div><div class="rb-label">Wrong</div></div>
+      <div class="rb-item"><div class="rb-val">${m}:${s.toString().padStart(2,'0')}</div><div class="rb-label">Time</div></div>
+    </div>
+    <div style="font-size:13.5px;color:var(--muted);margin-top:8px;">Topics: ${selectedTopics.map(t=>QUESTION_BANKS[t].name).join(', ')}</div>
+    <div class="result-btns">
+      <button class="rbtn primary" onclick="location.reload()">New Quiz</button>
+      <a href="index.html" class="rbtn secondary">← Home</a>
+      <a href="badges.html" class="rbtn secondary">Badges</a>
+    </div>
+  `;
+
+  if(typeof EN_GAME !== 'undefined'){
+    if(pct >= 100) EN_GAME.confetti();
+    const stats = EN_GAME.getLessonStats();
+    EN_GAME.checkBadges(stats);
+  }
+}
+
+/* ── Init ── */
+renderTopics();
+document.getElementById('start-btn').disabled = true;
+</script>
+</body>
+</html>

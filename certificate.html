@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="en-guard.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Certificate — EnglishNotebook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  :root{--ink:#1B2A4A;--paper:#F7F4EC;--paper-line:#E4DFD0;--green:#2F6F5E;--clay:#B5482A;--muted:#8A8370;--card:#FFFFFF;}
+  [data-theme="dark"]{--ink:#E8E4DA;--paper:#141B2D;--paper-line:#1F2D45;--green:#4CAF8A;--muted:#7A8FA6;--card:#1A2540;}
+  *{box-sizing:border-box;} html,body{margin:0;padding:0;overflow-x:hidden;max-width:100vw;}
+  body{background:var(--paper);color:var(--ink);font-family:'Inter',sans-serif;min-height:100vh;}
+  [data-theme="dark"] body{background:var(--paper);}
+  header{border-bottom:2px solid var(--ink);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:rgba(247,244,236,0.94);backdrop-filter:blur(6px);z-index:10;}
+  [data-theme="dark"] header{background:rgba(20,27,45,0.96)!important;}
+  .brand{font-family:'Fraunces',serif;font-weight:700;font-size:20px;}
+  .brand span{color:var(--green);}
+  .back-link{font-size:14px;font-weight:600;color:var(--ink);text-decoration:none;}
+  #dark-toggle{background:none;border:1.5px solid var(--paper-line);border-radius:20px;padding:5px 11px;cursor:pointer;color:var(--ink);font-family:'Inter',sans-serif;font-size:12px;font-weight:600;}
+
+  main{max-width:900px;margin:0 auto;padding:40px 24px 80px;}
+  .eyebrow{font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:var(--green);font-weight:600;margin-bottom:10px;}
+  h1{font-family:'Fraunces',serif;font-size:34px;margin:0 0 8px;}
+  .sub{font-size:14px;color:var(--muted);margin:0 0 32px;line-height:1.6;}
+
+  /* Progress check */
+  .progress-check{background:var(--card);border:1.5px solid var(--paper-line);border-radius:14px;padding:20px 24px;margin-bottom:28px;}
+  [data-theme="dark"] .progress-check{background:var(--card);}
+  .pc-title{font-family:'Fraunces',serif;font-size:17px;font-weight:600;margin-bottom:14px;}
+  .lesson-progress-row{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--paper-line);}
+  .lesson-progress-row:last-child{border:none;}
+  .lp-name{font-size:13.5px;flex:1;}
+  .lp-bar-wrap{width:120px;height:6px;background:var(--paper-line);border-radius:3px;overflow:hidden;}
+  .lp-bar{height:100%;border-radius:3px;transition:width 0.4s;}
+  .lp-pct{font-size:12px;font-weight:700;width:38px;text-align:right;}
+  .lp-check{font-size:16px;width:24px;text-align:center;}
+
+  .overall-pct-card{background:linear-gradient(135deg,#1B2A4A,#2F6F5E);color:white;border-radius:14px;padding:20px 24px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;}
+  .opc-label{font-size:13px;opacity:0.8;}
+  .opc-val{font-family:'Fraunces',serif;font-size:42px;font-weight:700;}
+  .opc-msg{font-size:14px;opacity:0.85;margin-top:4px;}
+
+  /* Unlock status */
+  .unlock-card{border-radius:14px;padding:18px 22px;margin-bottom:28px;text-align:center;}
+  .unlock-card.locked{background:rgba(181,72,42,0.08);border:1.5px solid rgba(181,72,42,0.2);}
+  .unlock-card.unlocked{background:rgba(47,111,94,0.08);border:1.5px solid rgba(47,111,94,0.3);}
+  .unlock-icon{width:44px;height:44px;border-radius:50%;background:rgba(138,131,112,0.12);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;}
+  .unlock-msg{font-size:14px;line-height:1.6;}
+
+  /* Certificate preview */
+  .cert-preview-wrap{margin-bottom:24px;display:none;}
+  .cert-preview-wrap.show{display:block;}
+
+  /* THE CERTIFICATE */
+  #certificate{
+    width:794px; min-height:562px;
+    background:#FDFBF5;
+    border:3px solid #1B2A4A;
+    border-radius:0;
+    padding:48px 56px;
+    position:relative;
+    font-family:'Playfair Display',serif;
+    overflow:hidden;
+  }
+  #certificate .cert-border{
+    position:absolute;inset:8px;
+    border:1.5px solid #2F6F5E;
+    border-radius:0;
+    pointer-events:none;
+  }
+  #certificate .cert-corner{
+    position:absolute;width:32px;height:32px;
+  }
+  #certificate .cert-corner.tl{top:16px;left:16px;border-top:3px solid #2F6F5E;border-left:3px solid #2F6F5E;}
+  #certificate .cert-corner.tr{top:16px;right:16px;border-top:3px solid #2F6F5E;border-right:3px solid #2F6F5E;}
+  #certificate .cert-corner.bl{bottom:16px;left:16px;border-bottom:3px solid #2F6F5E;border-left:3px solid #2F6F5E;}
+  #certificate .cert-corner.br{bottom:16px;right:16px;border-bottom:3px solid #2F6F5E;border-right:3px solid #2F6F5E;}
+
+  #certificate .cert-header{text-align:center;margin-bottom:24px;}
+  #certificate .cert-logo{font-family:'Fraunces',serif;font-size:22px;font-weight:700;color:#1B2A4A;letter-spacing:0.5px;}
+  #certificate .cert-logo span{color:#2F6F5E;}
+  #certificate .cert-tagline{font-family:'Inter',sans-serif;font-size:10px;color:#8A8370;text-transform:uppercase;letter-spacing:0.15em;margin-top:4px;}
+
+  #certificate .cert-divider{width:80px;height:2px;background:linear-gradient(90deg,transparent,#2F6F5E,transparent);margin:16px auto;}
+
+  #certificate .cert-title{font-size:13px;font-family:'Inter',sans-serif;text-transform:uppercase;letter-spacing:0.2em;color:#8A8370;text-align:center;margin-bottom:10px;}
+  #certificate .cert-main-title{font-size:36px;font-weight:700;font-style:italic;color:#1B2A4A;text-align:center;line-height:1.2;margin-bottom:16px;}
+
+  #certificate .cert-presented{font-family:'Inter',sans-serif;font-size:12px;color:#8A8370;text-align:center;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;}
+  #certificate .cert-name{font-size:34px;font-weight:700;color:#2F6F5E;text-align:center;margin-bottom:16px;border-bottom:2px solid #E4DFD0;padding-bottom:12px;}
+
+  #certificate .cert-desc{font-family:'Inter',sans-serif;font-size:13px;color:#4A4A4A;text-align:center;line-height:1.7;margin-bottom:20px;max-width:500px;margin-left:auto;margin-right:auto;}
+
+  #certificate .cert-stats{display:flex;justify-content:center;gap:40px;margin-bottom:24px;}
+  #certificate .cert-stat{text-align:center;}
+  #certificate .cert-stat .val{font-size:24px;font-weight:700;color:#1B2A4A;}
+  #certificate .cert-stat .lbl{font-family:'Inter',sans-serif;font-size:10px;color:#8A8370;text-transform:uppercase;letter-spacing:0.08em;margin-top:2px;}
+
+  #certificate .cert-footer{display:flex;justify-content:space-between;align-items:flex-end;margin-top:16px;}
+  #certificate .cert-sig{text-align:center;}
+  #certificate .cert-sig-line{width:120px;border-top:1.5px solid #1B2A4A;margin-bottom:6px;}
+  #certificate .cert-sig-name{font-size:13px;font-weight:700;color:#1B2A4A;}
+  #certificate .cert-sig-title{font-family:'Inter',sans-serif;font-size:10px;color:#8A8370;text-transform:uppercase;letter-spacing:0.08em;}
+  #certificate .cert-seal{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#1B2A4A,#2F6F5E);display:flex;flex-direction:column;align-items:center;justify-content:center;color:white;}
+  #certificate .cert-seal .seal-icon{font-size:28px;}
+  #certificate .cert-seal .seal-text{font-family:'Inter',sans-serif;font-size:7px;text-transform:uppercase;letter-spacing:0.1em;margin-top:2px;opacity:0.8;}
+  #certificate .cert-date{font-family:'Inter',sans-serif;font-size:10px;color:#8A8370;text-transform:uppercase;letter-spacing:0.08em;}
+
+  /* Download buttons */
+  .dl-btns{display:flex;gap:12px;flex-wrap:wrap;}
+  .dl-btn{padding:13px 24px;border-radius:25px;font-family:'Inter',sans-serif;font-size:14px;font-weight:700;cursor:pointer;border:none;display:flex;align-items:center;gap:8px;}
+  .dl-btn.primary{background:linear-gradient(135deg,#1B2A4A,#2F6F5E);color:white;}
+  .dl-btn.secondary{background:none;border:2px solid var(--ink);color:var(--ink);}
+  .dl-btn:hover{opacity:0.85;}
+  .dl-btn:disabled{opacity:0.4;cursor:not-allowed;}
+
+  @media(max-width:860px){
+    #certificate{width:100%;min-width:320px;transform-origin:top left;}
+    .cert-preview-wrap{overflow-x:auto;}
+  }
+</style>
+</head>
+<body>
+<header>
+  <a href="index.html" class="back-link">← Home</a>
+  <div class="brand">English<span>Notebook</span></div>
+  <button id="dark-toggle" onclick="toggleDark()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px;"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>Dark</button>
+</header>
+
+<main>
+  <div class="eyebrow">Achievement</div>
+  <h1>Your Certificate</h1>
+  <p class="sub">Complete at least 80% of all 9 lessons to unlock your certificate of completion.</p>
+
+  <!-- Overall progress -->
+  <div class="overall-pct-card">
+    <div>
+      <div class="opc-label">Overall Course Progress</div>
+      <div class="opc-val" id="overall-pct-val">0%</div>
+      <div class="opc-msg" id="overall-msg">Keep going! You're making progress.</div>
+    </div>
+    <div id="overall-emoji" style="width:72px;height:72px;border-radius:50%;background:rgba(138,131,112,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background 0.3s;">
+      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#8A8370" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" id="overall-emoji-icon"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+    </div>
+  </div>
+
+  <!-- Lesson progress -->
+  <div class="progress-check">
+    <div class="pc-title">Lesson Completion Status</div>
+    <div id="lesson-rows"></div>
+  </div>
+
+  <!-- Lock/Unlock status -->
+  <div class="unlock-card" id="unlock-card">
+    <div class="unlock-icon" id="unlock-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8A8370" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+    <div class="unlock-msg" id="unlock-msg">Complete 80% on all lessons to unlock your certificate.</div>
+  </div>
+
+  <!-- Certificate Preview -->
+  <div class="cert-preview-wrap" id="cert-preview-wrap">
+    <div id="certificate">
+      <div class="cert-border"></div>
+      <div class="cert-corner tl"></div>
+      <div class="cert-corner tr"></div>
+      <div class="cert-corner bl"></div>
+      <div class="cert-corner br"></div>
+
+      <div class="cert-header">
+        <div class="cert-logo">English<span>Notebook</span></div>
+        <div class="cert-tagline">AI-Powered English Grammar Course</div>
+      </div>
+
+      <div class="cert-divider"></div>
+      <div class="cert-title">Certificate of Completion</div>
+      <div class="cert-main-title">English Grammar Mastery</div>
+
+      <div class="cert-presented">This is to certify that</div>
+      <div class="cert-name" id="cert-name">Your Name</div>
+
+      <div class="cert-desc">
+        has successfully completed the <strong>EnglishNotebook 12-Lesson English Grammar Course</strong>,
+        covering Parts of Speech, 12 Tenses, Conjunctions, Modal Verbs, and Verb Forms
+        with AI-powered feedback and practice.
+      </div>
+
+      <div class="cert-stats">
+        <div class="cert-stat">
+          <div class="val" id="cert-score">0%</div>
+          <div class="lbl">Overall Score</div>
+        </div>
+        <div class="cert-stat">
+          <div class="val" id="cert-lessons">0/9</div>
+          <div class="lbl">Lessons Completed</div>
+        </div>
+        <div class="cert-stat">
+          <div class="val" id="cert-date-val">—</div>
+          <div class="lbl">Completion Date</div>
+        </div>
+      </div>
+
+      <div class="cert-footer">
+        <div class="cert-sig">
+          <div class="cert-sig-line"></div>
+          <div class="cert-sig-name">Hafeez Ur Rehman</div>
+          <div class="cert-sig-title">Course Instructor</div>
+        </div>
+        <div class="cert-seal">
+          <div class="seal-icon">🎓</div>
+          <div class="seal-text">Verified</div>
+        </div>
+        <div style="text-align:right;">
+          <div class="cert-date" id="cert-id">ID: EN-000000</div>
+          <div class="cert-date" style="margin-top:4px;">englishnotebook.app</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:20px;">
+      <div class="dl-btns">
+        <button class="dl-btn primary" onclick="downloadCert()" id="dl-btn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:6px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Download Certificate (PNG)
+        </button>
+        <button class="dl-btn secondary" onclick="shareCert()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:6px;"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="10.5" x2="15.4" y2="6.5"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/></svg>Share
+        </button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script src="en-gamification.js"></script>
+<script src="en-ai.js"></script>
+<script src="dark-mode.js"></script>
+<script>
+const LESSONS_INFO = [
+  {id:'l1_noun',      name:'Noun',              total:45},
+  {id:'l2_pronoun',   name:'Pronoun',           total:27},
+  {id:'l3_verbforms', name:'Verb Forms',        total:15},
+  {id:'l4_5_tenses',  name:'12 Tenses',         total:84},
+  {id:'l6_conjunctions',name:'Conjunctions',    total:20},
+  {id:'l7_tensepairs',name:'Tense Pairs',       total:14},
+  {id:'l8_paragraph', name:'Paragraph Practice',total:13},
+  {id:'l9_13_modals', name:'Modal Verbs',       total:23},
+  {id:'v300',         name:'300 Verbs Quiz',    total:30},
+];
+const UNLOCK_THRESHOLD = 80; // 80% overall
+
+function loadProgress(){
+  try{ return JSON.parse(localStorage.getItem('englishnotebook_progress_v1')||'{}'); }
+  catch(e){ return {}; }
+}
+
+function render(){
+  const progress = loadProgress();
+  let totalCorrect=0, totalQuestions=0, completedCount=0;
+  const lessonPcts = {};
+
+  LESSONS_INFO.forEach(l=>{
+    const qs = progress.lessons?.[l.id]?.questions || {};
+    const correct = Object.values(qs).filter(q=>q.correct).length;
+    const pct = l.total > 0 ? Math.round((correct/l.total)*100) : 0;
+    lessonPcts[l.id] = pct;
+    totalCorrect += correct;
+    totalQuestions += l.total;
+    if(pct >= UNLOCK_THRESHOLD) completedCount++;
+  });
+
+  const overallPct = totalQuestions > 0 ? Math.round((totalCorrect/totalQuestions)*100) : 0;
+  const isUnlocked = overallPct >= UNLOCK_THRESHOLD;
+
+  // Overall card
+  document.getElementById('overall-pct-val').textContent = overallPct+'%';
+  {
+    const emojiWrap = document.getElementById('overall-emoji');
+    const emojiIcon = document.getElementById('overall-emoji-icon');
+    const stage = overallPct>=80 ? 'gold' : overallPct>=50 ? 'green' : overallPct>=25 ? 'blue' : 'muted';
+    const colors = { gold:'#B8860B', green:'#2F6F5E', blue:'#4A90D9', muted:'#8A8370' };
+    const bgs = { gold:'rgba(184,134,11,0.14)', green:'rgba(47,111,94,0.12)', blue:'rgba(74,144,217,0.12)', muted:'rgba(138,131,112,0.12)' };
+    emojiWrap.style.background = bgs[stage];
+    emojiIcon.setAttribute('stroke', colors[stage]);
+    if(stage === 'gold'){
+      // Trophy icon once certificate is unlocked
+      emojiIcon.innerHTML = '<path d="M8 21h8"/><path d="M12 17v4"/><path d="M7 4h10v5a5 5 0 0 1-10 0V4Z"/><path d="M17 5h3a2 2 0 0 1-2 4h-1"/><path d="M7 5H4a2 2 0 0 0 2 4h1"/>';
+    } else {
+      // Book icon while progress is building
+      emojiIcon.innerHTML = '<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>';
+    }
+  }
+  document.getElementById('overall-msg').textContent =
+    overallPct>=80 ? 'Excellent! Certificate unlocked! 🎉' :
+    overallPct>=50 ? `Almost there! Need ${UNLOCK_THRESHOLD}% to unlock certificate.` :
+    `Keep practicing! Need ${UNLOCK_THRESHOLD}% overall to unlock.`;
+
+  // Lesson rows
+  document.getElementById('lesson-rows').innerHTML = LESSONS_INFO.map(l=>{
+    const pct = lessonPcts[l.id];
+    const color = pct>=80?'#2F6F5E':pct>=50?'#D48C00':pct>0?'#B5482A':'#E4DFD0';
+    return `
+      <div class="lesson-progress-row">
+        <span class="lc-check">${pct>=80?'✅':'⭕'}</span>
+        <span class="lp-name">${l.name}</span>
+        <div class="lp-bar-wrap"><div class="lp-bar" style="width:${pct}%;background:${color};"></div></div>
+        <span class="lp-pct" style="color:${color}">${pct}%</span>
+      </div>
+    `;
+  }).join('');
+
+  // Lock/unlock card
+  const unlockCard = document.getElementById('unlock-card');
+  if(isUnlocked){
+    unlockCard.className = 'unlock-card unlocked';
+    document.getElementById('unlock-icon').innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8"/><path d="M12 17v4"/><path d="M7 4h10v5a5 5 0 0 1-10 0V4Z"/><path d="M17 5h3a2 2 0 0 1-2 4h-1"/><path d="M7 5H4a2 2 0 0 0 2 4h1"/></svg>';
+    document.getElementById('unlock-msg').innerHTML = `<strong>Congratulations! Your certificate is unlocked!</strong><br>Download it below and share your achievement.`;
+    document.getElementById('cert-preview-wrap').classList.add('show');
+    fillCertificate(overallPct, completedCount);
+    if(typeof EN_GAME !== 'undefined') EN_GAME.confetti();
+  } else {
+    unlockCard.className = 'unlock-card locked';
+    document.getElementById('unlock-icon').innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8A8370" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
+    const need = UNLOCK_THRESHOLD - overallPct;
+    document.getElementById('unlock-msg').innerHTML = `
+      <strong>Certificate locked.</strong> You need <strong>${need}% more</strong> overall progress to unlock.<br>
+      Currently: ${completedCount}/9 lessons at 80%+. Keep going!
+    `;
+  }
+}
+
+function fillCertificate(pct, completedCount){
+  // Get name from Supabase if available, else from localStorage
+  const name = localStorage.getItem('en_user_name') || 'Student';
+  const today = new Date();
+  const dateStr = today.toLocaleDateString('en-PK',{day:'numeric',month:'long',year:'numeric'});
+  const certId = 'EN-' + Date.now().toString().slice(-6);
+
+  document.getElementById('cert-name').textContent = name;
+  document.getElementById('cert-score').textContent = pct+'%';
+  document.getElementById('cert-lessons').textContent = completedCount+'/9';
+  document.getElementById('cert-date-val').textContent = dateStr;
+  document.getElementById('cert-id').textContent = 'ID: '+certId;
+}
+
+async function downloadCert(){
+  const btn = document.getElementById('dl-btn');
+  btn.disabled = true; btn.textContent = '⏳ Generating...';
+  try{
+    const cert = document.getElementById('certificate');
+    const canvas = await html2canvas(cert, {
+      scale:2, useCORS:true, backgroundColor:'#FDFBF5',
+      logging:false
+    });
+    const link = document.createElement('a');
+    link.download = 'EnglishNotebook-Certificate.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  } catch(e){
+    alert('Download failed. Try screenshot instead.');
+  }
+  btn.disabled=false; btn.innerHTML='⬇️ Download Certificate (PNG)';
+}
+
+async function shareCert(){
+  if(navigator.share){
+    navigator.share({
+      title:'I completed English Grammar Course!',
+      text:'I just earned a certificate from EnglishNotebook — AI-powered English Grammar Course!',
+      url:'https://hafeezurrehman-hub.github.io/-EnglishNotebook/'
+    });
+  } else {
+    navigator.clipboard.writeText('https://hafeezurrehman-hub.github.io/-EnglishNotebook/');
+    alert('Link copied! Share it with your friends.');
+  }
+}
+
+render();
+</script>
+</body>
+</html>

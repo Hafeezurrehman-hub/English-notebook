@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="en-guard.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 2: Pronoun — EnglishNotebook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1B2A4A; --paper:#F7F4EC; --paper-line:#E4DFD0;
+    --green:#2F6F5E; --clay:#B5482A; --muted:#8A8370; --card:#FFFFFF; --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;overflow-x:hidden;max-width:100vw;}
+  body{background:var(--paper); color:var(--ink); font-family:'Inter',sans-serif; min-height:100vh;}
+
+  header.topbar{
+    position:sticky; top:0; z-index:10;
+    background:rgba(247,244,236,0.94); backdrop-filter: blur(6px);
+    border-bottom:2px solid var(--ink); padding:16px 24px;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .back-link{font-size:14px; font-weight:600; color:var(--ink); text-decoration:none; display:flex; align-items:center; gap:6px;}
+  .back-link:hover{color:var(--green);}
+  .brand{font-family:'Fraunces', serif; font-weight:700; font-size:18px;}
+  .brand span{color:var(--green);}
+  .topbar-status{font-size:13px; color:var(--muted);}
+
+  main{max-width:820px; margin:0 auto; padding:40px 24px 100px;}
+  .eyebrow{font-size:13px; letter-spacing:0.08em; text-transform:uppercase; color:var(--green); font-weight:600; margin-bottom:10px;}
+  h1.title{font-family:'Fraunces', serif; font-weight:600; font-size:clamp(28px, 4.5vw, 40px); line-height:1.15; margin:0 0 32px;}
+
+  .kind-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:32px;}
+  .kind-card{background:var(--card); border:1.5px solid var(--paper-line); border-radius:12px; padding:16px 18px;}
+  .kind-card h3{font-family:'Fraunces',serif; font-size:16px; font-weight:600; margin:0 0 6px;}
+  .kind-card p.def{font-size:13.5px; color:var(--ink); opacity:0.8; margin:0 0 8px; line-height:1.5;}
+  .kind-card p.ex{font-size:12.5px; color:var(--green); margin:0; font-weight:500;}
+
+  /* Reference table */
+  .ref-wrap{margin-bottom:48px;}
+  .ref-title{font-family:'Fraunces',serif; font-size:18px; font-weight:600; margin:0 0 12px;}
+  table.ref-table{width:100%; border-collapse:collapse; background:var(--card); border-radius:12px; overflow:hidden; border:1.5px solid var(--paper-line);}
+  table.ref-table th{background:var(--ink); color:var(--paper); font-size:12.5px; text-transform:uppercase; letter-spacing:0.04em; padding:10px 14px; text-align:left; font-weight:600;}
+  table.ref-table td{padding:10px 14px; font-size:14px; border-top:1px solid var(--paper-line);}
+  table.ref-table tr:nth-child(even) td{background:rgba(47,111,94,0.03);}
+
+  .section-block{margin-bottom:44px;}
+  .section-title{font-family:'Fraunces',serif; font-size:20px; font-weight:600; margin:0 0 4px;}
+  .section-sub{font-size:13.5px; color:var(--muted); margin:0 0 18px;}
+
+  .q-row{
+    background:var(--card); border:1.5px solid var(--paper-line); border-radius:12px;
+    padding:16px 18px; margin-bottom:10px;
+    display:grid; grid-template-columns: 32px 1fr 200px 28px; align-items:center; gap:14px;
+    transition: border-color 0.15s ease;
+  }
+  .q-row.correct{border-color:var(--green);}
+  .q-row.incorrect{border-color:var(--clay);}
+  .q-num{font-size:13px; color:var(--muted); font-weight:600;}
+  .q-word{font-size:16px; font-weight:600; font-family:'Fraunces',serif;}
+  select.q-select{
+    font-family:'Inter',sans-serif; font-size:14px; padding:9px 10px;
+    border-radius:8px; border:1.5px solid var(--paper-line); background:var(--paper);
+    color:var(--ink); cursor:pointer;
+  }
+  select.q-select:focus-visible{outline:2px solid var(--green); outline-offset:1px;}
+  .q-feedback{font-size:18px; text-align:center;}
+  .q-hint{
+    grid-column: 1 / -1; font-size:13px; color:var(--clay); margin-top:8px;
+    padding-top:8px; border-top:1px dashed var(--paper-line); display:none;
+  }
+  .q-row.incorrect .q-hint{display:block;}
+
+  /* Section B: two-select row */
+  .q-row-double{
+    background:var(--card); border:1.5px solid var(--paper-line); border-radius:12px;
+    padding:16px 18px; margin-bottom:10px;
+    display:grid; grid-template-columns: 32px 90px 1fr 1fr 28px; align-items:center; gap:14px;
+    transition: border-color 0.15s ease;
+  }
+  .q-row-double.correct{border-color:var(--green);}
+  .q-row-double.incorrect{border-color:var(--clay);}
+  .double-label{font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:0.04em; display:block; margin-bottom:4px;}
+
+  @media (max-width:600px){
+    .kind-grid{grid-template-columns:1fr;}
+    .q-row{grid-template-columns: 24px 1fr; row-gap:10px;}
+    select.q-select{grid-column:1 / -1;}
+    .q-feedback{grid-column:1 / -1; text-align:left;}
+    .q-row-double{grid-template-columns: 1fr 1fr; row-gap:10px;}
+    .q-row-double .q-num, .q-row-double .q-feedback{display:none;}
+    table.ref-table{font-size:12.5px;}
+    table.ref-table th, table.ref-table td{padding:8px 8px;}
+  }
+
+  .progress-bar-wrap{
+    position:sticky; bottom:0; z-index:5;
+    background:rgba(247,244,236,0.95); backdrop-filter:blur(6px);
+    border-top:1.5px solid var(--ink); padding:14px 24px;
+    display:flex; align-items:center; gap:16px;
+  }
+  .progress-bar-wrap .pb-label{font-size:13px; color:var(--muted); white-space:nowrap;}
+  .progress-track{flex:1; height:8px; background:var(--paper-line); border-radius:4px; overflow:hidden;}
+  .progress-fill{height:100%; background:var(--green); width:0%; transition:width 0.3s ease;}
+  .pb-stat{font-size:13px; font-weight:600; white-space:nowrap;}
+
+  @media (prefers-reduced-motion: reduce){ .q-row, .q-row-double, .progress-fill{transition:none;} }
+
+  /* ── Dark Mode ── */
+  [data-theme="dark"]{
+    --ink:#E8E4DA; --paper:#141B2D; --paper-line:#1F2D45;
+    --green:#4CAF8A; --clay:#E07055; --muted:#7A8FA6; --card:#1A2540;
+  }
+  [data-theme="dark"] body{ background:var(--paper); color:var(--ink); }
+  [data-theme="dark"] header.topbar{ background:rgba(20,27,45,0.96)!important; }
+  [data-theme="dark"] .q-row,
+  [data-theme="dark"] .kind-card,
+  [data-theme="dark"] .lesson-card,
+  [data-theme="dark"] .tense-row,
+  [data-theme="dark"] .mistake-card,
+  [data-theme="dark"] .story-card,
+  [data-theme="dark"] .ref-table-wrap table,
+  [data-theme="dark"] .summary-card{ background:var(--card)!important; border-color:var(--paper-line)!important; }
+  [data-theme="dark"] input,
+  [data-theme="dark"] select,
+  [data-theme="dark"] textarea{ background:var(--paper)!important; color:var(--ink)!important; border-color:var(--paper-line)!important; }
+  [data-theme="dark"] .progress-bar-wrap{ background:rgba(20,27,45,0.97)!important; border-color:var(--paper-line)!important; }
+
+  #dark-toggle{
+    background:none; border:1.5px solid var(--paper-line); border-radius:20px;
+    padding:5px 11px; cursor:pointer; color:var(--ink); font-family:'Inter',sans-serif;
+    font-size:12px; font-weight:600; transition:all 0.2s;
+  }
+  #dark-toggle:hover{ border-color:var(--green); color:var(--green); }
+
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a href="index.html" class="back-link">← Home</a>
+  <div class="brand">English<span>Notebook</span></div>
+  <div class="topbar-status" id="topbar-status">Free Plan</div>
+</header>
+
+<main>
+  <div class="eyebrow">Lesson 2</div>
+  <h1 class="title">Pronoun — the substitute word</h1>
+
+  <div class="kind-grid" id="kind-grid"></div>
+
+  <div class="ref-wrap">
+    <h2 class="ref-title">Reference Table</h2>
+    <table class="ref-table">
+      <thead><tr><th>Personal</th><th>Possessive</th><th>Self</th></tr></thead>
+      <tbody id="ref-body"></tbody>
+    </table>
+  </div>
+
+  <div id="sectionA"></div>
+  <div id="sectionB"></div>
+</main>
+
+<div class="progress-bar-wrap">
+  <span class="pb-label">Lesson progress</span>
+  <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+  <span class="pb-stat" id="progress-stat">0 / 27 correct</span>
+</div>
+
+<script>
+const LESSON_ID = "l2_pronoun";
+const STORAGE_KEY = "englishnotebook_progress_v1";
+
+const KINDS = [
+  { name:"Personal Pronoun", def:"Substitute for a specific person/thing as subject or object", ex:"e.g. I, me, we, us, you, they, them, he, him, she, her, it" },
+  { name:"Possessive Pronoun", def:"Shows ownership/belonging", ex:"e.g. my, mine, our, ours, your, yours, their, theirs, his, her, hers, its" },
+  { name:"Self Pronoun", def:"Refers back to the subject itself (reflexive)", ex:"e.g. myself, ourselves, yourself, yourselves, themselves, himself, herself, itself" },
+  { name:"Demonstrative Pronoun", def:"Points to specific things", ex:"e.g. this, these, that, those" },
+  { name:"Interrogative Pronoun", def:"Used to ask questions", ex:"e.g. who, what, when, where, why, how, whose" },
+];
+
+const REF_TABLE = [
+  { personal:"I", possessive:"my / mine", self:"myself" },
+  { personal:"We", possessive:"our / ours", self:"ourselves" },
+  { personal:"You", possessive:"your / yours", self:"yourself" },
+  { personal:"They", possessive:"their / theirs", self:"themselves" },
+  { personal:"He", possessive:"his", self:"himself" },
+  { personal:"She", possessive:"her / hers", self:"herself" },
+  { personal:"It", possessive:"its", self:"itself" },
+];
+
+const SECTION_A = {
+  title:"Section A: Which Kind of Pronoun?",
+  sub:"Personal / Possessive / Self / Demonstrative / Interrogative",
+  options:["Personal Pronoun","Possessive Pronoun","Self Pronoun","Demonstrative Pronoun","Interrogative Pronoun"],
+  questions:[
+    {w:"I", a:"Personal Pronoun"},{w:"we", a:"Personal Pronoun"},{w:"you", a:"Personal Pronoun"},{w:"he", a:"Personal Pronoun"},
+    {w:"my", a:"Possessive Pronoun"},{w:"our", a:"Possessive Pronoun"},{w:"your", a:"Possessive Pronoun"},{w:"his", a:"Possessive Pronoun"},
+    {w:"myself", a:"Self Pronoun"},{w:"ourselves", a:"Self Pronoun"},{w:"yourself", a:"Self Pronoun"},{w:"himself", a:"Self Pronoun"},
+    {w:"this", a:"Demonstrative Pronoun"},{w:"these", a:"Demonstrative Pronoun"},{w:"that", a:"Demonstrative Pronoun"},{w:"those", a:"Demonstrative Pronoun"},
+    {w:"who", a:"Interrogative Pronoun"},{w:"what", a:"Interrogative Pronoun"},{w:"where", a:"Interrogative Pronoun"},{w:"why", a:"Interrogative Pronoun"},
+  ]
+};
+
+// Section B: personal -> {possessive, self}. Note: table entries have "/" alt forms in reference,
+// but the practice answer key (Excel column G/H) uses a single canonical form per row.
+const SECTION_B = {
+  title:"Section B: Complete the Pronoun Table",
+  sub:"Choose the matching possessive and self form",
+  possOptions:["my","our","your","their","his","her","its"],
+  selfOptions:["myself","ourselves","yourself","themselves","himself","herself","itself"],
+  questions:[
+    {personal:"I", poss:"my", self:"myself"},
+    {personal:"We", poss:"our", self:"ourselves"},
+    {personal:"You", poss:"your", self:"yourself"},
+    {personal:"They", poss:"their", self:"themselves"},
+    {personal:"He", poss:"his", self:"himself"},
+    {personal:"She", poss:"her", self:"herself"},
+    {personal:"It", poss:"its", self:"itself"},
+  ]
+};
+
+const TOTAL_QUESTIONS = SECTION_A.questions.length + SECTION_B.questions.length;
+
+function loadProgress(){
+  try{ const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : { plan:"free", lessons:{} }; }
+  catch(e){ console.error("Progress load failed", e); return { plan:"free", lessons:{} }; }
+}
+function saveProgress(data){
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+  catch(e){ console.error("Progress save failed", e); }
+}
+function getLessonData(progress){
+  if(!progress.lessons[LESSON_ID]) progress.lessons[LESSON_ID] = { questions:{} };
+  return progress.lessons[LESSON_ID];
+}
+
+function renderKinds(){
+  document.getElementById("kind-grid").innerHTML = KINDS.map(k => `
+    <div class="kind-card">
+      <h3>${k.name}</h3>
+      <p class="def">${k.def}</p>
+      <p class="ex">${k.ex}</p>
+    </div>
+  `).join("");
+}
+
+function renderRefTable(){
+  document.getElementById("ref-body").innerHTML = REF_TABLE.map(r=>`
+    <tr><td>${r.personal}</td><td>${r.possessive}</td><td>${r.self}</td></tr>
+  `).join("");
+}
+
+function renderSectionA(){
+  const progress = loadProgress();
+  const lessonData = getLessonData(progress);
+  const optionsHtml = `<option value="">— select —</option>` +
+    SECTION_A.options.map(o=>`<option value="${o}">${o}</option>`).join("");
+
+  const rowsHtml = SECTION_A.questions.map((q, idx)=>{
+    const qid = `secA_${idx}`;
+    const saved = lessonData.questions[qid];
+    const state = saved && saved.attempted ? (saved.correct ? "correct" : "incorrect") : "";
+    return `
+      <div class="q-row ${state}" data-qid="${qid}" data-answer="${q.a}">
+        <div class="q-num">${idx+1}</div>
+        <div class="q-word">${q.w}</div>
+        <select class="q-select" aria-label="Classify ${q.w}">${optionsHtml}</select>
+        <div class="q-feedback">${state === "correct" ? "✅" : state === "incorrect" ? "❌" : ""}</div>
+        <div class="q-hint">Tip: <strong>${q.w}</strong> is a ${q.a}</div>
+      </div>
+    `;
+  }).join("");
+
+  const container = document.getElementById("sectionA");
+  container.innerHTML = `
+    <h2 class="section-title">${SECTION_A.title}</h2>
+    <p class="section-sub">${SECTION_A.sub}</p>
+    ${rowsHtml}
+  `;
+
+  SECTION_A.questions.forEach((q, idx)=>{
+    const qid = `secA_${idx}`;
+    const saved = lessonData.questions[qid];
+    if(saved && saved.value){
+      container.querySelector(`[data-qid="${qid}"] select`).value = saved.value;
+    }
+  });
+
+  container.addEventListener("change", handleSingleChange);
+}
+
+function renderSectionB(){
+  const progress = loadProgress();
+  const lessonData = getLessonData(progress);
+  const possHtml = `<option value="">— select —</option>` + SECTION_B.possOptions.map(o=>`<option value="${o}">${o}</option>`).join("");
+  const selfHtml = `<option value="">— select —</option>` + SECTION_B.selfOptions.map(o=>`<option value="${o}">${o}</option>`).join("");
+
+  const rowsHtml = SECTION_B.questions.map((q, idx)=>{
+    const qid = `secB_${idx}`;
+    const saved = lessonData.questions[qid];
+    const state = saved && saved.attempted ? (saved.correct ? "correct" : "incorrect") : "";
+    return `
+      <div class="q-row-double ${state}" data-qid="${qid}" data-poss="${q.poss}" data-self="${q.self}">
+        <div class="q-num">${idx+1}</div>
+        <div class="q-word">${q.personal}</div>
+        <div>
+          <span class="double-label">Possessive</span>
+          <select class="q-select poss-select">${possHtml}</select>
+        </div>
+        <div>
+          <span class="double-label">Self</span>
+          <select class="q-select self-select">${selfHtml}</select>
+        </div>
+        <div class="q-feedback">${state === "correct" ? "✅" : state === "incorrect" ? "❌" : ""}</div>
+      </div>
+    `;
+  }).join("");
+
+  const container = document.getElementById("sectionB");
+  container.innerHTML = `
+    <h2 class="section-title">${SECTION_B.title}</h2>
+    <p class="section-sub">${SECTION_B.sub}</p>
+    ${rowsHtml}
+  `;
+
+  SECTION_B.questions.forEach((q, idx)=>{
+    const qid = `secB_${idx}`;
+    const saved = lessonData.questions[qid];
+    if(saved && saved.possValue){
+      container.querySelector(`[data-qid="${qid}"] .poss-select`).value = saved.possValue;
+    }
+    if(saved && saved.selfValue){
+      container.querySelector(`[data-qid="${qid}"] .self-select`).value = saved.selfValue;
+    }
+  });
+
+  container.addEventListener("change", handleDoubleChange);
+}
+
+function handleSingleChange(e){
+  if(!e.target.classList.contains("q-select")) return;
+  const row = e.target.closest(".q-row");
+  const qid = row.dataset.qid;
+  const correctAnswer = row.dataset.answer;
+  const value = e.target.value;
+
+  const progress = loadProgress();
+  const lessonData = getLessonData(progress);
+
+  if(value === ""){
+    delete lessonData.questions[qid];
+    row.classList.remove("correct","incorrect");
+    row.querySelector(".q-feedback").textContent = "";
+  } else {
+    const isCorrect = value === correctAnswer;
+    const wordEl = row.querySelector(".q-word");
+    lessonData.questions[qid] = { attempted:true, correct:isCorrect, value:value,
+      question: wordEl ? wordEl.textContent : "",
+      correctAnswer: correctAnswer,
+      lastAttempt:new Date().toISOString() };
+    row.classList.remove("correct","incorrect");
+    row.classList.add(isCorrect ? "correct" : "incorrect");
+    row.querySelector(".q-feedback").textContent = isCorrect ? "✅" : "❌";
+  }
+  saveProgress(progress);
+  updateProgressBar();
+}
+
+function handleDoubleChange(e){
+  if(!e.target.classList.contains("q-select")) return;
+  const row = e.target.closest(".q-row-double");
+  const qid = row.dataset.qid;
+  const correctPoss = row.dataset.poss;
+  const correctSelf = row.dataset.self;
+  const possValue = row.querySelector(".poss-select").value;
+  const selfValue = row.querySelector(".self-select").value;
+
+  const progress = loadProgress();
+  const lessonData = getLessonData(progress);
+
+  if(possValue === "" && selfValue === ""){
+    delete lessonData.questions[qid];
+    row.classList.remove("correct","incorrect");
+    row.querySelector(".q-feedback").textContent = "";
+  } else {
+    const isCorrect = possValue === correctPoss && selfValue === correctSelf;
+    const wordEl = row.querySelector(".q-word");
+    lessonData.questions[qid] = {
+      attempted:true, correct:isCorrect,
+      possValue:possValue, selfValue:selfValue,
+      question: wordEl ? wordEl.textContent : "",
+      correctAnswer: correctPoss + " / " + correctSelf,
+      lastAttempt:new Date().toISOString()
+    };
+    row.classList.remove("correct","incorrect");
+    row.classList.add(isCorrect ? "correct" : "incorrect");
+    row.querySelector(".q-feedback").textContent = isCorrect ? "✅" : "❌";
+  }
+  saveProgress(progress);
+  updateProgressBar();
+}
+
+function updateProgressBar(){
+  const progress = loadProgress();
+  const lessonData = getLessonData(progress);
+  const qs = Object.values(lessonData.questions);
+  const correct = qs.filter(q=>q.correct).length;
+  const pct = TOTAL_QUESTIONS > 0 ? Math.round((correct/TOTAL_QUESTIONS)*100) : 0;
+
+  document.getElementById("progress-fill").style.width = pct + "%";
+  document.getElementById("progress-stat").textContent = `${correct} / ${TOTAL_QUESTIONS} correct`;
+  document.getElementById("topbar-status").textContent = progress.plan === "paid" ? "Paid Plan" : "Free Plan";
+}
+
+renderKinds();
+renderRefTable();
+renderSectionA();
+renderSectionB();
+updateProgressBar();
+</script>
+
+
+<script src="en-ai.js">
+/* ── Dark Mode ── */
+function toggleDark(){
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const newTheme = isDark ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', newTheme);
+  localStorage.setItem('en_theme', newTheme);
+  const btn = document.getElementById('dark-toggle');
+  if(btn) btn.textContent = newTheme === 'dark' ? '☀️ Light' : '🌙 Dark';
+}
+(function(){
+  const saved = localStorage.getItem('en_theme');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const theme = saved || (prefersDark ? 'dark' : 'light');
+  if(theme === 'dark'){
+    document.documentElement.setAttribute('data-theme', 'dark');
+    const btn = document.getElementById('dark-toggle');
+    if(btn) btn.textContent = '☀️ Light';
+  }
+})();
+
+</script>
+
+<script src="en-gamification.js"></script>
+</body>
+</html>

@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="en-guard.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 9-13: Modal Verbs — EnglishNotebook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1B2A4A; --paper:#F7F4EC; --paper-line:#E4DFD0;
+    --green:#2F6F5E; --clay:#B5482A; --muted:#8A8370; --card:#FFFFFF; --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;overflow-x:hidden;max-width:100vw;}
+  body{background:var(--paper); color:var(--ink); font-family:'Inter',sans-serif; min-height:100vh;}
+
+  header.topbar{
+    position:sticky; top:0; z-index:10;
+    background:rgba(247,244,236,0.94); backdrop-filter: blur(6px);
+    border-bottom:2px solid var(--ink); padding:16px 24px;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .back-link{font-size:14px; font-weight:600; color:var(--ink); text-decoration:none; display:flex; align-items:center; gap:6px;}
+  .back-link:hover{color:var(--green);}
+  .brand{font-family:'Fraunces', serif; font-weight:700; font-size:18px;}
+  .brand span{color:var(--green);}
+  .topbar-status{font-size:13px; color:var(--muted);}
+
+  main{max-width:900px; margin:0 auto; padding:40px 24px 100px;}
+  .eyebrow{font-size:13px; letter-spacing:0.08em; text-transform:uppercase; color:var(--green); font-weight:600; margin-bottom:10px;}
+  h1.title{font-family:'Fraunces', serif; font-weight:600; font-size:clamp(28px, 4.5vw, 40px); line-height:1.15; margin:0 0 10px;}
+  p.note{font-size:13.5px; color:var(--muted); margin:0 0 32px; line-height:1.6;}
+
+  .ref-wrap{margin-bottom:32px; overflow-x:auto;}
+  table.ref-table{width:100%; border-collapse:collapse; background:var(--card); border-radius:12px; overflow:hidden; border:1.5px solid var(--paper-line); min-width:680px;}
+  table.ref-table th{background:var(--ink); color:var(--paper); font-size:12px; text-transform:uppercase; letter-spacing:0.04em; padding:10px 14px; text-align:left; font-weight:600;}
+  table.ref-table td{padding:11px 14px; font-size:13px; border-top:1px solid var(--paper-line); vertical-align:top;}
+  table.ref-table tr:nth-child(even) td{background:rgba(47,111,94,0.03);}
+  table.ref-table td.mname{font-family:'Fraunces',serif; font-weight:600; font-size:13.5px; white-space:nowrap;}
+  table.ref-table td.example{color:var(--green); font-weight:500;}
+
+  .ref-title{font-family:'Fraunces',serif; font-size:17px; font-weight:600; margin:0 0 12px;}
+
+  .section-title{font-family:'Fraunces',serif; font-size:20px; font-weight:600; margin:0 0 4px;}
+  .section-sub{font-size:13.5px; color:var(--muted); margin:0 0 18px;}
+
+  .q-row{
+    background:var(--card); border:1.5px solid var(--paper-line); border-radius:12px;
+    padding:16px 18px; margin-bottom:10px;
+    display:grid; grid-template-columns: 32px 1fr 220px 28px;
+    align-items:center; gap:14px;
+    transition: border-color 0.15s ease;
+  }
+  .q-row.correct{border-color:var(--green);}
+  .q-row.incorrect{border-color:var(--clay);}
+  .q-num{font-size:13px; color:var(--muted); font-weight:600;}
+  .q-sentence{font-size:15px; font-family:'Fraunces',serif; font-weight:600;}
+  select.q-select{
+    font-family:'Inter',sans-serif; font-size:14px; padding:9px 10px;
+    border-radius:8px; border:1.5px solid var(--paper-line); background:var(--paper);
+    color:var(--ink); cursor:pointer;
+  }
+  select.q-select:focus-visible{outline:2px solid var(--green); outline-offset:1px;}
+  .q-feedback{font-size:18px; text-align:center;}
+  .q-hint{
+    grid-column: 1 / -1; font-size:13px; color:var(--clay); margin-top:8px;
+    padding-top:8px; border-top:1px dashed var(--paper-line); display:none;
+  }
+  .q-row.incorrect .q-hint{display:block;}
+
+  @media (max-width:600px){
+    .q-row{grid-template-columns: 24px 1fr; row-gap:10px;}
+    select.q-select{grid-column:1 / -1;}
+    .q-feedback{grid-column:1 / -1; text-align:left;}
+    table.ref-table{font-size:11.5px;}
+  }
+
+  .progress-bar-wrap{
+    position:sticky; bottom:0; z-index:5;
+    background:rgba(247,244,236,0.95); backdrop-filter:blur(6px);
+    border-top:1.5px solid var(--ink); padding:14px 24px;
+    display:flex; align-items:center; gap:16px;
+  }
+  .progress-bar-wrap .pb-label{font-size:13px; color:var(--muted); white-space:nowrap;}
+  .progress-track{flex:1; height:8px; background:var(--paper-line); border-radius:4px; overflow:hidden;}
+  .progress-fill{height:100%; background:var(--green); width:0%; transition:width 0.3s ease;}
+  .pb-stat{font-size:13px; font-weight:600; white-space:nowrap;}
+
+  @media (prefers-reduced-motion: reduce){ .q-row, .progress-fill{transition:none;} }
+
+  /* ── Dark Mode ── */
+  [data-theme="dark"]{
+    --ink:#E8E4DA; --paper:#141B2D; --paper-line:#1F2D45;
+    --green:#4CAF8A; --clay:#E07055; --muted:#7A8FA6; --card:#1A2540;
+  }
+  [data-theme="dark"] body{ background:var(--paper); color:var(--ink); }
+  [data-theme="dark"] header.topbar{ background:rgba(20,27,45,0.96)!important; }
+  [data-theme="dark"] .q-row,
+  [data-theme="dark"] .kind-card,
+  [data-theme="dark"] .lesson-card,
+  [data-theme="dark"] .tense-row,
+  [data-theme="dark"] .mistake-card,
+  [data-theme="dark"] .story-card,
+  [data-theme="dark"] .ref-table-wrap table,
+  [data-theme="dark"] .summary-card{ background:var(--card)!important; border-color:var(--paper-line)!important; }
+  [data-theme="dark"] input,
+  [data-theme="dark"] select,
+  [data-theme="dark"] textarea{ background:var(--paper)!important; color:var(--ink)!important; border-color:var(--paper-line)!important; }
+  [data-theme="dark"] .progress-bar-wrap{ background:rgba(20,27,45,0.97)!important; border-color:var(--paper-line)!important; }
+
+  #dark-toggle{
+    background:none; border:1.5px solid var(--paper-line); border-radius:20px;
+    padding:5px 11px; cursor:pointer; color:var(--ink); font-family:'Inter',sans-serif;
+    font-size:12px; font-weight:600; transition:all 0.2s;
+  }
+  #dark-toggle:hover{ border-color:var(--green); color:var(--green); }
+
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a href="index.html" class="back-link">← Home</a>
+  <div class="brand">English<span>Notebook</span></div>
+  <div class="topbar-status" id="topbar-status">Free Plan</div>
+</header>
+
+<main>
+  <div class="eyebrow">Lessons 9–13</div>
+  <h1 class="title">Modal Verbs — can / should / must / have to</h1>
+  <p class="note">Ability, Advice, Strong Advice, Obligation, and Logical Conclusion — 5 modal categories, along with the "must" formula by tense.</p>
+
+  <div class="ref-wrap">
+    <h2 class="ref-title">Modal Reference</h2>
+    <table class="ref-table">
+      <thead><tr><th>Modal</th><th>Meaning</th><th>Formula</th><th>Example</th></tr></thead>
+      <tbody id="ref-body"></tbody>
+    </table>
+  </div>
+
+  <div class="ref-wrap">
+    <h2 class="ref-title">Logical Conclusion (must) — Formula by Tense</h2>
+    <table class="ref-table">
+      <thead><tr><th>Tense</th><th>must Formula</th></tr></thead>
+      <tbody id="formula-body"></tbody>
+    </table>
+  </div>
+
+  <h2 class="section-title">Section A: What Does This Sentence Express?</h2>
+  <p class="section-sub">15 sentences — read each sentence and select the correct category</p>
+  <div id="sectionA"></div>
+
+  <h2 class="section-title">Section B: Complete the Logical Conclusion Table</h2>
+  <p class="section-sub">8 tenses — select the correct "must" formula</p>
+  <div id="sectionB"></div>
+</main>
+
+<div class="progress-bar-wrap">
+  <span class="pb-label">Lesson progress</span>
+  <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+  <span class="pb-stat" id="progress-stat">0 / 23 correct</span>
+</div>
+
+<script>
+const LESSON_ID = "l9_13_modals";
+const STORAGE_KEY = "englishnotebook_progress_v1";
+
+const MODALS = [
+  { modal:"can", meaning:"Ability / Possibility — Present", formula:"is/am/are able to  |  has/have ability to", example:"I can drive a car. (I am able to drive car.)" },
+  { modal:"could", meaning:"Ability / Possibility — Past", formula:"was/were able to  |  had ability to", example:"I could drive a car. (I was able to drive car.)" },
+  { modal:"will be able to", meaning:"Ability / Possibility — Future", formula:"will have ability to", example:"I will be able to drive a car." },
+  { modal:"should", meaning:"Advice / Suggestion", formula:"is/am/are advised/suggested to", example:"You should speak English." },
+  { modal:"should have", meaning:"Advice / Suggestion — Past (regret)", formula:"was/were advised/suggested to", example:"You should have spoken English." },
+  { modal:"must", meaning:"Strong Advice / Suggestion", formula:"is/am/are strongly advised/suggested to", example:"You must speak English." },
+  { modal:"have to / has to", meaning:"Obligation — Present", formula:"1st form of verb + object", example:"I have to attend class daily." },
+  { modal:"had to", meaning:"Obligation — Past", formula:"1st form of verb + object", example:"I had to attend class daily." },
+  { modal:"will have to", meaning:"Obligation — Future", formula:"1st form of verb + object", example:"I will have to continue my course." },
+];
+
+const FORMULA_TABLE = [
+  { tense:"Present Simple", formula:"must + 1st form" },
+  { tense:"Present Continuous", formula:"must be + 4th form" },
+  { tense:"Present Perfect", formula:"must have + 3rd form" },
+  { tense:"Present Perfect Continuous", formula:"must have been + 4th form" },
+  { tense:"Past Simple", formula:"must have + 3rd form" },
+  { tense:"Past Continuous", formula:"must have been + 4th form" },
+  { tense:"Past Perfect", formula:"must have + 3rd form" },
+  { tense:"Past Perfect Continuous", formula:"must have been + 4th form" },
+];
+
+const SECTION_A_OPTIONS = ["Ability","Advice","Strong Advice","Obligation","Logical Conclusion"];
+const SECTION_A = [
+  { sentence:"I can drive a car.", answer:"Ability" },
+  { sentence:"She could speak French when she was young.", answer:"Ability" },
+  { sentence:"We will be able to finish the project by Friday.", answer:"Ability" },
+  { sentence:"You should drink more water.", answer:"Advice" },
+  { sentence:"She should have called before visiting.", answer:"Advice" },
+  { sentence:"They should apologize to him.", answer:"Advice" },
+  { sentence:"You must wear a seatbelt while driving.", answer:"Strong Advice" },
+  { sentence:"Students must submit their assignments on time.", answer:"Strong Advice" },
+  { sentence:"You must not lie to your parents.", answer:"Strong Advice" },
+  { sentence:"I have to finish this report today.", answer:"Obligation" },
+  { sentence:"She had to leave early yesterday.", answer:"Obligation" },
+  { sentence:"We will have to change our plans.", answer:"Obligation" },
+  { sentence:"He must be at home now.", answer:"Logical Conclusion" },
+  { sentence:"She must have finished her work by now.", answer:"Logical Conclusion" },
+  { sentence:"They must have been waiting for a long time.", answer:"Logical Conclusion" },
+];
+
+const SECTION_B_OPTIONS = ["must + 1st form","must be + 4th form","must have + 3rd form","must have been + 4th form"];
+const SECTION_B = FORMULA_TABLE.map(f => ({ tense:f.tense, answer:f.formula }));
+
+function loadProgress(){
+  try{ const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : { plan:"free", lessons:{} }; }
+  catch(e){ console.error("Progress load failed", e); return { plan:"free", lessons:{} }; }
+}
+function saveProgress(data){
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+  catch(e){ console.error("Progress save failed", e); }
+}
+function getLessonData(progress){
+  if(!progress.lessons[LESSON_ID]) progress.lessons[LESSON_ID] = { questions:{} };
+  return progress.lessons[LESSON_ID];
+}
+
+const TOTAL_QUESTIONS = SECTION_A.length + SECTION_B.length;
+
+function renderRef(){
+  document.getElementById("ref-body").innerHTML = MODALS.map(m=>`
+    <tr>
+      <td class="mname">${m.modal}</td>
+      <td>${m.meaning}</td>
+      <td>${m.formula}</td>
+      <td class="example">${m.example}</td>
+    </tr>
+  `).join("");
+  document.getElementById("formula-body").innerHTML = FORMULA_TABLE.map(f=>`
+    <tr><td class="mname">${f.tense}</td><td>${f.formula}</td></tr>
+  `).join("");
+}
+
+function renderSection(containerId, questions, options, prefix){
+  const progress = loadProgress();
+  const lessonData = getLessonData(progress);
+  const container = document.getElementById(containerId);
+
+  const optionsHtml = `<option value="">— select —</option>` +
+    options.map(o=>`<option value="${o}">${o}</option>`).join("");
+
+  const rowsHtml = questions.map((q, idx)=>{
+    const qid = `${prefix}_${idx}`;
+    const saved = lessonData.questions[qid];
+    const state = saved && saved.attempted ? (saved.correct ? "correct" : "incorrect") : "";
+    const label = q.sentence || q.tense;
+    return `
+      <div class="q-row ${state}" data-qid="${qid}" data-answer="${q.answer}">
+        <div class="q-num">${idx+1}</div>
+        <div class="q-sentence">${label}</div>
+        <select class="q-select" aria-label="Classify">${optionsHtml}</select>
+        <div class="q-feedback">${state === "correct" ? "✅" : state === "incorrect" ? "❌" : ""}</div>
+        <div class="q-hint">Answer: ${q.answer}</div>
+      </div>
+    `;
+  }).join("");
+
+  container.innerHTML = rowsHtml;
+
+  questions.forEach((q, idx)=>{
+    const qid = `${prefix}_${idx}`;
+    const saved = lessonData.questions[qid];
+    if(saved && saved.value){
+      container.querySelector(`[data-qid="${qid}"] select`).value = saved.value;
+    }
+  });
+
+  container.addEventListener("change", handleChange);
+}
+
+function handleChange(e){
+  if(!e.target.classList.contains("q-select")) return;
+  const row = e.target.closest(".q-row");
+  const qid = row.dataset.qid;
+  const correctAnswer = row.dataset.answer;
+  const value = e.target.value;
+
+  const progress = loadProgress();
+  const lessonData = getLessonData(progress);
+
+  if(value === ""){
+    delete lessonData.questions[qid];
+    row.classList.remove("correct","incorrect");
+    row.querySelector(".q-feedback").textContent = "";
+  } else {
+    const isCorrect = value === correctAnswer;
+    const sentEl = row.querySelector(".q-sentence");
+    lessonData.questions[qid] = { attempted:true, correct:isCorrect, value:value,
+      question: sentEl ? sentEl.textContent.trim() : "",
+      correctAnswer: correctAnswer,
+      lastAttempt:new Date().toISOString() };
+    row.classList.remove("correct","incorrect");
+    row.classList.add(isCorrect ? "correct" : "incorrect");
+    row.querySelector(".q-feedback").textContent = isCorrect ? "✅" : "❌";
+  }
+  saveProgress(progress);
+  updateProgressBar();
+}
+
+function updateProgressBar(){
+  const progress = loadProgress();
+  const lessonData = getLessonData(progress);
+  const qs = Object.values(lessonData.questions);
+  const correct = qs.filter(q=>q.correct).length;
+  const pct = TOTAL_QUESTIONS > 0 ? Math.round((correct/TOTAL_QUESTIONS)*100) : 0;
+
+  document.getElementById("progress-fill").style.width = pct + "%";
+  document.getElementById("progress-stat").textContent = `${correct} / ${TOTAL_QUESTIONS} correct`;
+  document.getElementById("topbar-status").textContent = (progress.plan === "unlimited" || progress.plan === "paid") ? "AI Unlimited" : progress.plan === "starter" ? "AI Starter" : "Free Plan";
+}
+
+renderRef();
+renderSection("sectionA", SECTION_A, SECTION_A_OPTIONS, "secA");
+renderSection("sectionB", SECTION_B, SECTION_B_OPTIONS, "secB");
+updateProgressBar();
+</script>
+
+
+
+<script src="en-plan.js"></script>
+<script src="en-ai.js">
+/* ── Dark Mode ── */
+function toggleDark(){
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const newTheme = isDark ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', newTheme);
+  localStorage.setItem('en_theme', newTheme);
+  const btn = document.getElementById('dark-toggle');
+  if(btn) btn.textContent = newTheme === 'dark' ? '☀️ Light' : '🌙 Dark';
+}
+(function(){
+  const saved = localStorage.getItem('en_theme');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const theme = saved || (prefersDark ? 'dark' : 'light');
+  if(theme === 'dark'){
+    document.documentElement.setAttribute('data-theme', 'dark');
+    const btn = document.getElementById('dark-toggle');
+    if(btn) btn.textContent = '☀️ Light';
+  }
+})();
+
+</script>
+
+<script src="en-gamification.js"></script>
+</body>
+</html>
