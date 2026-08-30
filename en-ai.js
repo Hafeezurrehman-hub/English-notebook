@@ -6,6 +6,12 @@ const EN_AI = {
   FREE_LIMIT: 5,
   STARTER_LIMIT: 50,
 
+  history: [],
+  clearHistory(){ this.history = []; },
+  addToHistory(role, content){ 
+    this.history.push({role, content});
+    if(this.history.length > 10) this.history = this.history.slice(-10);
+  },
   getUsed(){
     return parseInt(localStorage.getItem('en_ai_used') || '0');
   },
@@ -50,14 +56,16 @@ const EN_AI = {
   },
 
   async call(systemPrompt, userPrompt, onChunk){
+    // Build messages with history for multi-turn
+    const messages = [...this.history, {role: 'user', content: userPrompt}];
     const res = await fetch(this.WORKER_URL, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
         model: 'llama-3.3-70b-versatile',
-        max_tokens: 350,
+        max_tokens: 400,
         system: systemPrompt,
-        messages: [{role: 'user', content: userPrompt}]
+        messages: messages
       })
     });
     if(!res.ok) throw new Error('API error ' + res.status);
@@ -246,7 +254,10 @@ const EN_AI = {
         <div class="title">🤖 AI Grammar Coach</div>
         <div class="subtitle">Powered by Groq + LLaMA 3 · ${ctx.lesson}</div>
       </div>
-      <button id="en-ai-close" onclick="ENAIPanel.close()">✕</button>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <button id="en-ai-lang-toggle" onclick="ENAIPanel.toggleLang()" title="Switch language" style="background:rgba(255,255,255,0.15);border:none;border-radius:14px;padding:4px 10px;color:white;font-size:11px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;letter-spacing:0.03em;">🇬🇧 EN</button>
+        <button id="en-ai-close" onclick="ENAIPanel.close()">✕</button>
+      </div>
     </div>
     <div id="en-ai-messages">
       <div class="ai-msg bot">
@@ -269,6 +280,10 @@ const EN_AI = {
   document.body.appendChild(panel);
 
   EN_AI.updateBadge();
+  // Restore saved language
+  const savedLang = localStorage.getItem('en_ai_lang') || 'en';
+  const langBtn = document.getElementById('en-ai-lang-toggle');
+  if(langBtn) langBtn.textContent = savedLang === 'ur' ? '🇵🇰 UR' : '🇬🇧 EN';
 })();
 
 // ============================================
@@ -349,5 +364,46 @@ Format: explanation first, then 1 example sentence in English.`;
     }
     document.getElementById('en-ai-send').disabled = false;
     document.getElementById('en-ai-messages').scrollTop = 99999;
+  },
+
+  lang: localStorage.getItem('en_ai_lang') || 'en',
+
+  toggleLang(){
+    this.lang = this.lang === 'en' ? 'ur' : 'en';
+    localStorage.setItem('en_ai_lang', this.lang);
+    const btn = document.getElementById('en-ai-lang-toggle');
+    if(btn) btn.textContent = this.lang === 'ur' ? '🇵🇰 UR' : '🇬🇧 EN';
+    const isUrdu = this.lang === 'ur';
+    this.addMsg(
+      isUrdu
+        ? 'Roman Urdu mode on! Ab main Roman Urdu mein jawab dunga. 🇵🇰'
+        : 'Switched to English mode! I will now reply in English. 🇬🇧',
+      'bot'
+    );
+    EN_AI.clearHistory();
+  },
+
+  startCorrection(){
+    const input = document.getElementById('en-ai-input');
+    const isUrdu = this.lang === 'ur';
+    input.value = isUrdu
+      ? 'Meri yeh sentence check karo: '
+      : 'Please check this sentence: ';
+    input.focus();
+    input.setSelectionRange(input.value.length, input.value.length);
+    document.getElementById('en-ai-suggestions').style.display = 'none';
+  },
+
+  clearChat(){
+    document.getElementById('en-ai-messages').innerHTML = '';
+    EN_AI.clearHistory();
+    const isUrdu = this.lang === 'ur';
+    this.addMsg(
+      isUrdu
+        ? 'Chat saaf ho gaya! Koi bhi grammar sawal poochein. 😊'
+        : 'Chat cleared! Ask me any grammar question. 😊',
+      'bot'
+    );
+    document.getElementById('en-ai-suggestions').style.display = 'flex';
   }
 };

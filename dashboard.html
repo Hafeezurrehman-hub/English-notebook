@@ -3,6 +3,16 @@
 <head>
 <script src="en-guard.js"></script>
 <meta charset="UTF-8">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://hafeezurrehman-hub.github.io/English-notebook/dashboard.html">
+<meta property="og:title" content="My Progress — EnglishNotebook">
+<meta property="og:description" content="Track your English grammar progress, accuracy scores, and earned badges.">
+<meta property="og:image" content="https://hafeezurrehman-hub.github.io/English-notebook/icon-512.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="My Progress — EnglishNotebook">
+<meta name="twitter:description" content="Track your English grammar progress, accuracy scores, and earned badges.">
+<meta name="twitter:image" content="https://hafeezurrehman-hub.github.io/English-notebook/icon-512.png">
+<meta name="description" content="Track your English grammar progress, accuracy scores, and earned badges.">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dashboard — EnglishNotebook</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -187,6 +197,50 @@
   .btn-cancel{font-family:'Inter',sans-serif; font-size:13px; font-weight:600; padding:9px 18px; border-radius:20px; border:1.5px solid var(--paper-line); background:none; color:var(--ink); cursor:pointer;}
   .btn-confirm{font-family:'Inter',sans-serif; font-size:13px; font-weight:600; padding:9px 18px; border-radius:20px; border:none; background:var(--clay); color:var(--paper); cursor:pointer;}
 
+
+  /* ── Share Progress Card ── */
+  .share-btn{
+    font-family:'Inter',sans-serif; font-size:13px; font-weight:600;
+    padding:9px 20px; border-radius:20px; border:1.5px solid var(--green);
+    background:none; color:var(--green); cursor:pointer; display:inline-flex;
+    align-items:center; gap:7px; transition:all 0.15s;
+  }
+  .share-btn:hover{background:var(--green); color:white;}
+  .share-modal-overlay{
+    display:none; position:fixed; inset:0; background:rgba(27,42,74,0.55);
+    z-index:200; align-items:center; justify-content:center; padding:20px;
+  }
+  .share-modal-overlay.show{display:flex;}
+  .share-modal{
+    background:var(--card); border:2px solid var(--ink); border-radius:18px;
+    padding:28px 24px; max-width:400px; width:100%; box-shadow:5px 5px 0 var(--ink);
+  }
+  .share-modal h3{font-family:'Fraunces',serif; font-size:22px; margin:0 0 18px;}
+  .share-card-preview{
+    background:linear-gradient(135deg,#1B2A4A 0%,#2F6F5E 100%);
+    border-radius:14px; padding:24px; color:white; margin-bottom:18px;
+    text-align:center;
+  }
+  .scp-brand{font-family:'Fraunces',serif; font-size:18px; font-weight:700; opacity:0.9; margin-bottom:16px;}
+  .scp-brand span{color:#8FD6BE;}
+  .scp-stats{display:flex; justify-content:space-around; gap:12px; margin-bottom:16px;}
+  .scp-stat{text-align:center;}
+  .scp-val{font-family:'Fraunces',serif; font-size:30px; font-weight:700;}
+  .scp-label{font-size:11px; opacity:0.7; text-transform:uppercase; letter-spacing:0.05em; margin-top:2px;}
+  .scp-bar-wrap{background:rgba(255,255,255,0.15); border-radius:8px; height:8px; margin-bottom:12px; overflow:hidden;}
+  .scp-bar-fill{height:100%; background:#8FD6BE; border-radius:8px; transition:width 0.6s ease;}
+  .scp-msg{font-size:13px; opacity:0.8; font-style:italic;}
+  .share-actions{display:flex; gap:10px; flex-wrap:wrap;}
+  .share-copy-btn{
+    flex:1; font-family:'Inter',sans-serif; font-size:13px; font-weight:700;
+    padding:11px 16px; border-radius:20px; border:none;
+    background:var(--green); color:white; cursor:pointer;
+  }
+  .share-close-btn{
+    font-family:'Inter',sans-serif; font-size:13px; font-weight:600;
+    padding:11px 18px; border-radius:20px; border:1.5px solid var(--paper-line);
+    background:none; color:var(--ink); cursor:pointer;
+  }
   @media(max-width:600px){
     .lesson-card,.col-headers,.total-row{grid-template-columns:1fr 60px 60px;}
     .lesson-card .mini-bar-wrap,.col-lbl:nth-child(4),.lesson-card .lc-num:nth-child(4){display:none;}
@@ -257,6 +311,10 @@
     <div class="summary-right">
       <div class="s-label">Overall Accuracy</div>
       <div class="big-pct" id="big-pct">0%</div>
+      <button class="share-btn" onclick="openShareCard()" style="margin-top:14px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        Share Progress
+      </button>
     </div>
   </div>
 
@@ -303,6 +361,36 @@
     <div class="mistake-count" id="mistake-count"></div>
     <div id="mistake-list"></div>
   </div>
+
+<!-- Share Progress Modal -->
+<div class="share-modal-overlay" id="share-modal">
+  <div class="share-modal">
+    <h3>📊 Share Your Progress</h3>
+    <div class="share-card-preview" id="share-card-preview">
+      <div class="scp-brand">English<span>Notebook</span></div>
+      <div class="scp-stats">
+        <div class="scp-stat">
+          <div class="scp-val" id="scp-pct">0%</div>
+          <div class="scp-label">Accuracy</div>
+        </div>
+        <div class="scp-stat">
+          <div class="scp-val" id="scp-correct">0</div>
+          <div class="scp-label">Correct</div>
+        </div>
+        <div class="scp-stat">
+          <div class="scp-val" id="scp-streak">0</div>
+          <div class="scp-label">Day Streak</div>
+        </div>
+      </div>
+      <div class="scp-bar-wrap"><div class="scp-bar-fill" id="scp-bar"></div></div>
+      <div class="scp-msg" id="scp-msg">Keep going — you're making great progress!</div>
+    </div>
+    <div class="share-actions">
+      <button class="share-copy-btn" onclick="copyShareText()">📋 Copy as Text</button>
+      <button class="share-close-btn" onclick="closeShareCard()">Close</button>
+    </div>
+  </div>
+</div>
 </main>
 
 <!-- Reset confirm modal -->
@@ -638,6 +726,51 @@ function renderMistakes(){
 function setFilter(lid){
   activeFilter = lid;
   renderMistakes();
+}
+
+
+// ─── Share Progress ───
+function openShareCard(){
+  const progress = loadProgress();
+  let grandCorrect=0, grandAttempted=0;
+  LESSONS.forEach(lesson=>{
+    if(lesson.refOnly) return;
+    const l = progress.lessons[lesson.id];
+    const qs = l && l.questions ? Object.values(l.questions) : [];
+    grandCorrect += qs.filter(q=>q.correct).length;
+    grandAttempted += qs.filter(q=>q.attempted).length;
+  });
+  const pct = grandAttempted>0 ? Math.round((grandCorrect/grandAttempted)*100) : 0;
+  const streak = parseInt(localStorage.getItem('en_streak_count')||'0');
+  const msgs = [
+    "Just started my English grammar journey! 📚",
+    "Making steady progress on EnglishNotebook! 💪",
+    "Grammar getting sharper every day! ✨",
+    "On fire with English grammar! 🔥",
+    "Crushing it on EnglishNotebook! 🏆"
+  ];
+  const msgIdx = pct>=80?4:pct>=60?3:pct>=40?2:pct>=20?1:0;
+  document.getElementById('scp-pct').textContent = pct+'%';
+  document.getElementById('scp-correct').textContent = grandCorrect;
+  document.getElementById('scp-streak').textContent = streak;
+  document.getElementById('scp-bar').style.width = pct+'%';
+  document.getElementById('scp-msg').textContent = msgs[msgIdx];
+  document.getElementById('share-modal').classList.add('show');
+}
+function closeShareCard(){
+  document.getElementById('share-modal').classList.remove('show');
+}
+function copyShareText(){
+  const pct = document.getElementById('scp-pct').textContent;
+  const correct = document.getElementById('scp-correct').textContent;
+  const streak = document.getElementById('scp-streak').textContent;
+  const msg = document.getElementById('scp-msg').textContent;
+  const text = `📚 EnglishNotebook Progress\n\nAccuracy: ${pct} | Correct: ${correct} | Streak: ${streak} days\n\n${msg}\n\nLearn English Grammar free: https://hafeezurrehman-hub.github.io/English-notebook/`;
+  navigator.clipboard.writeText(text).then(()=>{
+    const btn = document.querySelector('.share-copy-btn');
+    btn.textContent = '✅ Copied!';
+    setTimeout(()=>{ btn.textContent = '📋 Copy as Text'; }, 2000);
+  }).catch(()=>{ alert('Progress copied!'); });
 }
 
 // ─── Reset ───

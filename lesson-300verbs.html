@@ -3,6 +3,16 @@
 <head>
 <script src="en-guard.js"></script>
 <meta charset="UTF-8">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://hafeezurrehman-hub.github.io/English-notebook/lesson-300verbs.html">
+<meta property="og:title" content="300 Verbs — EnglishNotebook">
+<meta property="og:description" content="Full reference of 300 English verbs with a 30-question quiz.">
+<meta property="og:image" content="https://hafeezurrehman-hub.github.io/English-notebook/icon-512.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="300 Verbs — EnglishNotebook">
+<meta name="twitter:description" content="Full reference of 300 English verbs with a 30-question quiz.">
+<meta name="twitter:image" content="https://hafeezurrehman-hub.github.io/English-notebook/icon-512.png">
+<meta name="description" content="Full reference of 300 English verbs with a 30-question quiz.">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>300 Verbs — EnglishNotebook</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -63,6 +73,46 @@
   }
   #dark-toggle:hover{ border-color:var(--green); color:var(--green); }
 
+
+  /* ── Celebration Overlay ── */
+  .celebration-overlay{
+    display:none;position:fixed;inset:0;z-index:500;
+    align-items:center;justify-content:center;padding:20px;
+    background:rgba(27,42,74,0.6);backdrop-filter:blur(4px);
+  }
+  .celebration-overlay.show{display:flex;}
+  .celebration-card{
+    background:var(--card);border:2px solid var(--ink);border-radius:22px;
+    padding:36px 28px;max-width:380px;width:100%;text-align:center;
+    box-shadow:6px 6px 0 var(--ink);
+    animation:celebPop 0.5s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  @keyframes celebPop{from{opacity:0;transform:scale(0.7)}to{opacity:1;transform:scale(1)}}
+  .celeb-emoji{font-size:56px;margin-bottom:10px;display:block;}
+  .celeb-title{font-family:'Fraunces',serif;font-size:26px;font-weight:600;margin:0 0 8px;color:var(--ink);}
+  .celeb-sub{font-size:14px;color:var(--muted);margin:0 0 20px;line-height:1.6;}
+  .celeb-score{
+    background:linear-gradient(135deg,rgba(47,111,94,0.1),rgba(47,111,94,0.05));
+    border:1.5px solid var(--green);border-radius:12px;
+    padding:14px;margin-bottom:22px;
+    font-family:'Fraunces',serif;font-size:32px;font-weight:700;color:var(--green);
+  }
+  .celeb-btns{display:flex;gap:10px;flex-wrap:wrap;}
+  .celeb-btn-primary{
+    flex:1;background:var(--green);color:white;border:none;
+    padding:12px 20px;border-radius:25px;font-family:'Inter',sans-serif;
+    font-size:14px;font-weight:700;cursor:pointer;text-decoration:none;
+    display:inline-flex;align-items:center;justify-content:center;
+  }
+  .celeb-btn-secondary{
+    flex:1;background:none;color:var(--ink);border:1.5px solid var(--paper-line);
+    padding:12px 20px;border-radius:25px;font-family:'Inter',sans-serif;
+    font-size:14px;font-weight:600;cursor:pointer;
+  }
+  .celeb-btn-secondary:hover{border-color:var(--ink);}
+  /* Confetti canvas */
+  #confetti-canvas{position:fixed;inset:0;pointer-events:none;z-index:499;}
+  [data-theme="dark"] .celebration-card{border-color:var(--paper-line);box-shadow:6px 6px 0 var(--paper-line);}
 </style>
 <style>
   :root{
@@ -556,6 +606,7 @@ function updateProgressBar(){
   const pct = total > 0 ? Math.round((correct/total)*100) : 0;
   document.getElementById("progress-fill").style.width = pct+"%";
   document.getElementById("progress-stat").textContent = `${correct} / ${total} correct`;
+  checkCelebration(pct, correct, total);
   document.getElementById("topbar-status").textContent =
     (progress.plan==="unlimited"||progress.plan==="paid") ? "AI Unlimited" : progress.plan==="starter" ? "AI Starter" : "Free Plan";
 }
@@ -586,6 +637,78 @@ updateProgressBar();
 
 
 <script src="en-plan.js"></script>
+
+// ── Celebration ──
+var _celebShown = false;
+function checkCelebration(pct, correct, total){
+  if(_celebShown || pct < 80) return;
+  _celebShown = true;
+  var emoji = pct===100?'🏆':pct>=90?'🎯':'🎉';
+  var title = pct===100?'Perfect Score!':pct>=90?'Outstanding!':'Lesson Complete!';
+  var sub = pct===100?'You got every single question right. Incredible!':
+            pct>=90?'You are nearly perfect — excellent grammar skills!':
+            'You have passed this lesson with a great score!';
+  document.getElementById('celeb-emoji').textContent = emoji;
+  document.getElementById('celeb-title').textContent = title;
+  document.getElementById('celeb-sub').textContent = sub;
+  document.getElementById('celeb-score').textContent = pct + '% (' + correct + '/' + total + ')';
+  document.getElementById('celebration-overlay').classList.add('show');
+  launchConfetti();
+}
+function closeCelebration(){
+  document.getElementById('celebration-overlay').classList.remove('show');
+  stopConfetti();
+}
+
+// Simple confetti
+var _confettiAnim = null;
+var _confettiParts = [];
+function launchConfetti(){
+  var canvas = document.getElementById('confetti-canvas');
+  if(!canvas) return;
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  var ctx = canvas.getContext('2d');
+  var colors = ['#2F6F5E','#B5482A','#4A90D9','#D48C00','#7B5EA7','#E07055'];
+  _confettiParts = [];
+  for(var i=0;i<120;i++){
+    _confettiParts.push({
+      x:Math.random()*canvas.width,
+      y:Math.random()*canvas.height-canvas.height,
+      w:Math.random()*10+5,
+      h:Math.random()*6+3,
+      color:colors[Math.floor(Math.random()*colors.length)],
+      rot:Math.random()*360,
+      vx:(Math.random()-0.5)*3,
+      vy:Math.random()*4+2,
+      vrot:(Math.random()-0.5)*6
+    });
+  }
+  function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    _confettiParts.forEach(function(p){
+      ctx.save();
+      ctx.translate(p.x+p.w/2,p.y+p.h/2);
+      ctx.rotate(p.rot*Math.PI/180);
+      ctx.fillStyle=p.color;
+      ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);
+      ctx.restore();
+      p.x+=p.vx; p.y+=p.vy; p.rot+=p.vrot;
+      if(p.y>canvas.height){p.y=-20;p.x=Math.random()*canvas.width;}
+    });
+    _confettiAnim=requestAnimationFrame(draw);
+  }
+  if(_confettiAnim) cancelAnimationFrame(_confettiAnim);
+  draw();
+  setTimeout(stopConfetti,5000);
+}
+function stopConfetti(){
+  if(_confettiAnim){cancelAnimationFrame(_confettiAnim);_confettiAnim=null;}
+  var canvas=document.getElementById('confetti-canvas');
+  if(canvas){var ctx=canvas.getContext('2d');ctx.clearRect(0,0,canvas.width,canvas.height);}
+}
+
+</script>
 <script src="en-ai.js">
 /* ── Dark Mode ── */
 function toggleDark(){
@@ -610,5 +733,68 @@ function toggleDark(){
 </script>
 
 <script src="en-gamification.js"></script>
+
+<!-- Celebration Overlay -->
+<canvas id="confetti-canvas"></canvas>
+<div class="celebration-overlay" id="celebration-overlay">
+  <div class="celebration-card">
+    <span class="celeb-emoji" id="celeb-emoji">🎉</span>
+    <h2 class="celeb-title" id="celeb-title">Lesson Complete!</h2>
+    <p class="celeb-sub" id="celeb-sub">Amazing work — you've mastered this lesson!</p>
+    <div class="celeb-score" id="celeb-score">100%</div>
+    <div class="celeb-btns">
+      <a href="index.html" class="celeb-btn-primary">🏠 Back to Home</a>
+      <button class="celeb-btn-secondary" onclick="closeCelebration()">Keep Practicing</button>
+    </div>
+  </div>
+</div>
+
+
+// ── Keyboard Shortcuts ──
+(function(){
+  // Hint tooltip
+  var hint = document.createElement('div');
+  hint.style.cssText = 'position:fixed;bottom:80px;right:16px;background:rgba(27,42,74,0.85);color:white;font-family:Inter,sans-serif;font-size:12px;padding:10px 14px;border-radius:10px;z-index:100;line-height:1.8;pointer-events:none;opacity:0;transition:opacity 0.3s;';
+  hint.innerHTML = '<strong style="font-size:11px;letter-spacing:0.05em;opacity:0.7;">KEYBOARD SHORTCUTS</strong><br>Enter &nbsp;— Check answer<br>Esc &nbsp;&nbsp;&nbsp;— Close popup<br>Tab &nbsp;&nbsp;&nbsp;— Next question';
+  document.body.appendChild(hint);
+
+  // Show hint briefly on first visit
+  var hintKey = 'en_kb_hint_shown';
+  if(!localStorage.getItem(hintKey)){
+    setTimeout(function(){ hint.style.opacity='1'; }, 1200);
+    setTimeout(function(){ hint.style.opacity='0'; }, 5000);
+    localStorage.setItem(hintKey,'1');
+  }
+
+  document.addEventListener('keydown', function(e){
+    // Escape — close celebration overlay
+    if(e.key === 'Escape'){
+      var cel = document.getElementById('celebration-overlay');
+      if(cel && cel.classList.contains('show')){ closeCelebration(); return; }
+    }
+
+    // Enter — trigger Check button of focused input/select row
+    if(e.key === 'Enter'){
+      var active = document.activeElement;
+      if(!active) return;
+      // For text inputs — find check-btn in same row
+      var row = active.closest('.q-row');
+      if(row){
+        var checkBtn = row.querySelector('.check-btn');
+        if(checkBtn){ e.preventDefault(); checkBtn.click(); return; }
+        // For select dropdowns — trigger change event to check answer
+        var sel = row.querySelector('.q-select');
+        if(sel && active === sel){ e.preventDefault(); sel.dispatchEvent(new Event('change',{bubbles:true})); return; }
+      }
+    }
+
+    // ? — toggle shortcut hint
+    if(e.key === '?' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'SELECT'){
+      hint.style.opacity = hint.style.opacity === '1' ? '0' : '1';
+      if(hint.style.opacity === '1') setTimeout(function(){ hint.style.opacity='0'; }, 4000);
+    }
+  });
+})();
+
 </body>
 </html>

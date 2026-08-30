@@ -2,6 +2,16 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://hafeezurrehman-hub.github.io/English-notebook/pricing.html">
+<meta property="og:title" content="Pricing — EnglishNotebook">
+<meta property="og:description" content="All 12 lessons free. Upgrade for unlimited AI grammar feedback from Rs. 300/month.">
+<meta property="og:image" content="https://hafeezurrehman-hub.github.io/English-notebook/icon-512.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Pricing — EnglishNotebook">
+<meta name="twitter:description" content="All 12 lessons free. Upgrade for unlimited AI grammar feedback from Rs. 300/month.">
+<meta name="twitter:image" content="https://hafeezurrehman-hub.github.io/English-notebook/icon-512.png">
+<meta name="description" content="All 12 lessons free. Upgrade for unlimited AI grammar feedback from Rs. 300/month.">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pricing — EnglishNotebook</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -42,6 +52,15 @@
   .payment-note h3{font-family:'Fraunces',serif;font-size:18px;margin:0 0 8px;}
   .payment-note p{font-size:13.5px;color:var(--muted);margin:0;}
   @media(max-width:700px){.plans{grid-template-columns:1fr;}}
+
+  [data-theme="dark"]{
+    --ink:#E8E4DA; --paper:#141B2D; --paper-line:#1F2D45;
+    --green:#4CAF8A; --clay:#E07055; --muted:#7A8FA6; --card:#1A2540;
+  }
+  [data-theme="dark"] body{background:var(--paper);color:var(--ink);}
+  [data-theme="dark"] header{background:rgba(20,27,45,0.96)!important;border-color:var(--paper-line)!important;}
+  [data-theme="dark"] input,[data-theme="dark"] select,[data-theme="dark"] textarea{background:var(--paper)!important;color:var(--ink)!important;border-color:var(--paper-line)!important;}
+  [data-theme="dark"] .card,[data-theme="dark"] .plan-card,[data-theme="dark"] .modal-box,[data-theme="dark"] .share-modal{background:var(--card)!important;border-color:var(--paper-line)!important;}
 </style>
 </head>
 <body>
@@ -49,6 +68,8 @@
   <a href="index.html" style="font-size:14px;font-weight:600;color:var(--ink);text-decoration:none;">← Home</a>
   <div class="brand">English<span>Notebook</span></div>
   <div class="nav-right">
+    <button id="dark-toggle" onclick="toggleDark()" style="background:none;border:1.5px solid var(--paper-line);border-radius:20px;padding:5px 12px;cursor:pointer;color:var(--ink);font-family:'Inter',sans-serif;font-size:12px;font-weight:600;display:flex;align-items:center;gap:5px;">🌙 Dark</button>
+  
     <span id="user-status" style="font-size:13px;color:var(--muted);"></span>
     <button class="btn-nav" id="auth-btn" onclick="authAction()">Login</button>
   </div>

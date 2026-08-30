@@ -2,6 +2,16 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://hafeezurrehman-hub.github.io/English-notebook/index.html">
+<meta property="og:title" content="EnglishNotebook — Learn English Grammar Free">
+<meta property="og:description" content="Practice English grammar with 12 lessons, AI feedback, quizzes & certificates. Free to start!">
+<meta property="og:image" content="https://hafeezurrehman-hub.github.io/English-notebook/icon-512.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="EnglishNotebook — Learn English Grammar Free">
+<meta name="twitter:description" content="Practice English grammar with 12 lessons, AI feedback, quizzes & certificates. Free to start!">
+<meta name="twitter:image" content="https://hafeezurrehman-hub.github.io/English-notebook/icon-512.png">
+<meta name="description" content="Practice English grammar with 12 lessons, AI feedback, quizzes & certificates. Free to start!">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>EnglishNotebook — Home</title>
 <link rel="manifest" href="manifest.json">
@@ -94,6 +104,37 @@
   #auth-blocker .spinner{width:32px;height:32px;border:3px solid var(--paper-line);border-top-color:var(--green);border-radius:50%;animation:spin 0.8s linear infinite;}
   @keyframes spin{to{transform:rotate(360deg)}}
 
+
+  /* Search Bar */
+  .search-wrap{position:relative;margin-bottom:16px;}
+  .search-input{width:100%;padding:11px 16px 11px 42px;border:1.5px solid var(--paper-line);border-radius:25px;background:var(--card);color:var(--ink);font-family:'Inter',sans-serif;font-size:14px;outline:none;transition:border-color 0.2s;}
+  .search-input:focus{border-color:var(--green);}
+  .search-input::placeholder{color:var(--muted);}
+  [data-theme="dark"] .search-input{background:var(--card);color:var(--ink);}
+  .search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;}
+  .search-empty{text-align:center;padding:32px 16px;color:var(--muted);font-size:14px;display:none;}
+  .search-empty.show{display:block;}
+
+  /* Skeleton Loader */
+  @keyframes shimmer{0%{background-position:-600px 0}100%{background-position:600px 0}}
+  .skeleton{
+    background:linear-gradient(90deg,var(--paper-line) 25%,var(--card) 50%,var(--paper-line) 75%);
+    background-size:600px 100%;
+    animation:shimmer 1.4s infinite linear;
+    border-radius:6px;
+  }
+  .skeleton-row{
+    display:grid;grid-template-columns:44px 1fr 80px 24px;
+    align-items:center;gap:18px;padding:16px 14px;
+    border-bottom:1px solid var(--paper-line);
+  }
+  .sk-circle{width:44px;height:44px;border-radius:50%;}
+  .sk-lines{display:flex;flex-direction:column;gap:8px;}
+  .sk-line-a{height:16px;width:60%;border-radius:6px;}
+  .sk-line-b{height:12px;width:85%;border-radius:6px;}
+  .sk-meta{height:14px;width:60px;border-radius:6px;}
+  .sk-arrow{height:18px;width:18px;border-radius:4px;}
+
   @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;}}
   @media (max-width:600px){
     header.topbar{padding:10px 12px;}
@@ -138,11 +179,11 @@
 </header>
 
 <section class="hero">
-  <div class="eyebrow">12-Lesson Course</div>
-  <h1 class="title">Your grammar notebook, now digital.</h1>
-  <p class="sub">Every lesson comes with practice and instant ✅/❌ feedback. Pick up right where you left off.</p>
-  <div style="margin-top:20px;display:flex;gap:12px;flex-wrap:wrap;">
-    <a href="#lesson-grid" onclick="document.getElementById('lesson-grid').scrollIntoView({behavior:'smooth'});return false;" style="display:inline-flex;align-items:center;gap:8px;background:var(--green);color:white;padding:12px 28px;border-radius:25px;text-decoration:none;font-family:'Inter',sans-serif;font-size:15px;font-weight:700;box-shadow:0 4px 14px rgba(47,111,94,0.3);transition:transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+  <div class="eyebrow" id="hero-eyebrow">12-Lesson Course</div>
+  <h1 class="title" id="hero-title">Your grammar notebook, now digital.</h1>
+  <p class="sub" id="hero-sub">Every lesson comes with practice and instant ✅/❌ feedback. Pick up right where you left off.</p>
+  <div style="margin-top:20px;display:flex;gap:12px;flex-wrap:wrap;" id="hero-btns">
+    <a href="#lesson-grid" id="hero-cta-primary" onclick="document.getElementById('lesson-grid').scrollIntoView({behavior:'smooth'});return false;" style="display:inline-flex;align-items:center;gap:8px;background:var(--green);color:white;padding:12px 28px;border-radius:25px;text-decoration:none;font-family:'Inter',sans-serif;font-size:15px;font-weight:700;box-shadow:0 4px 14px rgba(47,111,94,0.3);transition:transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
       📚 Start Learning
     </a>
     <a href="pricing.html" style="display:inline-flex;align-items:center;gap:8px;background:none;border:2px solid var(--ink);color:var(--ink);padding:12px 28px;border-radius:25px;text-decoration:none;font-family:'Inter',sans-serif;font-size:15px;font-weight:700;transition:all 0.2s;" onmouseover="this.style.background='var(--ink)';this.style.color='white'" onmouseout="this.style.background='none';this.style.color='var(--ink)'">
@@ -152,7 +193,7 @@
 </section>
 
 <div class="overall">
-  <div class="overall-card">
+  <div class="overall-card" id="overall-card">
     <div class="ring-wrap">
       <svg class="ring" width="64" height="64" viewBox="0 0 64 64">
         <circle cx="32" cy="32" r="27" fill="none" stroke="#E4DFD0" stroke-width="7"/>
@@ -171,13 +212,55 @@
 </div>
 
 <main>
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;border-bottom:1px solid var(--paper-line);padding-bottom:10px;">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;border-bottom:1px solid var(--paper-line);padding-bottom:10px;">
     <p class="section-label" style="margin:0;border:none;padding:0;">Lessons</p>
     <a href="badges.html" style="font-size:13px;font-weight:600;color:var(--green);text-decoration:none;display:flex;align-items:center;gap:6px;">
       🏆 My Badges & Streak →
     </a>
   </div>
-  <div class="lesson-grid" id="lesson-grid"></div>
+  <div class="search-wrap">
+    <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input class="search-input" id="lesson-search" type="text" placeholder="Search lessons… e.g. tense, noun, modal" oninput="filterLessons(this.value)" autocomplete="off">
+  </div>
+  <div class="lesson-grid" id="lesson-grid">
+    <div class="skeleton-row">
+      <div class="skeleton sk-circle"></div>
+      <div class="sk-lines"><div class="skeleton sk-line-a"></div><div class="skeleton sk-line-b"></div></div>
+      <div class="skeleton sk-meta"></div>
+      <div class="skeleton sk-arrow"></div>
+    </div>
+    <div class="skeleton-row">
+      <div class="skeleton sk-circle"></div>
+      <div class="sk-lines"><div class="skeleton sk-line-a"></div><div class="skeleton sk-line-b"></div></div>
+      <div class="skeleton sk-meta"></div>
+      <div class="skeleton sk-arrow"></div>
+    </div>
+    <div class="skeleton-row">
+      <div class="skeleton sk-circle"></div>
+      <div class="sk-lines"><div class="skeleton sk-line-a"></div><div class="skeleton sk-line-b"></div></div>
+      <div class="skeleton sk-meta"></div>
+      <div class="skeleton sk-arrow"></div>
+    </div>
+    <div class="skeleton-row">
+      <div class="skeleton sk-circle"></div>
+      <div class="sk-lines"><div class="skeleton sk-line-a"></div><div class="skeleton sk-line-b"></div></div>
+      <div class="skeleton sk-meta"></div>
+      <div class="skeleton sk-arrow"></div>
+    </div>
+    <div class="skeleton-row">
+      <div class="skeleton sk-circle"></div>
+      <div class="sk-lines"><div class="skeleton sk-line-a"></div><div class="skeleton sk-line-b"></div></div>
+      <div class="skeleton sk-meta"></div>
+      <div class="skeleton sk-arrow"></div>
+    </div>
+    <div class="skeleton-row">
+      <div class="skeleton sk-circle"></div>
+      <div class="sk-lines"><div class="skeleton sk-line-a"></div><div class="skeleton sk-line-b"></div></div>
+      <div class="skeleton sk-meta"></div>
+      <div class="skeleton sk-arrow"></div>
+    </div>
+  </div>
+  <div class="search-empty" id="search-empty">No lessons found for "<span id="search-query"></span>"</div>
 </main>
 
 <div style="max-width:960px;margin:0 auto;padding:24px 24px;">
@@ -247,6 +330,39 @@
       <div style="width:44px;height:44px;border-radius:12px;background:rgba(181,72,42,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><span style="font-size:22px;">🚪</span></div>
       <div style="flex:1;"><div style="font-family:'Fraunces',serif;font-size:15px;font-weight:600;margin-bottom:2px;">Logout</div><div style="font-size:12px;color:var(--muted);">Sign out from account</div></div>
       <button onclick="if(confirm('Logout?')){localStorage.removeItem('en_logged_in');localStorage.removeItem('en_user_name');window.location.href='auth.html';}" style="background:none;border:1.5px solid var(--clay);border-radius:20px;padding:6px 12px;cursor:pointer;font-size:12px;font-weight:600;color:var(--clay);font-family:'Inter',sans-serif;white-space:nowrap;">Logout</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:14px;">
+      <div style="width:44px;height:44px;border-radius:12px;background:rgba(212,140,0,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><span style="font-size:22px;">⏰</span></div>
+      <div style="flex:1;">
+        <div style="font-family:'Fraunces',serif;font-size:15px;font-weight:600;margin-bottom:2px;">Daily Reminder</div>
+        <div style="font-size:12px;color:var(--muted);" id="reminder-status">Set a daily study time</div>
+      </div>
+      <button onclick="toggleReminder()" id="reminder-btn" style="background:none;border:1.5px solid var(--green);border-radius:20px;padding:6px 12px;cursor:pointer;font-size:12px;font-weight:600;color:var(--green);font-family:'Inter',sans-serif;white-space:nowrap;">Set Time</button>
+    </div>
+  </div>
+</div>
+
+<!-- Reminder Modal -->
+<div id="reminder-modal" style="display:none;position:fixed;inset:0;background:rgba(27,42,74,0.55);z-index:300;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:var(--card);border:2px solid var(--ink);border-radius:18px;padding:28px 24px;max-width:360px;width:100%;box-shadow:5px 5px 0 var(--ink);">
+    <h3 style="font-family:'Fraunces',serif;font-size:22px;margin:0 0 6px;">⏰ Daily Study Reminder</h3>
+    <p style="font-size:13px;color:var(--muted);margin:0 0 20px;">Pick a time — we'll remind you to study every day.</p>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px;">
+      <label style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;color:var(--muted);">Reminder Time</label>
+      <input type="time" id="reminder-time-input" value="20:00" style="padding:10px 14px;border:1.5px solid var(--paper-line);border-radius:10px;font-size:15px;font-family:'Inter',sans-serif;background:var(--paper);color:var(--ink);">
+      <label style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;color:var(--muted);">Daily Goal</label>
+      <select id="reminder-goal" style="padding:10px 14px;border:1.5px solid var(--paper-line);border-radius:10px;font-size:14px;font-family:'Inter',sans-serif;background:var(--paper);color:var(--ink);">
+        <option value="5">5 minutes</option>
+        <option value="10" selected>10 minutes</option>
+        <option value="15">15 minutes</option>
+        <option value="20">20 minutes</option>
+        <option value="30">30 minutes</option>
+      </select>
+    </div>
+    <div style="display:flex;gap:10px;">
+      <button onclick="saveReminder()" style="flex:1;background:var(--green);color:white;border:none;padding:12px;border-radius:20px;font-family:'Inter',sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Save Reminder</button>
+      <button onclick="clearReminder()" style="background:none;border:1.5px solid var(--clay);color:var(--clay);padding:12px 16px;border-radius:20px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;">Clear</button>
+      <button onclick="document.getElementById('reminder-modal').style.display='none';" style="background:none;border:1.5px solid var(--paper-line);color:var(--ink);padding:12px 16px;border-radius:20px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;">Cancel</button>
     </div>
   </div>
 </div>
@@ -324,15 +440,24 @@
   }
 
   /* ===== RENDER ===== */
-  function render(){
+  function render(filter){
     var grid=document.getElementById("lesson-grid");
     if(!grid)return;
-    grid.innerHTML="";
+    grid.innerHTML=""; // clears skeleton rows
     var progress=loadProgress();
     var totalCorrect=0,totalAttempted=0;
     var lastVisited=localStorage.getItem("en_last_visited")||"";
+    var query=(filter||"").toLowerCase().trim();
+    var filtered=LESSONS.filter(function(l){
+      if(!query)return true;
+      return l.name.toLowerCase().includes(query)||l.desc.toLowerCase().includes(query)||l.num.toLowerCase().includes(query);
+    });
+    var emptyEl=document.getElementById("search-empty");
+    var queryEl=document.getElementById("search-query");
+    if(emptyEl){emptyEl.classList.toggle("show",filtered.length===0&&query.length>0);}
+    if(queryEl&&query)queryEl.textContent=query;
 
-    LESSONS.forEach(function(lesson){
+    filtered.forEach(function(lesson){
       var stats=lessonStats(progress,lesson.id);
       totalCorrect+=stats.correct;
       totalAttempted+=stats.attempted;
@@ -369,7 +494,8 @@
       grid.appendChild(row);
     });
 
-    // Overall stats
+    // Overall stats — always from full list
+    if(!query){
     var pct=totalAttempted>0?Math.round((totalCorrect/totalAttempted)*100):0;
     var circumference=169.6;
     var offset=circumference-(pct/100)*circumference;
@@ -379,9 +505,53 @@
     if(pctText)pctText.textContent=pct+"%";
     var statText=document.getElementById("overall-stat");
     if(statText)statText.textContent=totalCorrect+" / "+totalAttempted+" correct";
+
+    // Update hero dynamically
+    updateHero(totalCorrect, totalAttempted);
+    }
   }
 
-  /* ===== DARK MODE ===== */
+  function updateHero(totalCorrect, totalAttempted){
+    var pct=totalAttempted>0?Math.round((totalCorrect/totalAttempted)*100):0;
+    var lastRoute=localStorage.getItem("en_last_visited")||"";
+    var lastLesson=LESSONS.find(function(l){return l.route===lastRoute;});
+    var eyebrow=document.getElementById("hero-eyebrow");
+    var title=document.getElementById("hero-title");
+    var sub=document.getElementById("hero-sub");
+    var cta=document.getElementById("hero-cta-primary");
+
+    if(totalAttempted===0){
+      // Fresh user — default copy
+      return;
+    }
+
+    // Has progress
+    var msgs=[
+      {min:1,  max:19, title:"You've started your English journey! 🌱",    sub:"Every great grammar master started with lesson 1. Keep going!"},
+      {min:20, max:49, title:"You're making great progress! 💪",            sub:"You're getting the hang of English grammar. Keep the momentum!"},
+      {min:50, max:79, title:"Halfway there — keep it up! ⚡",              sub:"Over 50% accuracy! You're on your way to mastering English grammar."},
+      {min:80, max:94, title:"Almost a grammar expert! 🎯",                 sub:"Your accuracy is impressive. A few more lessons and you'll be unstoppable."},
+      {min:95, max:100,title:"You're a Grammar Champion! 🏆",               sub:"Outstanding accuracy across all lessons. Share your progress with others!"}
+    ];
+    var msg=msgs.find(function(m){return pct>=m.min&&pct<=m.max;})||msgs[0];
+    if(title) title.textContent=msg.title;
+    if(sub) sub.textContent=msg.sub;
+    if(eyebrow) eyebrow.textContent=pct+"% Overall Accuracy";
+
+    // If user has a last visited lesson, show "Continue" CTA
+    if(lastLesson&&cta){
+      cta.textContent="▶ Continue: "+lastLesson.name;
+      cta.href=lastLesson.route;
+      cta.onclick=null;
+    }
+  }
+
+  /* ===== SEARCH ===== */
+  window.filterLessons=function(val){
+    render(val);
+  };
+
+    /* ===== DARK MODE ===== */
   window.toggleDark=function(){
     var isDark=document.documentElement.getAttribute("data-theme")==="dark";
     var next=isDark?"light":"dark";
@@ -423,6 +593,80 @@
       if(now-lastBack<2000){hideToast();window.history.back();setTimeout(function(){try{window.close();}catch(e){}},100);}
       else{lastBack=now;history.pushState(null,"",location.href);showToast();setTimeout(hideToast,2000);}
     });
+  })();
+
+
+  /* ===== DAILY REMINDER ===== */
+  (function initReminder(){
+    var saved=localStorage.getItem('en_reminder');
+    if(saved){
+      var r=JSON.parse(saved);
+      var el=document.getElementById('reminder-status');
+      var btn=document.getElementById('reminder-btn');
+      if(el)el.textContent='Daily at '+r.time+' ('+r.goal+' min goal)';
+      if(btn){btn.textContent='Edit';btn.style.borderColor='var(--clay)';btn.style.color='var(--clay)';}
+    }
+  })();
+
+  window.toggleReminder=function(){
+    var modal=document.getElementById('reminder-modal');
+    var saved=localStorage.getItem('en_reminder');
+    if(saved){
+      var r=JSON.parse(saved);
+      document.getElementById('reminder-time-input').value=r.time;
+      document.getElementById('reminder-goal').value=r.goal;
+    }
+    modal.style.display='flex';
+  };
+  window.saveReminder=function(){
+    var time=document.getElementById('reminder-time-input').value;
+    var goal=document.getElementById('reminder-goal').value;
+    localStorage.setItem('en_reminder',JSON.stringify({time:time,goal:goal}));
+    var el=document.getElementById('reminder-status');
+    var btn=document.getElementById('reminder-btn');
+    if(el)el.textContent='Daily at '+time+' ('+goal+' min goal)';
+    if(btn){btn.textContent='Edit';btn.style.borderColor='var(--clay)';btn.style.color='var(--clay)';}
+    document.getElementById('reminder-modal').style.display='none';
+    if('Notification' in window&&Notification.permission==='default'){
+      Notification.requestPermission().then(function(p){
+        if(p==='granted'){showReminderToast('Reminder set! We will notify you at '+time+' daily.');}
+      });
+    } else {
+      showReminderToast('Reminder saved! Open the app daily at '+time+'.');
+    }
+  };
+  window.clearReminder=function(){
+    localStorage.removeItem('en_reminder');
+    var el=document.getElementById('reminder-status');
+    var btn=document.getElementById('reminder-btn');
+    if(el)el.textContent='Set a daily study time';
+    if(btn){btn.textContent='Set Time';btn.style.borderColor='var(--green)';btn.style.color='var(--green)';}
+    document.getElementById('reminder-modal').style.display='none';
+  };
+  function showReminderToast(msg){
+    var t=document.createElement('div');
+    t.style.cssText='position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#1B2A4A;color:white;padding:13px 24px;border-radius:25px;font-family:Inter,sans-serif;font-size:13px;font-weight:600;z-index:9999;box-shadow:0 4px 14px rgba(0,0,0,0.3);';
+    t.textContent='✅ '+msg;
+    document.body.appendChild(t);
+    setTimeout(function(){t.remove();},3500);
+  }
+  // Check if reminder time has passed today
+  (function checkReminderToday(){
+    var saved=localStorage.getItem('en_reminder');
+    if(!saved)return;
+    var r=JSON.parse(saved);
+    var lastShown=localStorage.getItem('en_reminder_last');
+    var today=new Date().toDateString();
+    if(lastShown===today)return;
+    var now=new Date();
+    var parts=r.time.split(':');
+    var target=new Date();
+    target.setHours(parseInt(parts[0]),parseInt(parts[1]),0,0);
+    var diff=now-target;
+    if(diff>=0&&diff<60*60*1000){
+      localStorage.setItem('en_reminder_last',today);
+      showReminderToast('Time to study! Your '+r.goal+' min English session awaits. 📚');
+    }
   })();
 
   /* ===== SERVICE WORKER ===== */
