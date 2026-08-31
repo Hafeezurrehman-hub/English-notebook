@@ -1,5 +1,5 @@
 // EnglishNotebook — Service Worker (PWA)
-const CACHE_NAME = "englishnotebook-v2";
+const CACHE_NAME = "englishnotebook-v3";
 
 const CACHE_FILES = [
   "./",
